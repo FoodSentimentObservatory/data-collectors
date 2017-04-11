@@ -26,7 +26,12 @@ public class EstablishmentFactory {
          System.out.println("Failed to add GeoLocation to: " + XMLUtils.getStringValue(element, "BusinessName"));
       }
 
-      String address = address1 + ", " + address2;
+      String address = "";
+      if (address1 == null) {
+         address = address2;
+      } else {
+         address = address1 + ", " + address2;
+      }
 
       return new Establishment(id,name,type,address,city,postCode,lat,longitude,twitter);
    }
