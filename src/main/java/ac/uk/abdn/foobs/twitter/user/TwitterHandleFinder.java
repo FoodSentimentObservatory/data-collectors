@@ -11,9 +11,9 @@ import twitter4j.ResponseList;
 import twitter4j.User;
 
 public class TwitterHandleFinder {
-   private RESTAPI restAPI;
+   private UserRESTAPI restAPI;
 
-   public TwitterHandleFinder(RESTAPI rRestAPI) {
+   public TwitterHandleFinder(UserRESTAPI rRestAPI) {
       this.restAPI = rRestAPI;
    }
 
