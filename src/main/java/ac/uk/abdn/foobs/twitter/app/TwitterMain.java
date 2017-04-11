@@ -1,4 +1,4 @@
-package ac.uk.abdn.foobs.twitter_app;
+package ac.uk.abdn.foobs.twitter.app;
 
 import java.util.ArrayList;
 

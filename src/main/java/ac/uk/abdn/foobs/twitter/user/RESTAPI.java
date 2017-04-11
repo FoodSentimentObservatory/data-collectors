@@ -1,4 +1,4 @@
-package ac.uk.abdn.foobs.twitter_app;
+package ac.uk.abdn.foobs.twitter.user;
 
 import twitter4j.Query;
 import twitter4j.QueryResult;
@@ -12,12 +12,7 @@ public class RESTAPI {
    private Twitter twitter;
 
    public RESTAPI() {
-      try {
-         twitter = TwitterFactory.getSingleton();
-         twitter.getOAuth2Token();
-      } catch (TwitterException e) {
-         System.out.println(e.getErrorMessage());
-      }
+      twitter = TwitterFactory.getSingleton();
    }
 
    public QueryResult search(Query query) {
@@ -33,4 +28,13 @@ public class RESTAPI {
       return result;
    }
 
+   public ResponseList<User> searchUser(String query) {
+      ResponseList<User> users = null;
+      try {
+         users = twitter.searchUsers(query, 20);
+      } catch (TwitterException e) {
+         System.out.println(e.getErrorMessage());
+      }
+      return users;
+   }
 }

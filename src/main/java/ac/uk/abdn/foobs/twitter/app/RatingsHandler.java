@@ -1,4 +1,4 @@
-package ac.uk.abdn.foobs.twitter_app;
+package ac.uk.abdn.foobs.twitter.app;
 
 import java.io.File;
 import java.io.IOException;
