@@ -24,9 +24,9 @@ public class TwitterHandleFinder {
          ResponseList<User> users = restAPI.searchUser(establishment.getBusinessName());
 
          if (users != null && !users.isEmpty()) {
-            System.out.println("Searched for: ");
+            System.out.println("Searched for:\n ");
             System.out.println(establishment.toString());
-            System.out.println("Found: ");
+            System.out.println("Found:\n ");
 
             for (int i = 0; i < users.size(); i++) {
                System.out.println(i + "\t: " + users.get(i).getName() + "\t -\t " + users.get(i).getLocation() + "\n\n" + users.get(i).getDescription());
@@ -38,6 +38,7 @@ public class TwitterHandleFinder {
 
             if (inputString.isEmpty()) {
                System.out.println("No associated place");
+               RatingsHandler.addTwitterHandleToEstablishment(file, establishment, "NONE");
             } else {
                int input = Integer.parseInt(inputString);
                RatingsHandler.addTwitterHandleToEstablishment(file, establishment, users.get(input).getScreenName());
