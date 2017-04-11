@@ -18,39 +18,49 @@ public class TwitterHandleFinder {
    }
 
    public void findHandlesForEstablishements(File file, ArrayList<Establishment> establishmentList) {
-      Scanner reader = new Scanner(System.in);
 
       for (Establishment establishment : establishmentList) {
-         ResponseList<User> users = restAPI.searchUser(establishment.getBusinessName());
+         if (establishment.getTwitterHandle() == null) {
+            String handle = findHandleForEstablishment(establishment);
+            RatingsHandler.addTwitterHandleToEstablishment(file, establishment, handle);
+         }
+      }
+   }
 
-         if (users != null && !users.isEmpty()) {
-            System.out.println("Searched for:\n ");
-            System.out.println(establishment.toString());
-            System.out.println("Found:\n ");
+   private String findHandleForEstablishment(Establishment establishment) {
+      String twitterHandle = null;
+      Scanner reader = new Scanner(System.in);
 
-            for (int i = 0; i < users.size(); i++) {
-               System.out.println(i + "\t: " + users.get(i).getName() + "\t -\t " + users.get(i).getLocation() + "\n\n" + users.get(i).getDescription());
-               System.out.println("\n---------------------------------------------------\n");
-            }
+      ResponseList<User> users = restAPI.searchUser(establishment.getBusinessName());
 
-            System.out.println("Enter the number of the associated twitter account or press enter: ");
-            String inputString = reader.nextLine();
+      if (users != null && !users.isEmpty()) {
+         System.out.println("Searched for:\n ");
+         System.out.println(establishment.toString());
+         System.out.println("Found:\n ");
 
-            if (inputString.isEmpty()) {
-               System.out.println("No associated place");
-               RatingsHandler.addTwitterHandleToEstablishment(file, establishment, "NONE");
-            } else {
-               int input = Integer.parseInt(inputString);
-               RatingsHandler.addTwitterHandleToEstablishment(file, establishment, users.get(input).getScreenName());
-            }
-
-            System.out.println("\n**********************************************************************\n");
-         } else {
-            // add NONE in place of the twitter handle
-            RatingsHandler.addTwitterHandleToEstablishment(file, establishment, "NONE");
+         for (int i = 0; i < users.size(); i++) {
+            System.out.println(i + "\t: " + users.get(i).getName() + "\t -\t " + users.get(i).getLocation() + "\n\n" + users.get(i).getDescription());
+            System.out.println("\n---------------------------------------------------\n");
          }
 
+         System.out.println("Enter the number of the associated twitter account or press enter: ");
+         String inputString = reader.nextLine();
+
+         if (inputString.isEmpty()) {
+            System.out.println("No associated place");
+            twitterHandle = "NONE";
+         } else {
+            int input = Integer.parseInt(inputString);
+            twitterHandle = users.get(input).getScreenName();
+         }
+         System.out.println("\n**********************************************************************\n");
+
+      } else {
+         // add NONE in place of the twitter handle
+         twitterHandle = "NONE";
       }
+      
       reader.close();
+      return twitterHandle;
    }
 }
