@@ -1,9 +1,5 @@
 package ac.uk.abdn.foobs.twitter.app;
 
-import java.util.ArrayList;
-
-import twitter4j.FilterQuery;
-import twitter4j.GeoLocation;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Status;

@@ -1,7 +1,5 @@
 package ac.uk.abdn.foobs.twitter.user;
 
-import twitter4j.Query;
-import twitter4j.QueryResult;
 import twitter4j.ResponseList;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -13,19 +11,6 @@ public class RESTAPI {
 
    public RESTAPI() {
       twitter = TwitterFactory.getSingleton();
-   }
-
-   public QueryResult search(Query query) {
-      QueryResult result = null;
-
-      try {
-         result = twitter.search(query);
-         System.out.println(twitter.getRateLimitStatus("search"));
-      } catch (TwitterException e) {
-         System.out.println(e.getErrorMessage());
-      }
-      
-      return result;
    }
 
    public ResponseList<User> searchUser(String query) {

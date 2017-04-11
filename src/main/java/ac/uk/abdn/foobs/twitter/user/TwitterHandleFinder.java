@@ -1,7 +1,11 @@
 package ac.uk.abdn.foobs.twitter.user;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import ac.uk.abdn.foobs.Establishment;
+import ac.uk.abdn.foobs.fsa.RatingsHandler;
 
 import twitter4j.ResponseList;
 import twitter4j.User;
@@ -13,7 +17,7 @@ public class TwitterHandleFinder {
       this.restAPI = rRestAPI;
    }
 
-   public void findHandlesForEstablishements(String filename, ArrayList<Establishment> establishmentList) {
+   public void findHandlesForEstablishements(File file, ArrayList<Establishment> establishmentList) {
       Scanner reader = new Scanner(System.in);
 
       for (Establishment establishment : establishmentList) {
@@ -35,7 +39,7 @@ public class TwitterHandleFinder {
                System.out.println("No associated place");
             } else {
                int input = Integer.parseInt(inputString);
-               RatingsHandler.addTwitterHandleToEstablishment(filename, establishment, users.get(input).getScreenName());
+               RatingsHandler.addTwitterHandleToEstablishment(file, establishment, users.get(input).getScreenName());
             }
 
             System.out.println("\n**********************************************************************\n");

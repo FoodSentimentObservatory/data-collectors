@@ -1,4 +1,4 @@
-package ac.uk.abdn.foobs.twitter.user;
+package ac.uk.abdn.foobs;
 
 import twitter4j.GeoLocation;
 

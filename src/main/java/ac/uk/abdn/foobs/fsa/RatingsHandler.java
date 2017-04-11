@@ -1,4 +1,4 @@
-package ac.uk.abdn.foobs.twitter.user;
+package ac.uk.abdn.foobs.fsa;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -7,6 +7,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import ac.uk.abdn.foobs.Establishment;
+import ac.uk.abdn.foobs.EstablishmentFactory;
 import ac.uk.abdn.foobs.utils.XMLUtils;
 
 public class RatingsHandler {
