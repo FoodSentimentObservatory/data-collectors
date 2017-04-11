@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Config>
+   <TwitterApp>
+      <ConsumerKey></ConsumerKey>
+      <ConsumerSecret></ConsumerSecret>
+   </TwitterApp>
+   <TwitterUser>
+      <ConsumerKey></ConsumerKey>
+      <ConsumerSecret></ConsumerSecret>
+      <UserAccessToken></UserAccessToken>
+      <UserAccessTokenSecret></UserAccessTokenSecret>
+   </TwitterUser>
+</Config>
