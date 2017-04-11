@@ -1,16 +1,15 @@
 package ac.uk.abdn.foobs.twitter.user;
 
 import ac.uk.abdn.foobs.Config;
+import ac.uk.abdn.foobs.twitter.BaseRESTAPI;
 
 import twitter4j.ResponseList;
-import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
 import twitter4j.conf.ConfigurationBuilder;
 
-public class UserRESTAPI {
-   private Twitter twitter;
+public class UserRESTAPI extends BaseRESTAPI {
 
    public UserRESTAPI(Config config) {
       ConfigurationBuilder cb = new ConfigurationBuilder();

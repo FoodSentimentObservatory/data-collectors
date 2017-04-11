@@ -29,7 +29,8 @@ public class TwitterHandleFinder {
             System.out.println("Found: ");
 
             for (int i = 0; i < users.size(); i++) {
-               System.out.println(i + ": " + users.get(i).getName() + " - " + users.get(i).getLocation() + " - " + users.get(i).getDescription());
+               System.out.println(i + "\t: " + users.get(i).getName() + "\t -\t " + users.get(i).getLocation() + "\n\n" + users.get(i).getDescription());
+               System.out.println("\n---------------------------------------------------\n");
             }
 
             System.out.println("Enter the number of the associated twitter account or press enter: ");
@@ -43,6 +44,9 @@ public class TwitterHandleFinder {
             }
 
             System.out.println("\n**********************************************************************\n");
+         } else {
+            // add NONE in place of the twitter handle
+            RatingsHandler.addTwitterHandleToEstablishment(file, establishment, "NONE");
          }
 
       }

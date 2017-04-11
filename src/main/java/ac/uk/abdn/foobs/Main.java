@@ -17,7 +17,7 @@ public class Main {
       File file = new File(args[0]);
       Config config = new Config(file);
 
-      connectToAppOnlyTwitter(config);
+      //connectToAppOnlyTwitter(config);
 
       File xml = new File(args[1]);
       findTwitterHanldes(config, xml);
