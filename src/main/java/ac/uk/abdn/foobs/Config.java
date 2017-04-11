@@ -29,12 +29,12 @@ public class Config {
 
       Element rootElement = document.getDocumentElement();
 
-      Element twitterApp = (Element)rootElement.getElementsByTagName("TwitterApp");
+      Element twitterApp = (Element)rootElement.getElementsByTagName("TwitterApp").item(0);
 
       twitterAppConsumerKey = XMLUtils.getStringValue(twitterApp, "ConsumerKey");
       twitterAppConsumerSecret = XMLUtils.getStringValue(twitterApp, "ConsumerSecret");
 
-      Element twitterUser = (Element)rootElement.getElementsByTagName("TwitterUser");
+      Element twitterUser = (Element)rootElement.getElementsByTagName("TwitterUser").item(0);
 
       twitterUserConsumerKey = XMLUtils.getStringValue(twitterUser, "ConsumerKey");
       twitterUserConsumerSecret = XMLUtils.getStringValue(twitterUser, "ConsumerSecret");
