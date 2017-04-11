@@ -3,6 +3,7 @@ package ac.uk.abdn.foobs;
 import java.io.File;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import ac.uk.abdn.foobs.utils.XMLUtils;
 
@@ -25,6 +26,20 @@ public class Config {
          System.out.println("Failed to read config file");
          return;
       }
+
+      Element rootElement = document.getDocumentElement();
+
+      Element twitterApp = (Element)rootElement.getElementsByTagName("TwitterApp");
+
+      twitterAppConsumerKey = XMLUtils.getStringValue(twitterApp, "ConsumerKey");
+      twitterAppConsumerSecret = XMLUtils.getStringValue(twitterApp, "ConsumerSecret");
+
+      Element twitterUser = (Element)rootElement.getElementsByTagName("TwitterUser");
+
+      twitterUserConsumerKey = XMLUtils.getStringValue(twitterUser, "ConsumerKey");
+      twitterUserConsumerSecret = XMLUtils.getStringValue(twitterUser, "ConsumerSecret");
+      twitterUserAccessToken = XMLUtils.getStringValue(twitterUser, "UserAccessToken");
+      twitterUserAccessTokenSecret = XMLUtils.getStringValue(twitterUser, "UserAccessTokenSecret");
    }
 
    /**

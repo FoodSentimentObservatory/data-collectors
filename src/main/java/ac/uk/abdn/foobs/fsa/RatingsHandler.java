@@ -23,7 +23,7 @@ public class RatingsHandler {
       }
 
       Element rootElement = document.getDocumentElement();
-      NodeList   establishments = rootElement.getElementsByTagName("EstablishmentDetail");
+      NodeList establishments = rootElement.getElementsByTagName("EstablishmentDetail");
 
       for (int i = 0; i < establishments.getLength(); i++) {
          Establishment establishment = EstablishmentFactory.createEstablishment((Element)establishments.item(i));
