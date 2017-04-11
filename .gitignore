@@ -8,3 +8,4 @@ build/
 eclimd.log
 .metadata/
 src/main/resources/twitter4j.properties
+config.xml
