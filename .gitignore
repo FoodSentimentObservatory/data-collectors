@@ -1,0 +1,10 @@
+*.class
+bin/
+build/
+.gradle/
+.project
+.settings/
+.classpath
+eclimd.log
+.metadata/
+src/main/resources/twitter4j.properties

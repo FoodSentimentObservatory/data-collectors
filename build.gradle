@@ -1,0 +1,23 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+repositories {
+   mavenCentral()
+}
+
+dependencies {
+   compile 'org.twitter4j:twitter4j-core:4.0.4'
+   compile 'org.twitter4j:twitter4j-stream:4.0.4'
+}
+
+jar {
+   manifest {
+      attributes 'Main-Class': 'ac.uk.abdn.foobs.Main'
+   }
+
+   from ({ configurations.compile.collect { it.isDirectory()  ? it : zipTree(it) } }) {
+      exclude "META-INF/*.SF"
+      exclude "META-INF/*.DSA"
+      exclude "META-INF/*.RSA"
+   }
+}
