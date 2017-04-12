@@ -28,7 +28,7 @@ public class UserRESTAPI extends BaseRESTAPI {
    public ResponseList<User> searchUser(String query) {
       ResponseList<User> users = null;
       try {
-         users = twitter.searchUsers(query, 20);
+         users = twitter.searchUsers(query, -1);
       } catch (TwitterException e) {
          System.out.println(e.getErrorMessage());
       }

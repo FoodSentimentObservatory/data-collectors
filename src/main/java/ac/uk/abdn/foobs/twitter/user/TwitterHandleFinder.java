@@ -31,9 +31,10 @@ public class TwitterHandleFinder {
    private String findHandleForEstablishment(Establishment establishment) {
       String twitterHandle = null;
 
-      ResponseList<User> users = restAPI.searchUser(establishment.getBusinessName());
+      ResponseList<User> responeseUsers = restAPI.searchUser(establishment.getBusinessName());
+      ArrayList<User> users = new ArrayList<User>(filterUsersBasedOnLocation(responeseUsers, establishment));
 
-      if (users != null && !users.isEmpty()) {
+      if (!users.isEmpty()) {
          System.out.println("Searched for:\n ");
          System.out.println(establishment.toString());
          System.out.println("Found:\n ");
@@ -81,5 +82,37 @@ public class TwitterHandleFinder {
       }
       
       return twitterHandle;
+   }
+
+   private ArrayList<User> filterUsersBasedOnLocation(ResponseList<User> users, Establishment establishment) {
+      ArrayList<User> filteredUsers = new ArrayList<User>();
+      String userLocation = "";
+      User user = null;
+      for (int i = 0; i < users.size(); i++) {
+         user = users.get(i);
+         userLocation = user.getLocation();
+         String[] establishmentAddressWords = establishment.getAddress().split(" ");
+
+         if (userLocation.contains("UK") || userLocation.contains("United Kingdom")) {
+            filteredUsers.add(user);
+            continue;
+         } else if (userLocation.contains(establishment.getCity())) {
+            filteredUsers.add(user);
+            continue;
+         } else if (userLocation.contains(establishment.getPostCode())) {
+            filteredUsers.add(user);
+            continue;
+         }
+
+         for (int j = 0; j < establishmentAddressWords.length; j++) {
+            if (userLocation.contains(establishmentAddressWords[j])) {
+               filteredUsers.add(user);
+               break;
+            }
+         }
+
+      }
+
+      return filteredUsers;
    }
 }
