@@ -10,6 +10,7 @@ import ac.uk.abdn.foobs.twitter.user.TwitterHandleFinder;
 
 import twitter4j.Query;
 import twitter4j.QueryResult;
+import twitter4j.ResponseList;
 import twitter4j.Status;
 
 public class Main {
@@ -23,33 +24,18 @@ public class Main {
       File file = new File(args[0]);
       Config config = new Config(file);
 
-      //connectToAppOnlyTwitter(config);
-
       if (args.length < 2) {
          System.out.println("To user ratings file please supply it as an argument after the config file");
          return;
       }
 
       File xml = new File(args[1]);
-      findTwitterHanldes(config, xml);
+      //findTwitterHandles(config, xml);
+
+      connectToAppOnlyTwitter(config);
    }
 
-   private static void connectToAppOnlyTwitter(Config config) {
-      AppRESTAPI restAPI = new AppRESTAPI(config);
-      Query query = new Query("google");
-      //Query query = new Query().geoCode(new GeoLocation(57.149651, -2.099075), 10, "km");
-      //Query query = new Query("TechCrunch");
-      QueryResult result = restAPI.search(query);
-      if (result != null) {
-         for (Status status : result.getTweets()) {
-            System.out.println(status.getCreatedAt());
-         }
-      } else {
-         System.out.println("returned empty");
-      }
-   }
-
-   private static void findTwitterHanldes(Config config, File ratingsXML) {
+   private static void findTwitterHandles(Config config, File ratingsXML) {
       ArrayList<Establishment> establishmentList = RatingsHandler.parseXml(ratingsXML);
 
       UserRESTAPI restAPI = new UserRESTAPI(config);
@@ -57,5 +43,25 @@ public class Main {
       System.out.println("Finding twitter handles for the ratings");
       TwitterHandleFinder finder = new TwitterHandleFinder(restAPI);
       finder.findHandlesForEstablishements(ratingsXML, establishmentList);
+   }
+
+   private static void connectToAppOnlyTwitter(Config config) {
+      AppRESTAPI restAPI = new AppRESTAPI(config);
+      //Query query = new Query("google");
+      //Query query = new Query().geoCode(new GeoLocation(57.149651, -2.099075), 10, "km");
+      //
+      //QueryResult result = restAPI.search(query);
+      //QueryResult result = restAPI.searchRepliesToUser("realDonaldTrump");
+      //QueryResult result = restAPI.searchMentionsOfUser("realDonaldTrump");
+      ResponseList<Status> result = restAPI.showTweetsByUser("realDonaldTrump");
+      if (result != null) {
+         //for (Status status : result.getTweets()) {
+         for (int i = 0; i < result.size(); i++) {
+            Status status = result.get(i);
+            System.out.println(status.getText() + "\n -- " + status.getUser().getScreenName());
+         }
+      } else {
+         System.out.println("returned empty");
+      }
    }
 }
