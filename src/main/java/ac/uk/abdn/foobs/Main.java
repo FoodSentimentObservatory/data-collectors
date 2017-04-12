@@ -14,10 +14,21 @@ import twitter4j.Status;
 
 public class Main {
    public static void main(String[] args) {
+      
+      if (args.length < 1) {
+         System.out.println("Run program with arguments <config.xml>");
+         return;
+      }
+
       File file = new File(args[0]);
       Config config = new Config(file);
 
       //connectToAppOnlyTwitter(config);
+
+      if (args.length < 2) {
+         System.out.println("To user ratings file please supply it as an argument after the config file");
+         return;
+      }
 
       File xml = new File(args[1]);
       findTwitterHanldes(config, xml);
@@ -46,6 +57,5 @@ public class Main {
       System.out.println("Finding twitter handles for the ratings");
       TwitterHandleFinder finder = new TwitterHandleFinder(restAPI);
       finder.findHandlesForEstablishements(ratingsXML, establishmentList);
-
    }
 }
