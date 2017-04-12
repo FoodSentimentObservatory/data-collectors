@@ -2,7 +2,6 @@ package ac.uk.abdn.foobs.twitter.user;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import ac.uk.abdn.foobs.Establishment;
 import ac.uk.abdn.foobs.fsa.RatingsHandler;
@@ -22,14 +21,15 @@ public class TwitterHandleFinder {
       for (Establishment establishment : establishmentList) {
          if (establishment.getTwitterHandle() == null) {
             String handle = findHandleForEstablishment(establishment);
-            RatingsHandler.addTwitterHandleToEstablishment(file, establishment, handle);
+            if (handle != null) {
+               RatingsHandler.addTwitterHandleToEstablishment(file, establishment, handle);
+            }
          }
       }
    }
 
    private String findHandleForEstablishment(Establishment establishment) {
       String twitterHandle = null;
-      Scanner reader = new Scanner(System.in);
 
       ResponseList<User> users = restAPI.searchUser(establishment.getBusinessName());
 
@@ -43,16 +43,36 @@ public class TwitterHandleFinder {
             System.out.println("\n---------------------------------------------------\n");
          }
 
-         System.out.println("Enter the number of the associated twitter account or press enter: ");
-         String inputString = reader.nextLine();
+         boolean validInput = false;
 
-         if (inputString.isEmpty()) {
-            System.out.println("No associated place");
-            twitterHandle = "NONE";
-         } else {
-            int input = Integer.parseInt(inputString);
-            twitterHandle = users.get(input).getScreenName();
-         }
+         do {
+            System.out.println("Enter the number of the associated twitter account, enter 'skip' to skip establishment or enter if 'none' if none of the accounts match the establishment: ");
+            String input = System.console().readLine();
+
+            if (input.isEmpty()) {
+               System.out.println("Invalid input, try again.");
+               validInput = false;
+            } else if (input.equals("skip")) {
+               twitterHandle = null;
+               validInput = true;
+               break;
+            } else if (input.equals("none")) {
+               twitterHandle = "NONE";
+               validInput = true;
+               break;
+            }
+
+            try {
+               int userId = Integer.parseInt(input);
+               twitterHandle = users.get(userId).getScreenName();
+               validInput = true;
+            } catch (NumberFormatException e) {
+               System.out.println("Invalid input, try again.");
+               validInput = false;
+            }
+         } while (!validInput);
+
+
          System.out.println("\n**********************************************************************\n");
 
       } else {
@@ -60,7 +80,6 @@ public class TwitterHandleFinder {
          twitterHandle = "NONE";
       }
       
-      reader.close();
       return twitterHandle;
    }
 }
