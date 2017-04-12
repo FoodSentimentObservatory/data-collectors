@@ -12,6 +12,10 @@ import twitter4j.conf.ConfigurationBuilder;
 public class AppRESTAPI extends BaseRESTAPI {
 
    public AppRESTAPI(Config config) {
+      connectToTwitter(config);
+   }
+
+   protected void connectToTwitter(Config config) {
       try {
          ConfigurationBuilder cb = new ConfigurationBuilder();
          cb.setApplicationOnlyAuthEnabled(true);

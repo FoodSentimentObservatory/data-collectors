@@ -12,6 +12,10 @@ import twitter4j.conf.ConfigurationBuilder;
 public class UserRESTAPI extends BaseRESTAPI {
 
    public UserRESTAPI(Config config) {
+      connectToTwitter(config);
+   }
+
+   protected void connectToTwitter(Config config) {
       ConfigurationBuilder cb = new ConfigurationBuilder();
       cb.setOAuthConsumerKey(config.getTwitterUserConsumerKey());
       cb.setOAuthConsumerSecret(config.getTwitterUserConsumerSecret());
