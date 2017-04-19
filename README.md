@@ -1,4 +1,5 @@
-# The Food Observatory Project
+# Social Media Data Collectors
+For the Food Sentiment Observatory.
 This repository contains all software packages that pull data from social networks and open data from the Food Standards Agency.
 
 ## Installation
