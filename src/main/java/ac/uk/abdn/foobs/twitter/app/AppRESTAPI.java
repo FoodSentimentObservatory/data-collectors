@@ -14,7 +14,7 @@ import twitter4j.conf.ConfigurationBuilder;
 public class AppRESTAPI extends BaseRESTAPI {
 
    public AppRESTAPI(Config config) {
-      connectToTwitter(config);
+      super(config);
    }
 
    protected void connectToTwitter(Config config) {
@@ -32,10 +32,15 @@ public class AppRESTAPI extends BaseRESTAPI {
    }
 
    public QueryResult search(Query query) {
+      String resource = "/search/tweets";
       QueryResult result = null;
 
       try {
-         result = twitter.search(query);
+         if (decrementAndCheckRemaining(resource)) {
+            result = twitter.search(query);
+         } else {
+            System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
+         }
       } catch (TwitterException e) {
          System.out.println(e.getErrorMessage());
       }
@@ -44,10 +49,15 @@ public class AppRESTAPI extends BaseRESTAPI {
    }
 
    public ResponseList<Status> showTweetsByUser(String userHandle) {
+      String resource = "/statuses/user_timeline";
       ResponseList<Status> statuses = null;
 
       try {
-         statuses = twitter.getUserTimeline(userHandle);
+         if (decrementAndCheckRemaining(resource)) {
+            statuses = twitter.getUserTimeline(userHandle);
+         } else {
+            System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
+         }
       } catch (TwitterException e) {
          System.out.println(e.getErrorMessage());
       }
@@ -56,12 +66,17 @@ public class AppRESTAPI extends BaseRESTAPI {
    }
 
    public QueryResult searchRepliesToUser(String userHandle) {
+      String resource = "/search/tweets";
       QueryResult result = null;
 
       Query query = new Query();
       query.setQuery("to:"+userHandle);
       try {
-         result = twitter.search(query);
+         if (decrementAndCheckRemaining(resource)) {
+            result = twitter.search(query);
+         } else {
+            System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
+         }
       } catch (TwitterException e) {
          System.out.println(e.getErrorMessage());
       }
@@ -70,12 +85,17 @@ public class AppRESTAPI extends BaseRESTAPI {
    }
 
    public QueryResult searchMentionsOfUser(String userHandle) {
+      String resource = "/search/tweets";
       QueryResult result = null;
 
       Query query = new Query();
       query.setQuery("@"+userHandle);
       try {
-         result = twitter.search(query);
+         if (decrementAndCheckRemaining(resource)) {
+            result = twitter.search(query);
+         } else {
+            System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
+         }
       } catch (TwitterException e) {
          System.out.println(e.getErrorMessage());
       }

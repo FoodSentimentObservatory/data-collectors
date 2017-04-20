@@ -4,14 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 import ac.uk.abdn.foobs.fsa.RatingsHandler;
-import ac.uk.abdn.foobs.twitter.app.AppRESTAPI;
 import ac.uk.abdn.foobs.twitter.user.UserRESTAPI;
 import ac.uk.abdn.foobs.twitter.user.TwitterHandleFinder;
-
-import twitter4j.Query;
-import twitter4j.QueryResult;
-import twitter4j.ResponseList;
-import twitter4j.Status;
 
 public class Main {
    public static void main(String[] args) {
@@ -30,9 +24,7 @@ public class Main {
       }
 
       File xml = new File(args[1]);
-      //findTwitterHandles(config, xml);
-
-      connectToAppOnlyTwitter(config);
+      findTwitterHandles(config, xml);
    }
 
    private static void findTwitterHandles(Config config, File ratingsXML) {
@@ -43,25 +35,5 @@ public class Main {
       System.out.println("Finding twitter handles for the ratings");
       TwitterHandleFinder finder = new TwitterHandleFinder(restAPI);
       finder.findHandlesForEstablishements(ratingsXML, establishmentList);
-   }
-
-   private static void connectToAppOnlyTwitter(Config config) {
-      AppRESTAPI restAPI = new AppRESTAPI(config);
-      //Query query = new Query("google");
-      //Query query = new Query().geoCode(new GeoLocation(57.149651, -2.099075), 10, "km");
-      //
-      //QueryResult result = restAPI.search(query);
-      //QueryResult result = restAPI.searchRepliesToUser("realDonaldTrump");
-      //QueryResult result = restAPI.searchMentionsOfUser("realDonaldTrump");
-      ResponseList<Status> result = restAPI.showTweetsByUser("realDonaldTrump");
-      if (result != null) {
-         //for (Status status : result.getTweets()) {
-         for (int i = 0; i < result.size(); i++) {
-            Status status = result.get(i);
-            System.out.println(status.getText() + "\n -- " + status.getUser().getScreenName());
-         }
-      } else {
-         System.out.println("returned empty");
-      }
    }
 }

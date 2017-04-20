@@ -12,7 +12,7 @@ import twitter4j.conf.ConfigurationBuilder;
 public class UserRESTAPI extends BaseRESTAPI {
 
    public UserRESTAPI(Config config) {
-      connectToTwitter(config);
+      super(config);
    }
 
    protected void connectToTwitter(Config config) {
@@ -27,8 +27,14 @@ public class UserRESTAPI extends BaseRESTAPI {
 
    public ResponseList<User> searchUser(String query) {
       ResponseList<User> users = null;
+      String resource = "/users/search";
+
       try {
-         users = twitter.searchUsers(query, -1);
+         if (decrementAndCheckRemaining(resource)) {
+            users = twitter.searchUsers(query, -1);
+         } else {
+            System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
+         }
       } catch (TwitterException e) {
          System.out.println(e.getErrorMessage());
       }
