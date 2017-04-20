@@ -1,5 +1,7 @@
 package ac.uk.abdn.foobs.twitter.user;
 
+import java.util.ArrayList;
+
 import ac.uk.abdn.foobs.Config;
 import ac.uk.abdn.foobs.twitter.BaseRESTAPI;
 
@@ -25,19 +27,30 @@ public class UserRESTAPI extends BaseRESTAPI {
       twitter = tf.getInstance();
    }
 
-   public ResponseList<User> searchUser(String query) {
-      ResponseList<User> users = null;
+   public ArrayList<User> searchUser(String query) {
+      ResponseList<User> userResponses = null;
       String resource = "/users/search";
+      ArrayList<User> allUsers = new ArrayList<User>();
 
       try {
          if (decrementAndCheckRemaining(resource)) {
-            users = twitter.searchUsers(query, -1);
+            int page = 0;
+            // the user search returns 20 per page, we need to paginate
+            do {
+               userResponses = twitter.searchUsers(query, page);
+               
+               for (int i = 0; i < userResponses.size(); i++) {
+                  allUsers.add(userResponses.get(i));
+               }
+
+               page++;
+            } while (userResponses != null && userResponses.size() >= 20);
          } else {
             System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
          }
       } catch (TwitterException e) {
          System.out.println(e.getErrorMessage());
       }
-      return users;
+      return allUsers;
    }
 }

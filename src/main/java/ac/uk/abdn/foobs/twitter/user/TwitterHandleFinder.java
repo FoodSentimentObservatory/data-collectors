@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import ac.uk.abdn.foobs.Establishment;
 import ac.uk.abdn.foobs.fsa.RatingsHandler;
 
-import twitter4j.ResponseList;
 import twitter4j.User;
 
 public class TwitterHandleFinder {
@@ -31,16 +30,16 @@ public class TwitterHandleFinder {
    private String findHandleForEstablishment(Establishment establishment) {
       String twitterHandle = null;
 
-      ResponseList<User> responeseUsers = restAPI.searchUser(establishment.getBusinessName());
-      ArrayList<User> users = new ArrayList<User>(filterUsersBasedOnLocation(responeseUsers, establishment));
+      ArrayList<User> responeseUsers = restAPI.searchUser(establishment.getBusinessName());
+      ArrayList<User> filteredUsers = new ArrayList<User>(filterUsersBasedOnLocation(responeseUsers, establishment));
 
-      if (!users.isEmpty()) {
+      if (!filteredUsers.isEmpty()) {
          System.out.println("Searched for:\n ");
          System.out.println(establishment.toString());
          System.out.println("Found:\n ");
 
-         for (int i = 0; i < users.size(); i++) {
-            System.out.println(i + "\t: " + users.get(i).getName() + "\t -\t " + users.get(i).getLocation() + "\n\n" + users.get(i).getDescription());
+         for (int i = 0; i < filteredUsers.size(); i++) {
+            System.out.println(i + "\t: " + filteredUsers.get(i).getName() + "\t -\t " + filteredUsers.get(i).getLocation() + "\n\n" + filteredUsers.get(i).getDescription());
             System.out.println("\n---------------------------------------------------\n");
          }
 
@@ -65,7 +64,7 @@ public class TwitterHandleFinder {
 
             try {
                int userId = Integer.parseInt(input);
-               twitterHandle = users.get(userId).getScreenName();
+               twitterHandle = filteredUsers.get(userId).getScreenName();
                validInput = true;
             } catch (NumberFormatException e) {
                System.out.println("Invalid input, try again.");
@@ -84,7 +83,7 @@ public class TwitterHandleFinder {
       return twitterHandle;
    }
 
-   private ArrayList<User> filterUsersBasedOnLocation(ResponseList<User> users, Establishment establishment) {
+   private ArrayList<User> filterUsersBasedOnLocation(ArrayList<User> users, Establishment establishment) {
       ArrayList<User> filteredUsers = new ArrayList<User>();
       String userLocation = "";
       User user = null;
