@@ -2,6 +2,7 @@ package ac.uk.abdn.foobs.twitter.app;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ac.uk.abdn.foobs.Config;
 import ac.uk.abdn.foobs.twitter.BaseRESTAPI;
@@ -73,7 +74,7 @@ public class AppRESTAPI extends BaseRESTAPI {
       return tweets;
    }
 
-   public ResponseList<Status> showTweetsByUser(String userHandle, int numberOfTweets) {
+   public List<Status> showTweetsByUser(String userHandle, int numberOfTweets) {
       String resource = "/statuses/user_timeline";
       ResponseList<Status> statuses = null;
       List<Status> tweets = new ArrayList<Status>();
@@ -104,7 +105,15 @@ public class AppRESTAPI extends BaseRESTAPI {
          page++;
       }
 
-      return statuses;
+      return tweets;
+   }
+
+   public List<Status> searchList(List<String> words, int numberOfTweets) {
+      Query query = new Query();
+      String queryString = words.stream().map(Object::toString).collect(Collectors.joining(" OR "));
+      System.out.println(queryString);
+      query.setQuery(queryString);
+      return search(query, numberOfTweets);
    }
 
    public List<Status> searchRepliesToUser(String userHandle, int numberOfTweets) {

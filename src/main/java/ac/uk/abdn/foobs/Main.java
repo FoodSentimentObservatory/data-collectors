@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import ac.uk.abdn.foobs.fsa.RatingsHandler;
 import ac.uk.abdn.foobs.twitter.user.UserRESTAPI;
+import ac.uk.abdn.foobs.twitter.app.AppRESTAPI;
 import ac.uk.abdn.foobs.twitter.user.TwitterHandleFinder;
 
 public class Main {
@@ -35,5 +36,9 @@ public class Main {
       System.out.println("Finding twitter handles for the ratings");
       TwitterHandleFinder finder = new TwitterHandleFinder(restAPI);
       finder.findHandlesForEstablishements(ratingsXML, establishmentList);
+   }
+
+   private static void testAppRESTAPI(Config config) {
+      AppRESTAPI restAPI = new AppRESTAPI(config);
    }
 }
