@@ -1,8 +1,12 @@
 package ac.uk.abdn.foobs.twitter.app;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ac.uk.abdn.foobs.Config;
 import ac.uk.abdn.foobs.twitter.BaseRESTAPI;
 
+import twitter4j.Paging;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.ResponseList;
@@ -31,88 +35,87 @@ public class AppRESTAPI extends BaseRESTAPI {
       }
    }
 
-   public QueryResult search(Query query) {
+   public List<Status> search(Query query, int numberOfTweets) {
       String resource = "/search/tweets";
       QueryResult result = null;
+      List<Status> tweets = new ArrayList<Status>();
+      long lastId = Long.MAX_VALUE;
 
-      try {
-         if (decrementAndCheckRemaining(resource)) {
-            result = twitter.search(query);
+      while (tweets.size() < numberOfTweets) {
+         if (numberOfTweets - tweets.size() > 100) {
+            // this is the maximum that could be retrieved at once
+            query.setCount(100);
          } else {
-            System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
-            Thread.sleep(getSecondsUntilResetForResource(resource)*1000);
+            query.setCount(numberOfTweets - tweets.size());
          }
-      } catch (TwitterException e) {
-         System.out.println(e.getErrorMessage());
-      } catch (InterruptedException e) {
-         System.out.println(e.getMessage());
+
+         try {
+            if (decrementAndCheckRemaining(resource)) {
+               result = twitter.search(query);
+               tweets.addAll(result.getTweets());
+               for (Status tweet : tweets) {
+                  if (tweet.getId() < lastId) {
+                     lastId = tweet.getId();
+                  }
+               }
+               query.setMaxId(lastId - 1);
+            } else {
+               System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
+               Thread.sleep(getSecondsUntilResetForResource(resource)*1000);
+            }
+         } catch (TwitterException e) {
+            System.out.println(e.getErrorMessage());
+         } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+         }
       }
       
-      return result;
+      return tweets;
    }
 
-   public ResponseList<Status> showTweetsByUser(String userHandle) {
+   public ResponseList<Status> showTweetsByUser(String userHandle, int numberOfTweets) {
       String resource = "/statuses/user_timeline";
       ResponseList<Status> statuses = null;
+      List<Status> tweets = new ArrayList<Status>();
+      Paging paging = new Paging();
+      int page = 0;
 
-      try {
-         if (decrementAndCheckRemaining(resource)) {
-            statuses = twitter.getUserTimeline(userHandle);
+      while (tweets.size() < numberOfTweets) {
+         paging.setPage(page);
+         if (numberOfTweets - tweets.size() > 200) {
+            paging.setCount(200);
          } else {
-            System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
-            Thread.sleep(getSecondsUntilResetForResource(resource)*1000);
+            paging.setCount(numberOfTweets - tweets.size());
          }
-      } catch (TwitterException e) {
-         System.out.println(e.getErrorMessage());
-      } catch (InterruptedException e) {
-         System.out.println(e.getMessage());
+         try {
+            if (decrementAndCheckRemaining(resource)) {
+               statuses = twitter.getUserTimeline(userHandle, paging);
+               tweets.addAll(statuses);
+            } else {
+               System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
+               Thread.sleep(getSecondsUntilResetForResource(resource)*1000);
+            }
+         } catch (TwitterException e) {
+            System.out.println(e.getErrorMessage());
+         } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+         }
+
+         page++;
       }
 
       return statuses;
    }
 
-   public QueryResult searchRepliesToUser(String userHandle) {
-      String resource = "/search/tweets";
-      QueryResult result = null;
-
+   public List<Status> searchRepliesToUser(String userHandle, int numberOfTweets) {
       Query query = new Query();
       query.setQuery("to:"+userHandle);
-      try {
-         if (decrementAndCheckRemaining(resource)) {
-            result = twitter.search(query);
-         } else {
-            System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
-            Thread.sleep(getSecondsUntilResetForResource(resource)*1000);
-         }
-      } catch (TwitterException e) {
-         System.out.println(e.getErrorMessage());
-      } catch (InterruptedException e) {
-         System.out.println(e.getMessage());
-      }
-      
-      return result;
+      return search(query, numberOfTweets);
    }
 
-   public QueryResult searchMentionsOfUser(String userHandle) {
-      String resource = "/search/tweets";
-      QueryResult result = null;
-
+   public List<Status> searchMentionsOfUser(String userHandle, int numberOfTweets) {
       Query query = new Query();
       query.setQuery("@"+userHandle);
-      try {
-         if (decrementAndCheckRemaining(resource)) {
-            result = twitter.search(query);
-         } else {
-            System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
-            Thread.sleep(getSecondsUntilResetForResource(resource)*1000);
-         }
-      } catch (TwitterException e) {
-         System.out.println(e.getErrorMessage());
-      } catch (InterruptedException e) {
-         System.out.println(e.getMessage());
-      }
-      
-      return result;
-
+      return search(query, numberOfTweets);
    }
 }
