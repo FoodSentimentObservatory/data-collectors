@@ -127,4 +127,10 @@ public class AppRESTAPI extends BaseRESTAPI {
       query.setQuery("@"+userHandle);
       return search(query, numberOfTweets);
    }
+
+   public List<Status> searchHashTag(String hashtag, int numberOfTweets) {
+      Query query = new Query();
+      query.setQuery("#"+hashtag);
+      return search(query, numberOfTweets);
+   }
 }
