@@ -47,9 +47,12 @@ public class UserRESTAPI extends BaseRESTAPI {
             } while (userResponses != null && userResponses.size() >= 20);
          } else {
             System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
+            Thread.sleep(getSecondsUntilResetForResource(resource)*1000);
          }
       } catch (TwitterException e) {
          System.out.println(e.getErrorMessage());
+      } catch (InterruptedException e) {
+         System.out.println(e.getMessage());
       }
       return allUsers;
    }

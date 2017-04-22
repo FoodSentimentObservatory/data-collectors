@@ -40,9 +40,12 @@ public class AppRESTAPI extends BaseRESTAPI {
             result = twitter.search(query);
          } else {
             System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
+            Thread.sleep(getSecondsUntilResetForResource(resource)*1000);
          }
       } catch (TwitterException e) {
          System.out.println(e.getErrorMessage());
+      } catch (InterruptedException e) {
+         System.out.println(e.getMessage());
       }
       
       return result;
@@ -57,9 +60,12 @@ public class AppRESTAPI extends BaseRESTAPI {
             statuses = twitter.getUserTimeline(userHandle);
          } else {
             System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
+            Thread.sleep(getSecondsUntilResetForResource(resource)*1000);
          }
       } catch (TwitterException e) {
          System.out.println(e.getErrorMessage());
+      } catch (InterruptedException e) {
+         System.out.println(e.getMessage());
       }
 
       return statuses;
@@ -76,9 +82,12 @@ public class AppRESTAPI extends BaseRESTAPI {
             result = twitter.search(query);
          } else {
             System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
+            Thread.sleep(getSecondsUntilResetForResource(resource)*1000);
          }
       } catch (TwitterException e) {
          System.out.println(e.getErrorMessage());
+      } catch (InterruptedException e) {
+         System.out.println(e.getMessage());
       }
       
       return result;
@@ -95,9 +104,12 @@ public class AppRESTAPI extends BaseRESTAPI {
             result = twitter.search(query);
          } else {
             System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
+            Thread.sleep(getSecondsUntilResetForResource(resource)*1000);
          }
       } catch (TwitterException e) {
          System.out.println(e.getErrorMessage());
+      } catch (InterruptedException e) {
+         System.out.println(e.getMessage());
       }
       
       return result;
