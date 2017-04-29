@@ -2,6 +2,7 @@ package ac.uk.abdn.foobs.twitter.user;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 
 import ac.uk.abdn.foobs.Establishment;
 import ac.uk.abdn.foobs.fsa.RatingsHandler;
@@ -31,15 +32,13 @@ public class TwitterHandleFinder {
       String twitterHandle = null;
 
       ArrayList<User> responeseUsers = restAPI.searchUser(establishment.getBusinessName());
-      ArrayList<User> filteredUsers = new ArrayList<User>(filterUsersBasedOnLocation(responeseUsers, establishment));
+      ArrayList<User> filteredUsers = new ArrayList<User>(filterUsersBasedOnLocation(deleteDuplicateUsers(responeseUsers), establishment));
 
       if (!filteredUsers.isEmpty()) {
-         System.out.println("Searched for:\n ");
          System.out.println(establishment.toString());
-         System.out.println("Found:\n ");
 
          for (int i = 0; i < filteredUsers.size(); i++) {
-            System.out.println(i + "\t: " + filteredUsers.get(i).getName() + "\t -\t " + filteredUsers.get(i).getLocation() + "\n\n" + filteredUsers.get(i).getDescription());
+            System.out.println(i + "\t: " + filteredUsers.get(i).getScreenName() + "  :  " + filteredUsers.get(i).getName() + "\t -\t " + filteredUsers.get(i).getLocation() + "\n\n" + filteredUsers.get(i).getDescription());
             System.out.println("\n---------------------------------------------------\n");
          }
 
@@ -81,6 +80,10 @@ public class TwitterHandleFinder {
       }
       
       return twitterHandle;
+   }
+
+   private ArrayList<User> deleteDuplicateUsers(ArrayList<User> users) {
+      return new ArrayList<User>(new LinkedHashSet<User>(users));
    }
 
    private ArrayList<User> filterUsersBasedOnLocation(ArrayList<User> users, Establishment establishment) {

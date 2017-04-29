@@ -39,9 +39,7 @@ public class UserRESTAPI extends BaseRESTAPI {
             do {
                userResponses = twitter.searchUsers(query, page);
                
-               for (int i = 0; i < userResponses.size(); i++) {
-                  allUsers.add(userResponses.get(i));
-               }
+               allUsers.addAll(userResponses);
 
                page++;
             } while (userResponses != null && userResponses.size() >= 20);
