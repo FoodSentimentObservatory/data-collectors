@@ -36,11 +36,13 @@ public class EstablishmentFactory {
       }
 
       Scores scores = null;
-      if (schemeType == "FHRS") {
+      if (schemeType.equals("FHRS")) {
          Integer hygiene = XMLUtils.getIntValue(element, "Hygiene");
          Integer structural = XMLUtils.getIntValue(element, "Structural");
          Integer confidence = XMLUtils.getIntValue(element, "ConfidenceInManagement");
-         scores = new Scores(hygiene, structural, confidence);
+         if (hygiene != null && structural != null && confidence != null) {
+            scores = new Scores(hygiene, structural, confidence);
+         }
       }
 
       // Handle differences in address
