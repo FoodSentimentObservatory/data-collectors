@@ -103,8 +103,11 @@ public class TwitterHandleFinder {
             continue;
          }
 
+         String currentWord = "";
          for (int j = 0; j < establishmentAddressWords.length; j++) {
-            if (userLocation.contains(establishmentAddressWords[j])) {
+            // make sure it is not checked against whitespace and empty
+            currentWord = establishmentAddressWords[j].replaceAll("\\s+","");
+            if (!currentWord.isEmpty() && userLocation.contains(currentWord)) {
                filteredUsers.add(user);
                break;
             }
