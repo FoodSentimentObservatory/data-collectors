@@ -95,10 +95,10 @@ public class TwitterHandleFinder {
          if (userLocation.contains("UK") || userLocation.contains("United Kingdom")) {
             filteredUsers.add(user);
             continue;
-         } else if (userLocation.contains(establishment.getCity())) {
+         } else if (establishment.getCity() != null && userLocation.contains(establishment.getCity())) {
             filteredUsers.add(user);
             continue;
-         } else if (userLocation.contains(establishment.getPostCode())) {
+         } else if (establishment.getPostCode() != null && userLocation.contains(establishment.getPostCode())) {
             filteredUsers.add(user);
             continue;
          }

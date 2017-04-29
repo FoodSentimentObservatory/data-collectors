@@ -1,5 +1,7 @@
 package ac.uk.abdn.foobs;
 
+import ac.uk.abdn.foobs.fsa.Scores;
+
 import twitter4j.GeoLocation;
 
 public class Establishment {
@@ -11,23 +13,43 @@ public class Establishment {
    private String PostCode;
    private String twitterHandle;
    private GeoLocation location;
+   private String schemeType;
+   private Scores scores;
+   private String ratingKey;
+   private String ratingDate;
+   private String ratingValue;
+   private String newRatingPending;
 
-   public Establishment(Integer rId, String rName, String rType, String rAddress, String rCity, String rPostCode, Double lat, Double longitude, String rTwitterHandle) {
+   public Establishment(Integer rId, String rName, String rType, String rAddress,
+         String rCity, String rPostCode, GeoLocation rLocation, String rSchemeType,
+         String rTwitterHandle, Scores rScores, String rRatingKey,
+         String rRatingDate, String rRatingValue, String rNewRatingPending) {
       this.FHRSID = rId;
       this.BusinessName = rName;
       this.BusinessType = rType;
       this.Address = rAddress;
       this.City = rCity;
       this.PostCode = rPostCode;
-      if (lat == null || longitude == null) {
-         this.location = null;
-      } else {
-         this.location = new GeoLocation(lat, longitude);
-      }
+      this.location = rLocation;
       this.twitterHandle = rTwitterHandle;
+      this.scores = rScores;
+      this.schemeType = rSchemeType;
+      this.ratingKey = rRatingKey;
+      this.ratingDate = rRatingDate;
+      this.ratingValue = rRatingValue;
+      this.newRatingPending = rNewRatingPending;
    }
 
    public String toString() {
+      String scoreString = "null";
+      String locationString = "null";
+      if (scores != null) {
+         scoreString = scores.toString();
+      }
+      if (location != null) {
+         locationString = location.toString();
+      }
+
       String value = "BusinessName: " + BusinessName + "\n"+
                      "FHRSID: " + FHRSID + "\n" +
                      "BusinessType: " + BusinessType + "\n" +
@@ -35,7 +57,13 @@ public class Establishment {
                      "City: " + City + "\n" + 
                      "PostCode: " + PostCode + "\n" +
                      "twitterHandle: " + twitterHandle + "\n" +
-                     "location: " + location.toString() + "\n";
+                     "location: " + locationString + "\n" +
+                     "SchemeType: " + schemeType + "\n" +
+                     "ratingKey: " + ratingKey + "\n" +
+                     "ratingDate: " + ratingDate + "\n" +
+                     "ratingValue: " + ratingValue + "\n" +
+                     "newRatingPending: " + newRatingPending + "\n" +
+                     "scores: " + scoreString + "\n";
       return value;
    }
 
@@ -100,5 +128,40 @@ public class Establishment {
     */
    public GeoLocation getLocation() {
       return location;
+   }
+
+   /**
+    * @return the scores
+    */
+   public Scores getScores() {
+      return scores;
+   }
+
+   /**
+    * @return the ratingKey
+    */
+   public String getRatingKey() {
+      return ratingKey;
+   }
+
+   /**
+    * @return the ratingDate
+    */
+   public String getRatingDate() {
+      return ratingDate;
+   }
+
+   /**
+    * @return the ratingValue
+    */
+   public String getRatingValue() {
+      return ratingValue;
+   }
+
+   /**
+    * @return the newRatingPending
+    */
+   public String getNewRatingPending() {
+      return newRatingPending;
    }
 }
