@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Config>
+   <Db>
+      <ConnectionUrl></ConnectionUrl>
+   </Db>
    <TwitterApp>
       <ConsumerKey></ConsumerKey>
       <ConsumerSecret></ConsumerSecret>

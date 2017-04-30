@@ -14,6 +14,7 @@ public class Config {
    private String twitterUserConsumerSecret;
    private String twitterUserAccessToken;
    private String twitterUserAccessTokenSecret;
+   private String dbConnectionUrl;
 
    public Config(File file) {
       readAndSetConfig(file);
@@ -40,6 +41,9 @@ public class Config {
       twitterUserConsumerSecret = XMLUtils.getStringValue(twitterUser, "ConsumerSecret");
       twitterUserAccessToken = XMLUtils.getStringValue(twitterUser, "UserAccessToken");
       twitterUserAccessTokenSecret = XMLUtils.getStringValue(twitterUser, "UserAccessTokenSecret");
+
+      Element db = (Element)rootElement.getElementsByTagName("Db").item(0);
+      dbConnectionUrl = XMLUtils.getStringValue(db, "ConnectionUrl");
    }
 
    /**
@@ -82,5 +86,12 @@ public class Config {
     */
    public String getTwitterUserAccessTokenSecret() {
       return twitterUserAccessTokenSecret;
+   }
+
+   /**
+    * @return the dbConnectionUrl
+    */
+   public String getDbConnectionUrl() {
+      return dbConnectionUrl;
    }
 }
