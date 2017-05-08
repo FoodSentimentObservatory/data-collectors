@@ -17,17 +17,14 @@ public class DatabaseConnection {
       this.connectionUrl = url;
    }
 
-   public void insertEstbalisments(List<Establishment> establishments) {
-      try (Connection connection = DriverManager.getConnection(connectionUrl);
-          )
-      {
-
-      } catch (SQLException e) {
-         e.printStackTrace();
+   public void insertEstbalishments(List<Establishment> establishments) {
+	  // It would be better to do this as batch, but we need the returned keys
+      for (Establishment establishment : establishments) {
+    	  insertEstablishment(establishment);
       }
    }
 
-   public void insertEstbalisment(Establishment establishment) {
+   public void insertEstablishment(Establishment establishment) {
       Connection connection = null;
       PreparedStatement preparedStatementAgent = null;
       PreparedStatement preparedStatementLocation = null;
@@ -61,11 +58,12 @@ public class DatabaseConnection {
                                  "VALUES " +
                                     "(?, ?, ?, ?, ?, ?, ?, ?, ?)";
       String insertUserAccountPremisesMapping = "INSERT INTO [dbo].[UserAccountPremisesMapping] " +
-                            "([UserAccount_Id], [Premises_Id]) " +
-                         "VALUES " +
-                            "(?, ?)";
+    		  										"([UserAccount_Id], [Premises_Id]) " +
+    		  									"VALUES " +
+    		  										"(?, ?)";
 
       try {
+    	 // this should be done as a transaction, but we need the returned keys
          connection = getConnection();
 
          preparedStatementAgent = connection.prepareStatement(insertAgent, Statement.RETURN_GENERATED_KEYS);
@@ -100,10 +98,14 @@ public class DatabaseConnection {
             }
          }
          
-         //preparedStatementGeo.setString(1, "geography::STGeomFromText('POINT(" + establishment.getLocation().getLatitude() + ", );
+         preparedStatementGeo.setString(1, "geography::STGeomFromText('POINT(" + establishment.getLocation().getLatitude() + ", "
+        		 							+ establishment.getLocation().getLongitude() + ")', 4326)");
+         preparedStatementGeo.setInt(2, locationId);
+         preparedStatementGeo.executeUpdate();
+         
          preparedStatementAddress.setString(1, establishment.getAddress());
          preparedStatementAddress.setString(2, establishment.getPostCode());
-         preparedStatementAddress.setString(3, "Scotland");
+         preparedStatementAddress.setString(3, "Scotland"); // TODO
          preparedStatementAddress.setInt(4, locationId);
          preparedStatementAddress.setString(5, establishment.getCity());
          preparedStatementAddress.executeUpdate();
@@ -114,6 +116,14 @@ public class DatabaseConnection {
          preparedStatementPremises.setInt(4, locationId);
          preparedStatementPremises.setString(5, establishment.getBusinessType());
          preparedStatementPremises.executeUpdate();
+         
+         if (establishment.getTwitterHandle() == null) {
+        	 
+         } else if (establishment.getTwitterHandle().equals("NONE")) {
+        	 
+         } else {
+        	 
+         }
          
       } catch (SQLException e) {
          try {
