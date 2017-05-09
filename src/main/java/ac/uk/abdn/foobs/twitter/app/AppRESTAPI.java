@@ -128,6 +128,12 @@ public class AppRESTAPI extends BaseRESTAPI {
       return search(query, numberOfTweets);
    }
 
+   public List<Status> searchExactString(String string, int numberOfTweets) {
+      Query query = new Query();
+      query.setQuery("\""+string+"\"");
+      return search(query, numberOfTweets);
+   }
+
    public List<Status> searchHashTag(String hashtag, int numberOfTweets) {
       Query query = new Query();
       query.setQuery("#"+hashtag);
