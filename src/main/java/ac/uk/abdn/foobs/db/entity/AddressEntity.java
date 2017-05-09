@@ -3,6 +3,7 @@ package ac.uk.abdn.foobs.db.entity;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Table;
@@ -38,7 +39,7 @@ public class AddressEntity {
    @Column(name="city")
    private String city;
 
-   @OneToOne(cascade=CascadeType.ALL)
+   @OneToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
    @JoinColumn(name="locationId")
    private LocationEntity location;
 

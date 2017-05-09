@@ -1,11 +1,14 @@
 package ac.uk.abdn.foobs.db.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Table;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -22,6 +25,12 @@ public class LocationEntity {
 
    @Column(name="displayString")
    private String displayString;
+
+   @OneToOne(fetch=FetchType.LAZY,mappedBy="locationId",cascade=CascadeType.ALL)
+   private AddressEntity address;
+
+   @OneToOne(fetch=FetchType.LAZY,mappedBy="locationId",cascade=CascadeType.ALL)
+   private GeoPointEntity geoPoint;
 
    /**
     * @return the id
@@ -56,6 +65,34 @@ public class LocationEntity {
     */
    public void setDisplayString(String displayString) {
       this.displayString = displayString;
+   }
+
+   /**
+   * @return the address
+   */
+   public AddressEntity getAddress() {
+      return address;
+   }
+
+   /**
+    * @param address the address to set
+    */
+   public void setAddress(AddressEntity address) {
+      this.address = address;
+   }
+
+   /**
+    * @return the geoPoint
+    */
+   public GeoPointEntity getGeoPoint() {
+      return geoPoint;
+   }
+
+   /**
+    * @param geoPoint the geoPoint to set
+    */
+   public void setGeoPoint(GeoPointEntity geoPoint) {
+      this.geoPoint = geoPoint;
    }
 
 }

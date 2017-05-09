@@ -1,8 +1,5 @@
 package ac.uk.abdn.foobs;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.w3c.dom.Element;
 
 import ac.uk.abdn.foobs.fsa.Scores;
