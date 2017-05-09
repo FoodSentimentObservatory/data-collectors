@@ -29,7 +29,7 @@ public class GeoPointEntity {
 
    @OneToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
    @JoinColumn(name="locationId")
-   private LocationEntity location;
+   private LocationEntity locationId;
 
    /**
    * @return the id
@@ -53,16 +53,17 @@ public class GeoPointEntity {
    }
 
    /**
-    * @return the location
-    */
-   public LocationEntity getLocation() {
-      return location;
+   * @return the locationId
+   */
+   public LocationEntity getLocationId() {
+      return locationId;
    }
 
    /**
-    * @param location the location to set
+    * @param locationId the locationId to set
     */
-   public void setLocation(LocationEntity location) {
-      this.location = location;
+   public void setLocationId(LocationEntity locationId) {
+      this.locationId = locationId;
    }
+
 }

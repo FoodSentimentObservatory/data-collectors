@@ -41,7 +41,7 @@ public class AddressEntity {
 
    @OneToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
    @JoinColumn(name="locationId")
-   private LocationEntity location;
+   private LocationEntity locationId;
 
    /**
     * @return the id
@@ -135,16 +135,16 @@ public class AddressEntity {
    }
 
    /**
-    * @return the location
+    * @return the locationId
     */
-   public LocationEntity getLocation() {
-      return location;
+   public LocationEntity getLocationId() {
+      return locationId;
    }
 
    /**
-    * @param location the location to set
+    * @param locationId the locationId to set
     */
-   public void setLocation(LocationEntity location) {
-      this.location = location;
+   public void setLocationId(LocationEntity locationId) {
+      this.locationId = locationId;
    }
 }

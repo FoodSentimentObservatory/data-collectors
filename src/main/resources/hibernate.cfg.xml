@@ -6,8 +6,14 @@
 
       <property name="dialect">org.hibernate.dialect.SQLServerDialect</property>
 
-      <mapping class="ac.uk.abdn.foobs.db.entity.Address"/>
-      <mapping class="ac.uk.abdn.foobs.db.entity.Location"/>
+      <mapping class="ac.uk.abdn.foobs.db.entity.AddressEntity"/>
+      <mapping class="ac.uk.abdn.foobs.db.entity.AgentEntity"/>
+      <mapping class="ac.uk.abdn.foobs.db.entity.GeoPointEntity"/>
+      <mapping class="ac.uk.abdn.foobs.db.entity.LocationEntity"/>
+      <mapping class="ac.uk.abdn.foobs.db.entity.PremisesEntity"/>
+      <mapping class="ac.uk.abdn.foobs.db.entity.RatingEntity"/>
+      <mapping class="ac.uk.abdn.foobs.db.entity.PlatformEntity"/>
+      <mapping class="ac.uk.abdn.foobs.db.entity.UserAccountEntity"/>
 
    </session-factory>
 </hibernate-configuration>

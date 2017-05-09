@@ -48,11 +48,11 @@ public class UserAccountEntity {
 
    @OneToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
    @JoinColumn(name="platformId")
-   private PlatformEntity platform;
+   private PlatformEntity platformId;
 
    @OneToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
    @JoinColumn(name="agentId")
-   private AgentEntity agent;
+   private AgentEntity agentId;
 
    /**
    * @return the id
@@ -160,30 +160,31 @@ public class UserAccountEntity {
    }
 
    /**
-   * @return the platform
+   * @return the platformId
    */
-   public PlatformEntity getPlatform() {
-      return platform;
+   public PlatformEntity getPlatformId() {
+      return platformId;
    }
 
    /**
-    * @param platform the platform to set
+    * @param platformId the platformId to set
     */
-   public void setPlatform(PlatformEntity platform) {
-      this.platform = platform;
+   public void setPlatformId(PlatformEntity platformId) {
+      this.platformId = platformId;
    }
 
    /**
-    * @return the agent
-    */
-   public AgentEntity getAgent() {
-      return agent;
+   * @return the agentId
+   */
+   public AgentEntity getAgentId() {
+      return agentId;
    }
 
    /**
-    * @param agent the agent to set
+    * @param agentId the agentId to set
     */
-   public void setAgent(AgentEntity agent) {
-      this.agent = agent;
+   public void setAgentId(AgentEntity agentId) {
+      this.agentId = agentId;
    }
+
 }
