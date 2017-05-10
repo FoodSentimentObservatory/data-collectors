@@ -41,7 +41,7 @@ public class RatingEntity {
    private boolean newRatingPending;
 
    @ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
-   @JoinColumn(name="premiesId")
+   @JoinColumn(name="premisesId")
    private PremisesEntity premisesId;
 
    /**
@@ -119,6 +119,20 @@ public class RatingEntity {
     */
    public void setNewRatingPending(boolean newRatingPending) {
       this.newRatingPending = newRatingPending;
+   }
+
+   /**
+    * @return the premisesId
+    */
+   public PremisesEntity getPremisesId() {
+      return premisesId;
+   }
+
+   /**
+    * @param premisesId the premisesId to set
+    */
+   public void setPremisesId(PremisesEntity premisesId) {
+      this.premisesId = premisesId;
    }
 
 }

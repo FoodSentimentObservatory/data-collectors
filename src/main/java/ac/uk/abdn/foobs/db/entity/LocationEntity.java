@@ -74,6 +74,16 @@ public class LocationEntity {
       return address;
    }
 
+   public void setAddressAndDispayString(AddressEntity address) {
+      String addressString = "";
+      addressString = address.getLine1() + ", " +
+                      address.getCity() + ", " +
+                      address.getPostcode() + ", " +
+                      address.getCountry();
+      this.displayString = addressString;
+      this.address = address;
+   }
+
    /**
     * @param address the address to set
     */

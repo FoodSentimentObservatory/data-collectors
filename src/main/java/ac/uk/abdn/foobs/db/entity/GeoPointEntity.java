@@ -1,6 +1,5 @@
 package ac.uk.abdn.foobs.db.entity;
 
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +13,11 @@ import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+
+import twitter4j.GeoLocation;
 
 @Entity
 @Table(name="GeoPoint")
@@ -43,6 +46,13 @@ public class GeoPointEntity {
     */
    public Point getLocationPoint() {
       return locationPoint;
+   }
+
+   public void setLocationPoint(GeoLocation geoLocation) {
+      GeometryFactory gf = new GeometryFactory();
+
+      Coordinate coordinate = new Coordinate(geoLocation.getLongitude(), geoLocation.getLatitude(), 4326);
+      this.locationPoint = gf.createPoint(coordinate);
    }
 
    /**
