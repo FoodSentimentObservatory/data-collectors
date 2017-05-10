@@ -1,8 +1,10 @@
 package ac.uk.abdn.foobs;
 
 import ac.uk.abdn.foobs.fsa.Scores;
+import ac.uk.abdn.foobs.twitter.user.UserRESTAPI;
 
 import twitter4j.GeoLocation;
+import twitter4j.User;
 
 public class Establishment {
    private Integer FHRSID;
@@ -19,6 +21,7 @@ public class Establishment {
    private String ratingDate;
    private String ratingValue;
    private String newRatingPending;
+   private User twitter = null;
 
    public Establishment(Integer rId, String rName, String rType, String rAddress,
          String rCity, String rPostCode, GeoLocation rLocation, String rSchemeType,
@@ -38,6 +41,12 @@ public class Establishment {
       this.ratingDate = rRatingDate;
       this.ratingValue = rRatingValue;
       this.newRatingPending = rNewRatingPending;
+   }
+
+   public void setTwitterUser(UserRESTAPI restAPI) {
+      if (twitterHandle != null && !twitterHandle.equals("NONE")) {
+         this.twitter = restAPI.getUserByName(this.twitterHandle);
+      }
    }
 
    public String toString() {
@@ -163,5 +172,19 @@ public class Establishment {
     */
    public String getNewRatingPending() {
       return newRatingPending;
+   }
+
+   /**
+    * @return the twitter
+    */
+   public User getTwitter() {
+      return twitter;
+   }
+
+   /**
+    * @param twitter the twitter to set
+    */
+   public void setTwitter(User twitter) {
+      this.twitter = twitter;
    }
 }

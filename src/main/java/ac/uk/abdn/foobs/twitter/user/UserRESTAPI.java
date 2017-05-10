@@ -27,6 +27,16 @@ public class UserRESTAPI extends BaseRESTAPI {
       twitter = tf.getInstance();
    }
 
+   public User getUserByName(String twitterHandle) {
+      User user = null;
+      try {
+         user = twitter.showUser(twitterHandle);
+      } catch (TwitterException e) {
+         e.getStackTrace();
+      }
+      return user;
+   }
+
    public ArrayList<User> searchUser(String query) {
       ResponseList<User> userResponses = null;
       String resource = "/users/search";

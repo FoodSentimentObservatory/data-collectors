@@ -29,13 +29,13 @@ public class Main {
    }
 
    private static void findTwitterHandles(Config config, File ratingsXML) {
-      ArrayList<Establishment> establishmentList = RatingsHandler.parseXml(ratingsXML);
-
       UserRESTAPI restAPI = new UserRESTAPI(config);
+
+      ArrayList<Establishment> establishmentList = RatingsHandler.parseXml(ratingsXML, restAPI);
 
       System.out.println("Finding twitter handles for the ratings");
       TwitterHandleFinder finder = new TwitterHandleFinder(restAPI);
-      finder.findHandlesForEstablishements(ratingsXML, establishmentList);
+      finder.findHandlesForEstablishementsAndWriteToFile(ratingsXML, establishmentList);
    }
 
    private static void testAppRESTAPI(Config config) {

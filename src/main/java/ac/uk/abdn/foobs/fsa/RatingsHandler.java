@@ -8,12 +8,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import ac.uk.abdn.foobs.Establishment;
-import ac.uk.abdn.foobs.EstablishmentFactory;
+import ac.uk.abdn.foobs.EstablishmentUtil;
+import ac.uk.abdn.foobs.twitter.user.UserRESTAPI;
 import ac.uk.abdn.foobs.utils.XMLUtils;
 
 public class RatingsHandler {
 
-   public static ArrayList<Establishment> parseXml(File file) {
+   public static ArrayList<Establishment> parseXml(File file, UserRESTAPI restAPI) {
       ArrayList<Establishment> establishmentList = new ArrayList<Establishment>();
 
       Document document = XMLUtils.readXml(file);
@@ -26,7 +27,7 @@ public class RatingsHandler {
       NodeList establishments = rootElement.getElementsByTagName("EstablishmentDetail");
 
       for (int i = 0; i < establishments.getLength(); i++) {
-         Establishment establishment = EstablishmentFactory.createEstablishment((Element)establishments.item(i));
+         Establishment establishment = EstablishmentUtil.createEstablishment((Element)establishments.item(i), restAPI);
          if (establishment != null) {
             establishmentList.add(establishment);
          }
@@ -35,7 +36,7 @@ public class RatingsHandler {
       return establishmentList;
    }
 
-   public static void addTwitterHandleToEstablishment(File file, Establishment establishment, String twitter) {
+   public static void addTwitterHandleToEstablishmentInXML(File file, Establishment establishment, String twitter) {
 
       Document document = XMLUtils.readXml(file);
 

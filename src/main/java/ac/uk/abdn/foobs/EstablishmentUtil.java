@@ -3,12 +3,13 @@ package ac.uk.abdn.foobs;
 import org.w3c.dom.Element;
 
 import ac.uk.abdn.foobs.fsa.Scores;
+import ac.uk.abdn.foobs.twitter.user.UserRESTAPI;
 import ac.uk.abdn.foobs.utils.XMLUtils;
 
 import twitter4j.GeoLocation;
 
-public class EstablishmentFactory {
-   public static Establishment createEstablishment(Element element) { 
+public class EstablishmentUtil {
+   public static Establishment createEstablishment(Element element, UserRESTAPI restAPI) { 
       String[] addressStrings = new String[3];
       Integer id = XMLUtils.getIntValue(element, "FHRSID");
       String name = XMLUtils.getStringValue(element, "BusinessName");
@@ -60,7 +61,13 @@ public class EstablishmentFactory {
          }
       }
 
-      return new Establishment(id,name,type,address,city,postCode,geo,schemeType,
-            twitter,scores,ratingKey,ratingDate,ratingValue,newRatingPending);
+      Establishment establishment = new Establishment(id,name,type,address,city,
+            postCode,geo,schemeType,twitter,scores,ratingKey,
+            ratingDate,ratingValue,newRatingPending);
+
+      establishment.setTwitterUser(restAPI);
+
+      return establishment;
    }
+
 }

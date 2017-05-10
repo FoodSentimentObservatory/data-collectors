@@ -16,13 +16,13 @@ public class TwitterHandleFinder {
       this.restAPI = rRestAPI;
    }
 
-   public void findHandlesForEstablishements(File file, ArrayList<Establishment> establishmentList) {
+   public void findHandlesForEstablishementsAndWriteToFile(File file, ArrayList<Establishment> establishmentList) {
 
       for (Establishment establishment : establishmentList) {
          if (establishment.getTwitterHandle() == null) {
             String handle = findHandleForEstablishment(establishment);
             if (handle != null) {
-               RatingsHandler.addTwitterHandleToEstablishment(file, establishment, handle);
+               RatingsHandler.addTwitterHandleToEstablishmentInXML(file, establishment, handle);
             }
          }
       }
