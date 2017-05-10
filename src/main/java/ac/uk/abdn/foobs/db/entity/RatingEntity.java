@@ -14,7 +14,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name="Rating")
@@ -37,8 +36,7 @@ public class RatingEntity {
    private Date ratingDate;
 
    @Column(name="newRatingPending")
-   @Type(type="numeric_boolean")
-   private boolean newRatingPending;
+   private String newRatingPending;
 
    @ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
    @JoinColumn(name="premisesId")
@@ -108,16 +106,16 @@ public class RatingEntity {
    }
 
    /**
-    * @return the newRatingPending
-    */
-   public boolean isNewRatingPending() {
+   * @return the newRatingPending
+   */
+   public String getNewRatingPending() {
       return newRatingPending;
    }
 
    /**
     * @param newRatingPending the newRatingPending to set
     */
-   public void setNewRatingPending(boolean newRatingPending) {
+   public void setNewRatingPending(String newRatingPending) {
       this.newRatingPending = newRatingPending;
    }
 

@@ -18,7 +18,7 @@ import javax.persistence.OneToOne;
 public class PremisesEntity {
    @Id
    @Column(name="Id")
-   private String Id;
+   private Integer Id;
 
    @Column(name="businessName")
    private String businessName;
@@ -38,9 +38,16 @@ public class PremisesEntity {
    private List<RatingEntity> ratings;
 
    /**
-   * @param id the id to set
+   * @return the id
    */
-   public void setId(String id) {
+   public Integer getId() {
+      return Id;
+   }
+
+   /**
+    * @param id the id to set
+    */
+   public void setId(Integer id) {
       Id = id;
    }
 

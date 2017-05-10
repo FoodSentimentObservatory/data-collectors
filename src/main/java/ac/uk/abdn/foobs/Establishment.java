@@ -1,5 +1,10 @@
 package ac.uk.abdn.foobs;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import ac.uk.abdn.foobs.fsa.Scores;
 import ac.uk.abdn.foobs.twitter.user.UserRESTAPI;
 
@@ -18,7 +23,7 @@ public class Establishment {
    private String schemeType;
    private Scores scores;
    private String ratingKey;
-   private String ratingDate;
+   private Date ratingDate;
    private String ratingValue;
    private String newRatingPending;
    private User twitter = null;
@@ -38,9 +43,21 @@ public class Establishment {
       this.scores = rScores;
       this.schemeType = rSchemeType;
       this.ratingKey = rRatingKey;
-      this.ratingDate = rRatingDate;
+      this.ratingDate = convertDateString(rRatingDate);
       this.ratingValue = rRatingValue;
       this.newRatingPending = rNewRatingPending;
+   }
+
+   private Date convertDateString(String string) {
+      Date date = null;
+      try {
+         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+         date = format.parse(string);
+
+      } catch (ParseException e) {
+         e.printStackTrace();
+      }
+      return date;
    }
 
    public void setTwitterUser(UserRESTAPI restAPI) {
@@ -140,6 +157,20 @@ public class Establishment {
    }
 
    /**
+   * @return the schemeType
+   */
+   public String getSchemeType() {
+      return schemeType;
+   }
+
+   /**
+    * @param schemeType the schemeType to set
+    */
+   public void setSchemeType(String schemeType) {
+      this.schemeType = schemeType;
+   }
+
+   /**
     * @return the scores
     */
    public Scores getScores() {
@@ -154,10 +185,17 @@ public class Establishment {
    }
 
    /**
-    * @return the ratingDate
-    */
-   public String getRatingDate() {
+   * @return the ratingDate
+   */
+   public Date getRatingDate() {
       return ratingDate;
+   }
+
+   /**
+    * @param ratingDate the ratingDate to set
+    */
+   public void setRatingDate(Date ratingDate) {
+      this.ratingDate = ratingDate;
    }
 
    /**
