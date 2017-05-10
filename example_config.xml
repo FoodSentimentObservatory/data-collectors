@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Config>
+   <Tasks>
+      <ParseAndUploadRatings></ParseAndUploadRatings>
+   </Tasks>
+   <Rating>
+      <RatingFile></RatingFile>
+      <Country></Country>
+   </Rating>
    <Db>
       <ConnectionUrl></ConnectionUrl>
    </Db>
