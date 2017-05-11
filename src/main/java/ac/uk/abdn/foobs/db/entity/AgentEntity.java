@@ -1,6 +1,7 @@
 package ac.uk.abdn.foobs.db.entity;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Table;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -26,7 +28,10 @@ public class AgentEntity {
    private String agentType;
 
    @OneToMany(fetch=FetchType.LAZY,mappedBy="belongToAgent",cascade=CascadeType.ALL)
-   private List<PremisesEntity> premises;
+   private Set<PremisesEntity> premises = new HashSet<PremisesEntity>();
+
+   @OneToOne(fetch=FetchType.EAGER,mappedBy="agentId",cascade=CascadeType.ALL)
+   private UserAccountEntity userAccount;
 
    /**
     * @return the id
@@ -48,4 +53,26 @@ public class AgentEntity {
    public void setAgentType(String agentType) {
       this.agentType = agentType;
    }
+
+   /**
+   * @param premises the premises to set
+   */
+   public void setPremises(Set<PremisesEntity> premises) {
+      this.premises = premises;
+   }
+
+   /**
+   * @return the userAccount
+   */
+   public UserAccountEntity getUserAccount() {
+      return userAccount;
+   }
+
+   /**
+    * @param userAccount the userAccount to set
+    */
+   public void setUserAccount(UserAccountEntity userAccount) {
+      this.userAccount = userAccount;
+   }
+
 }

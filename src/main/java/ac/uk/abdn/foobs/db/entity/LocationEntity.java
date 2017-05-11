@@ -26,7 +26,7 @@ public class LocationEntity {
    @Column(name="displayString")
    private String displayString;
 
-   @OneToOne(fetch=FetchType.LAZY,mappedBy="locationId",cascade=CascadeType.ALL)
+   @OneToOne(fetch=FetchType.EAGER,mappedBy="locationId",cascade=CascadeType.ALL)
    private AddressEntity address;
 
    @OneToOne(fetch=FetchType.LAZY,mappedBy="locationId",cascade=CascadeType.ALL)

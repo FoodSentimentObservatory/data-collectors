@@ -62,12 +62,14 @@ public class DAO {
          rating.setRatingValue(establishment.getRatingValue());
          rating.setSchemeType(establishment.getSchemeType());
          rating.setPremisesId(premises);
+         premises.getRatings().add(rating);
 
          if (establishment.getTwitterHandle().equals("NONE")) {
             UserAccountEntity userAccount = new UserAccountEntity();
             userAccount.setAgentId(agent);
             userAccount.setLastCheckedDate(new Date());
             userAccount.setPlatformId(platform);
+            agent.setUserAccount(userAccount);
             session.save(userAccount);
          } else if (establishment.getTwitterHandle() != null) {
             UserAccountEntity userAccount = new UserAccountEntity();
@@ -81,14 +83,15 @@ public class DAO {
             userAccount.setPlatformAccountId(establishment.getTwitterHandle());
             userAccount.setProfileDescription(establishment.getTwitter().getDescription());
             userAccount.setVerified(establishment.getTwitter().isVerified());
+            agent.setUserAccount(userAccount);
             session.save(userAccount);
          }
 
          session.save(rating);
-         session.save(location);
-         session.save(address);
-         session.save(agent);
          session.save(premises);
+         session.save(address);
+         session.save(location);
+         session.save(agent);
 
          session.getTransaction().commit();
       } catch (Exception e) {
@@ -102,7 +105,7 @@ public class DAO {
    public static PlatformEntity getPlatfromBasedOnName(String name) {
       PlatformEntity platform = null;
       Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-      Transaction transaction = session.beginTransaction();
+      session.beginTransaction();
       String hql = "from PlatformEntity platform where platform.forumName LIKE '%"+name+"%'";
       try {
          List results = session.createQuery(hql).getResultList();
@@ -118,7 +121,7 @@ public class DAO {
    public static PremisesEntity getPremises(Integer id) {
       PremisesEntity premises = null;
       Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-      Transaction transaction = session.beginTransaction();
+      session.beginTransaction();
 
       try {
          premises = (PremisesEntity)session.get(PremisesEntity.class,id);

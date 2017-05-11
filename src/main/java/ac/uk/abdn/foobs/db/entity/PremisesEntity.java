@@ -1,6 +1,7 @@
 package ac.uk.abdn.foobs.db.entity;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -26,16 +27,16 @@ public class PremisesEntity {
    @Column(name="businessType")
    private String businessType;
 
-   @OneToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
+   @OneToOne(fetch=FetchType.EAGER,cascade=CascadeType.ALL)
    @JoinColumn(name="locationId")
    private LocationEntity location;
 
-   @ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
+   @ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.ALL)
    @JoinColumn(name="belongToAgent")
    private AgentEntity belongToAgent;
 
    @OneToMany(fetch=FetchType.LAZY,mappedBy="premisesId",cascade=CascadeType.ALL)
-   private List<RatingEntity> ratings;
+   private Set<RatingEntity> ratings = new HashSet<RatingEntity>();
 
    /**
    * @return the id
@@ -108,16 +109,17 @@ public class PremisesEntity {
    }
 
    /**
-    * @return the ratings
-    */
-   public List<RatingEntity> getRatings() {
+   * @return the ratings
+   */
+   public Set<RatingEntity> getRatings() {
       return ratings;
    }
 
    /**
-    * @param ratings the ratings to set
-    */
-   public void setRatings(List<RatingEntity> ratings) {
+   * @param ratings the ratings to set
+   */
+   public void setRatings(Set<RatingEntity> ratings) {
       this.ratings = ratings;
    }
+
 }
