@@ -1,11 +1,15 @@
 package ac.uk.abdn.foobs.twitter.user;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
-import ac.uk.abdn.foobs.Establishment;
-import ac.uk.abdn.foobs.fsa.RatingsHandler;
+import ac.uk.abdn.foobs.db.DAO;
+import ac.uk.abdn.foobs.db.entity.AddressEntity;
+import ac.uk.abdn.foobs.db.entity.PlatformEntity;
+import ac.uk.abdn.foobs.db.entity.PremisesEntity;
+import ac.uk.abdn.foobs.db.entity.UserAccountEntity;
 
 import twitter4j.User;
 
@@ -16,30 +20,39 @@ public class TwitterHandleFinder {
       this.restAPI = rRestAPI;
    }
 
-   public void findHandlesForEstablishementsAndWriteToFile(File file, ArrayList<Establishment> establishmentList) {
-
-      for (Establishment establishment : establishmentList) {
-         if (establishment.getTwitterHandle() == null) {
-            String handle = findHandleForEstablishment(establishment);
-            if (handle != null) {
-               RatingsHandler.addTwitterHandleToEstablishmentInXML(file, establishment, handle);
-            }
-         }
+   public PremisesEntity findAndInsertTwitterAccountForPremises(PremisesEntity premises) {
+      UserAccountEntity userAccount = findTwitterAccountForPremises(premises);
+      if (userAccount != null) {
+         userAccount = DAO.saveOrUpdateUserAccount(userAccount);
+         premises.getBelongToAgent().setUserAccount(userAccount);
+         premises = DAO.saveOrUpdatePremises(premises);
       }
+      return premises;
    }
 
-   private String findHandleForEstablishment(Establishment establishment) {
-      String twitterHandle = null;
+   public UserAccountEntity findTwitterAccountForPremises(PremisesEntity premises) {
+      UserAccountEntity userAccount = null;
 
-      ArrayList<User> responeseUsers = restAPI.searchUser(establishment.getBusinessName());
-      ArrayList<User> filteredUsers = new ArrayList<User>(filterUsersBasedOnLocation(deleteDuplicateUsers(responeseUsers), establishment));
+      PlatformEntity platform = DAO.getPlatfromBasedOnName("Twitter");
+      if (platform == null) {
+         System.out.println("Twitter is not present in platforms, adding.");
+         platform = new PlatformEntity("social network", "Twitter", "twitter.com");
+         platform = DAO.insertPlatform(platform);
+      }
 
+      Set<User> responeseUsers = restAPI.searchUser(premises.getBusinessName());
+      List<User> filteredUsers = new ArrayList<User>(filterUsersBasedOnLocation(responeseUsers, premises.getLocation().getAddress()));
+ 
       if (!filteredUsers.isEmpty()) {
-         System.out.println(establishment.toString());
+         printPremiseInfo(premises);
 
          for (int i = 0; i < filteredUsers.size(); i++) {
-            System.out.println(i + "\t: " + filteredUsers.get(i).getScreenName() + "  :  " + filteredUsers.get(i).getName() + "\t -\t " + filteredUsers.get(i).getLocation() + "\n\n" + filteredUsers.get(i).getDescription());
-            System.out.println("\n---------------------------------------------------\n");
+            System.out.println(i + "\t: " + 
+                  filteredUsers.get(i).getScreenName() + "  :  " + 
+                  filteredUsers.get(i).getName() + "\t -\t " + 
+                  filteredUsers.get(i).getLocation() + "\n\n" + 
+                  filteredUsers.get(i).getDescription());
+            System.out.println("\n---------------------------------------------\n");
          }
 
          boolean validInput = false;
@@ -52,18 +65,28 @@ public class TwitterHandleFinder {
                System.out.println("Invalid input, try again.");
                validInput = false;
             } else if (input.equals("skip")) {
-               twitterHandle = null;
+               userAccount = null;
                validInput = true;
                break;
             } else if (input.equals("none")) {
-               twitterHandle = "NONE";
+               userAccount = new UserAccountEntity();
+               userAccount.setAgentId(premises.getBelongToAgent());
+               userAccount.setLastCheckedDate(new Date());
+               userAccount.setPlatformId(platform);
                validInput = true;
                break;
             }
 
             try {
                int userId = Integer.parseInt(input);
-               twitterHandle = filteredUsers.get(userId).getScreenName();
+               if (userId > (filteredUsers.size() - 1)) {
+                  System.out.println("Invalid input (ID not present), try again.");
+                  validInput = false;
+                  continue;
+               }
+               userAccount = new UserAccountEntity(filteredUsers.get(userId));
+               userAccount.setAgentId(premises.getBelongToAgent());
+               userAccount.setPlatformId(platform);
                validInput = true;
             } catch (NumberFormatException e) {
                System.out.println("Invalid input, try again.");
@@ -75,33 +98,32 @@ public class TwitterHandleFinder {
          System.out.println("\n**********************************************************************\n");
 
       } else {
-         // add NONE in place of the twitter handle
-         twitterHandle = "NONE";
+         // Same as none
+         userAccount = new UserAccountEntity();
+         userAccount.setAgentId(premises.getBelongToAgent());
+         userAccount.setLastCheckedDate(new Date());
+         userAccount.setPlatformId(platform);
       }
-      
-      return twitterHandle;
+      return userAccount;
    }
 
-   private ArrayList<User> deleteDuplicateUsers(ArrayList<User> users) {
-      return new ArrayList<User>(new LinkedHashSet<User>(users));
-   }
-
-   private ArrayList<User> filterUsersBasedOnLocation(ArrayList<User> users, Establishment establishment) {
-      ArrayList<User> filteredUsers = new ArrayList<User>();
+   private List<User> filterUsersBasedOnLocation(Set<User> users, AddressEntity address) {
+      List<User> filteredUsers = new ArrayList<User>();
       String userLocation = "";
-      User user = null;
-      for (int i = 0; i < users.size(); i++) {
-         user = users.get(i);
+      for (User user : users) {
          userLocation = user.getLocation();
-         String[] establishmentAddressWords = establishment.getAddress().split(" ");
+         String[] establishmentAddressWords = address.getLine1().split(" ");
 
          if (userLocation.contains("UK") || userLocation.contains("United Kingdom")) {
             filteredUsers.add(user);
             continue;
-         } else if (establishment.getCity() != null && userLocation.contains(establishment.getCity())) {
+         } else if (userLocation.contains(address.getCountry())) {
             filteredUsers.add(user);
             continue;
-         } else if (establishment.getPostCode() != null && userLocation.contains(establishment.getPostCode())) {
+         } else if (userLocation.contains(address.getCity())) {
+            filteredUsers.add(user);
+            continue;
+         } else if (userLocation.contains(address.getPostcode())) {
             filteredUsers.add(user);
             continue;
          }
@@ -119,5 +141,15 @@ public class TwitterHandleFinder {
       }
 
       return filteredUsers;
+   }
+
+   private void printPremiseInfo(PremisesEntity premises) {
+      System.out.println("Business Name: " + premises.getBusinessName());
+      System.out.println("Business Type: " + premises.getBusinessType());
+      System.out.println("Address: " + premises.getLocation().getDisplayString());
+      if (premises.getBelongToAgent().getUserAccount().getDisplayName() != null) {
+         System.out.println("Current Handle: " + 
+               premises.getBelongToAgent().getUserAccount().getDisplayName());
+      }
    }
 }

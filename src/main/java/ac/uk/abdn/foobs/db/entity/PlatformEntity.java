@@ -34,6 +34,14 @@ public class PlatformEntity {
    @OneToMany(fetch=FetchType.LAZY,mappedBy="platformId",cascade=CascadeType.ALL)
    private List<UserAccountEntity> users;
 
+   public PlatformEntity() {}
+
+   public PlatformEntity(String fType, String fName, String fSiteUrl) {
+      this.forumType = fType;
+      this.forumName = fName;
+      this.forumSiteUrl = fSiteUrl;
+   }
+
    /**
     * @return the id
     */

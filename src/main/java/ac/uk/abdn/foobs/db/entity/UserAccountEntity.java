@@ -16,6 +16,8 @@ import javax.persistence.OneToOne;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
+import twitter4j.User;
+
 @Entity
 @Table(name="UserAccount")
 public class UserAccountEntity {
@@ -53,6 +55,19 @@ public class UserAccountEntity {
    @OneToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
    @JoinColumn(name="agentId")
    private AgentEntity agentId;
+
+   public UserAccountEntity() {}
+
+   public UserAccountEntity(User user) {
+      this.lastCheckedDate = new Date();
+      this.accountCreatedAt = user.getCreatedAt();
+      this.accountURL = user.getURL();
+      this.displayName = user.getName();
+      this.platformAccountId = user.getScreenName();
+      this.profileDescription = user.getDescription();
+      this.verified = user.isVerified();
+
+   }
 
    /**
    * @return the id

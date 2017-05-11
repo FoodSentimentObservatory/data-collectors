@@ -25,8 +25,9 @@ public class DAO {
 
       PlatformEntity platform = getPlatfromBasedOnName("Twitter");
       if (platform == null) {
-         System.out.println("Could not find platform, will not insert Establishment");
-         return;
+         System.out.println("Twitter is not present in platforms, adding.");
+         platform = new PlatformEntity("social network", "Twitter", "twitter.com");
+         platform = insertPlatform(platform);
       }
 
       Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -72,17 +73,10 @@ public class DAO {
             agent.setUserAccount(userAccount);
             session.save(userAccount);
          } else if (establishment.getTwitterHandle() != null) {
-            UserAccountEntity userAccount = new UserAccountEntity();
+            UserAccountEntity userAccount = new UserAccountEntity(establishment.getTwitter());
             userAccount.setAgentId(agent);
-            userAccount.setLastCheckedDate(new Date());
             userAccount.setPlatformId(platform);
 
-            userAccount.setAccountCreatedAt(establishment.getTwitter().getCreatedAt());
-            userAccount.setAccountURL(establishment.getTwitter().getURL());
-            userAccount.setDisplayName(establishment.getTwitter().getScreenName());
-            userAccount.setPlatformAccountId(establishment.getTwitterHandle());
-            userAccount.setProfileDescription(establishment.getTwitter().getDescription());
-            userAccount.setVerified(establishment.getTwitter().isVerified());
             agent.setUserAccount(userAccount);
             session.save(userAccount);
          }
@@ -100,6 +94,57 @@ public class DAO {
       } finally {
          session.close();
       }
+   }
+
+   public static UserAccountEntity saveOrUpdateUserAccount(UserAccountEntity userAccount) {
+
+      Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+      Transaction transaction = session.beginTransaction();
+
+      try {
+         session.saveOrUpdate(userAccount);
+         session.getTransaction().commit();
+      } catch (Exception e) {
+         transaction.rollback();
+         e.printStackTrace();
+      } finally {
+         session.close();
+      }
+      return userAccount;
+   }
+
+   public static PremisesEntity saveOrUpdatePremises(PremisesEntity premises) {
+
+      Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+      Transaction transaction = session.beginTransaction();
+
+      try {
+         session.saveOrUpdate(premises);
+         session.getTransaction().commit();
+      } catch (Exception e) {
+         transaction.rollback();
+         e.printStackTrace();
+      } finally {
+         session.close();
+      }
+      return premises;
+   }
+
+   public static PlatformEntity insertPlatform(PlatformEntity platform) {
+
+      Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+      Transaction transaction = session.beginTransaction();
+
+      try {
+         session.saveOrUpdate(platform);
+         session.getTransaction().commit();
+      } catch (Exception e) {
+         transaction.rollback();
+         e.printStackTrace();
+      } finally {
+         session.close();
+      }
+      return platform;
    }
 
    public static PlatformEntity getPlatfromBasedOnName(String name) {
