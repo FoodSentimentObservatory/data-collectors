@@ -1,6 +1,7 @@
 package ac.uk.abdn.foobs.db;
 
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -17,7 +18,7 @@ import ac.uk.abdn.foobs.db.entity.UserAccountEntity;
 public class DAO {
    
    public static void insertEstablishment(Establishment establishment, String country) {
-      if (getPremises(establishment.getFHRSID()) == null) {
+      if (getPremises(establishment.getFHRSID()) != null) {
          System.out.println("Establishment alrady in database, will not save");
          return;
       }
@@ -101,11 +102,13 @@ public class DAO {
    public static PlatformEntity getPlatfromBasedOnName(String name) {
       PlatformEntity platform = null;
       Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-      String hql = "FROM PlatformEntity p WHERE p.forumName = :name";
+      Transaction transaction = session.beginTransaction();
+      String hql = "from PlatformEntity platform where platform.forumName LIKE '%"+name+"%'";
       try {
-         platform = (PlatformEntity)session.createQuery(hql)
-                     .setParameter("name", name)
-                     .getResultList().get(0);
+         List results = session.createQuery(hql).getResultList();
+         if (results.size() > 0) {
+            platform = (PlatformEntity)results.get(0);
+         }
       } finally {
          session.close();
       }
@@ -115,6 +118,8 @@ public class DAO {
    public static PremisesEntity getPremises(Integer id) {
       PremisesEntity premises = null;
       Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+      Transaction transaction = session.beginTransaction();
+
       try {
          premises = (PremisesEntity)session.get(PremisesEntity.class,id);
       } finally {

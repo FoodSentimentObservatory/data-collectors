@@ -2,6 +2,8 @@ package ac.uk.abdn.foobs;
 
 import java.io.File;
 
+import ac.uk.abdn.foobs.db.HibernateUtil;
+
 public class Main {
    public static void main(String[] args) {
       
@@ -14,6 +16,8 @@ public class Main {
       Config config = new Config(file);
 
       TaskManager.manageTasks(config);
+
+      HibernateUtil.getSessionFactory().close();
 
    }
 
