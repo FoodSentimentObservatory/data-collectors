@@ -39,17 +39,24 @@ public class DAO {
          AddressEntity address = new AddressEntity();
          address.setCountry(country);
          address.setCity(establishment.getCity());
-         address.setPostcode(establishment.getPostCode());
          address.setLine1(establishment.getAddress());
-
-         GeoPointEntity geoPoint = new GeoPointEntity(establishment.getLocation());
+         if (establishment.getPostCode() != null) {
+            address.setPostcode(establishment.getPostCode());
+         }
 
          LocationEntity location = new LocationEntity();
          location.setAddressAndDispayString(address);
-         location.setGeoPoint(geoPoint);
 
          address.setLocationId(location);
-         geoPoint.setLocationId(location);
+         
+         if (establishment.getLocation() != null) {
+            GeoPointEntity geoPoint = new GeoPointEntity(establishment.getLocation());
+            location.setGeoPoint(geoPoint);
+            geoPoint.setLocationId(location);
+            session.save(geoPoint);
+         } else {
+            location.setGeoPoint(null);
+         }
 
          AgentEntity agent = new AgentEntity();
          agent.setAgentType("Premises");
@@ -70,14 +77,16 @@ public class DAO {
          rating.setPremisesId(premises);
          premises.getRatings().add(rating);
 
-         if (establishment.getTwitterHandle().equals("NONE")) {
+         if (establishment.getTwitterHandle() == null) {
+
+         } else if (establishment.getTwitterHandle().equals("NONE")) {
             UserAccountEntity userAccount = new UserAccountEntity();
             userAccount.setAgentId(agent);
             userAccount.setLastCheckedDate(new Date());
             userAccount.setPlatformId(platform);
             agent.setUserAccount(userAccount);
             session.save(userAccount);
-         } else if (establishment.getTwitterHandle() != null) {
+         } else {
             UserAccountEntity userAccount = new UserAccountEntity(establishment.getTwitter());
             userAccount.setAgentId(agent);
             userAccount.setPlatformId(platform);
@@ -89,12 +98,16 @@ public class DAO {
          session.save(rating);
          session.save(premises);
          session.save(address);
-         session.save(geoPoint);
          session.save(location);
          session.save(agent);
 
          session.getTransaction().commit();
       } catch (Exception e) {
+         System.out.println();
+         System.out.println();
+         System.out.println(establishment.getBusinessName());
+         System.out.println();
+         System.out.println();
          transaction.rollback();
          e.printStackTrace();
       } finally {
