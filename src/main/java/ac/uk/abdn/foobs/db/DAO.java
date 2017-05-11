@@ -9,6 +9,7 @@ import org.hibernate.Transaction;
 import ac.uk.abdn.foobs.Establishment;
 import ac.uk.abdn.foobs.db.entity.AddressEntity;
 import ac.uk.abdn.foobs.db.entity.AgentEntity;
+import ac.uk.abdn.foobs.db.entity.GeoPointEntity;
 import ac.uk.abdn.foobs.db.entity.LocationEntity;
 import ac.uk.abdn.foobs.db.entity.PlatformEntity;
 import ac.uk.abdn.foobs.db.entity.PremisesEntity;
@@ -41,10 +42,14 @@ public class DAO {
          address.setPostcode(establishment.getPostCode());
          address.setLine1(establishment.getAddress());
 
+         GeoPointEntity geoPoint = new GeoPointEntity(establishment.getLocation());
+
          LocationEntity location = new LocationEntity();
          location.setAddressAndDispayString(address);
+         location.setGeoPoint(geoPoint);
 
          address.setLocationId(location);
+         geoPoint.setLocationId(location);
 
          AgentEntity agent = new AgentEntity();
          agent.setAgentType("Premises");
@@ -84,6 +89,7 @@ public class DAO {
          session.save(rating);
          session.save(premises);
          session.save(address);
+         session.save(geoPoint);
          session.save(location);
          session.save(agent);
 
@@ -151,9 +157,11 @@ public class DAO {
       PlatformEntity platform = null;
       Session session = HibernateUtil.getSessionFactory().getCurrentSession();
       session.beginTransaction();
-      String hql = "from PlatformEntity platform where platform.forumName LIKE '%"+name+"%'";
+      String hql = "from PlatformEntity platform where platform.forumName=:name";
       try {
-         List results = session.createQuery(hql).getResultList();
+         List results = session.createQuery(hql)
+                           .setParameter("name", name)
+                           .getResultList();
          if (results.size() > 0) {
             platform = (PlatformEntity)results.get(0);
          }

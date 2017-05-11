@@ -13,10 +13,6 @@ import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-
 import twitter4j.GeoLocation;
 
 @Entity
@@ -27,13 +23,22 @@ public class GeoPointEntity {
    @GenericGenerator(name="native",strategy="native")
    private Long Id;
 
-   @Column(name="locationPoint",columnDefinition="geometry(Point,4326)")
-   private Point locationPoint;
+   @Column(name="longitude")
+   private Double longitude;
+
+   @Column(name="latitude")
+   private Double latitude;
 
    @OneToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
    @JoinColumn(name="locationId")
    private LocationEntity locationId;
 
+   public GeoPointEntity() {}
+
+   public GeoPointEntity(GeoLocation geoLocation) {
+      this.longitude = geoLocation.getLongitude();
+      this.latitude = geoLocation.getLatitude();
+   }
    /**
    * @return the id
    */
@@ -42,24 +47,31 @@ public class GeoPointEntity {
    }
 
    /**
-    * @return the locationPoint
-    */
-   public Point getLocationPoint() {
-      return locationPoint;
-   }
-
-   public void setLocationPoint(GeoLocation geoLocation) {
-      GeometryFactory gf = new GeometryFactory();
-
-      Coordinate coordinate = new Coordinate(geoLocation.getLongitude(), geoLocation.getLatitude(), 4326);
-      this.locationPoint = gf.createPoint(coordinate);
+   * @return the longitude
+   */
+   public Double getLongitude() {
+      return longitude;
    }
 
    /**
-    * @param locationPoint the locationPoint to set
+    * @param longitude the longitude to set
     */
-   public void setLocationPoint(Point locationPoint) {
-      this.locationPoint = locationPoint;
+   public void setLongitude(Double longitude) {
+      this.longitude = longitude;
+   }
+
+   /**
+   * @return the latitude
+   */
+   public Double getLatitude() {
+      return latitude;
+   }
+
+   /**
+    * @param latitude the latitude to set
+    */
+   public void setLatitude(Double latitude) {
+      this.latitude = latitude;
    }
 
    /**
