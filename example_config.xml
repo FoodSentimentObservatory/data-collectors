@@ -2,6 +2,7 @@
 <Config>
    <Tasks>
       <ParseAndUploadRatings></ParseAndUploadRatings>
+      <FindTwitterAccounts></FindTwitterAccounts>
    </Tasks>
    <Rating>
       <RatingFile></RatingFile>

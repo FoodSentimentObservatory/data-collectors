@@ -1,7 +1,9 @@
 package ac.uk.abdn.foobs.db;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -166,17 +168,41 @@ public class DAO {
       return platform;
    }
 
+   public static Set<PremisesEntity> getPremisesWithUncheckedUserAccount(String accountName) {
+      Set<PremisesEntity> premisesSet = new HashSet<PremisesEntity>();
+
+      Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+      session.beginTransaction();
+      String hql = "from PremisesEntity as premises " +
+                   "where not exists (" +
+                      "from UserAccountEntity as account " +
+                      "where account.agentId = premises.belongToAgent " +
+                      "and account.platformId = (" +
+                         "select platform.Id " +
+                         "from PlatformEntity as platform " +
+                         "where platform.forumName=:name))";
+      try {
+         List<PremisesEntity> results = session.createQuery(hql,PremisesEntity.class)
+                           .setParameter("name", accountName)
+                           .getResultList();
+         premisesSet.addAll(results);
+      } finally {
+         session.close();
+      }
+      return premisesSet;
+   }
+
    public static PlatformEntity getPlatfromBasedOnName(String name) {
       PlatformEntity platform = null;
       Session session = HibernateUtil.getSessionFactory().getCurrentSession();
       session.beginTransaction();
       String hql = "from PlatformEntity platform where platform.forumName=:name";
       try {
-         List results = session.createQuery(hql)
+         List<PlatformEntity> results = session.createQuery(hql,PlatformEntity.class)
                            .setParameter("name", name)
                            .getResultList();
          if (results.size() > 0) {
-            platform = (PlatformEntity)results.get(0);
+            platform = results.get(0);
          }
       } finally {
          session.close();

@@ -147,7 +147,7 @@ public class TwitterHandleFinder {
       System.out.println("Business Name: " + premises.getBusinessName());
       System.out.println("Business Type: " + premises.getBusinessType());
       System.out.println("Address: " + premises.getLocation().getDisplayString());
-      if (premises.getBelongToAgent().getUserAccount().getDisplayName() != null) {
+      if (premises.getBelongToAgent().getUserAccount() != null) {
          System.out.println("Current Handle: " + 
                premises.getBelongToAgent().getUserAccount().getDisplayName());
       }

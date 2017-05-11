@@ -18,6 +18,7 @@ public class Config {
    private String ratingFile;
    private String ratingFileCountry;
    private Integer parseAndUploadRatings;
+   private Integer findTwitterAccounts;
 
    public Config(File file) {
       readAndSetConfig(file);
@@ -54,6 +55,7 @@ public class Config {
 
       Element tasks = (Element)rootElement.getElementsByTagName("Tasks").item(0);
       this.parseAndUploadRatings = XMLUtils.getIntValue(tasks, "ParseAndUploadRatings");
+      this.findTwitterAccounts = XMLUtils.getIntValue(tasks, "FindTwitterAccounts");
    }
 
    /**
@@ -145,5 +147,19 @@ public class Config {
     */
    public void setParseAndUploadRatings(Integer parseAndUploadRatings) {
       this.parseAndUploadRatings = parseAndUploadRatings;
+   }
+
+   /**
+    * @return the findTwitterAccounts
+    */
+   public Integer getFindTwitterAccounts() {
+      return findTwitterAccounts;
+   }
+
+   /**
+    * @param findTwitterAccounts the findTwitterAccounts to set
+    */
+   public void setFindTwitterAccounts(Integer findTwitterAccounts) {
+      this.findTwitterAccounts = findTwitterAccounts;
    }
 }
