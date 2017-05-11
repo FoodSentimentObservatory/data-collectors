@@ -1,7 +1,8 @@
 package ac.uk.abdn.foobs.twitter.app;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import ac.uk.abdn.foobs.Config;
@@ -36,10 +37,10 @@ public class AppRESTAPI extends BaseRESTAPI {
       }
    }
 
-   public List<Status> search(Query query, int numberOfTweets) {
+   public Set<Status> search(Query query, int numberOfTweets) {
       String resource = "/search/tweets";
       QueryResult result = null;
-      List<Status> tweets = new ArrayList<Status>();
+      Set<Status> tweets = new HashSet<Status>();
       long lastId = Long.MAX_VALUE;
 
       while (tweets.size() < numberOfTweets) {
@@ -74,10 +75,10 @@ public class AppRESTAPI extends BaseRESTAPI {
       return tweets;
    }
 
-   public List<Status> showTweetsByUser(String userHandle, int numberOfTweets) {
+   public Set<Status> showTweetsByUser(String userHandle, int numberOfTweets) {
       String resource = "/statuses/user_timeline";
       ResponseList<Status> statuses = null;
-      List<Status> tweets = new ArrayList<Status>();
+      Set<Status> tweets = new HashSet<Status>();
       Paging paging = new Paging();
       int page = 0;
 
@@ -108,7 +109,7 @@ public class AppRESTAPI extends BaseRESTAPI {
       return tweets;
    }
 
-   public List<Status> searchList(List<String> words, int numberOfTweets) {
+   public Set<Status> searchList(List<String> words, int numberOfTweets) {
       Query query = new Query();
       String queryString = words.stream().map(Object::toString).collect(Collectors.joining(" OR "));
       System.out.println(queryString);
@@ -116,25 +117,25 @@ public class AppRESTAPI extends BaseRESTAPI {
       return search(query, numberOfTweets);
    }
 
-   public List<Status> searchRepliesToUser(String userHandle, int numberOfTweets) {
+   public Set<Status> searchRepliesToUser(String userHandle, int numberOfTweets) {
       Query query = new Query();
       query.setQuery("to:"+userHandle);
       return search(query, numberOfTweets);
    }
 
-   public List<Status> searchMentionsOfUser(String userHandle, int numberOfTweets) {
+   public Set<Status> searchMentionsOfUser(String userHandle, int numberOfTweets) {
       Query query = new Query();
       query.setQuery("@"+userHandle);
       return search(query, numberOfTweets);
    }
 
-   public List<Status> searchExactString(String string, int numberOfTweets) {
+   public Set<Status> searchExactString(String string, int numberOfTweets) {
       Query query = new Query();
       query.setQuery("\""+string+"\"");
       return search(query, numberOfTweets);
    }
 
-   public List<Status> searchHashTag(String hashtag, int numberOfTweets) {
+   public Set<Status> searchHashTag(String hashtag, int numberOfTweets) {
       Query query = new Query();
       query.setQuery("#"+hashtag);
       return search(query, numberOfTweets);

@@ -1,6 +1,7 @@
 package ac.uk.abdn.foobs.twitter.user;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import ac.uk.abdn.foobs.Config;
 import ac.uk.abdn.foobs.twitter.BaseRESTAPI;
@@ -37,10 +38,10 @@ public class UserRESTAPI extends BaseRESTAPI {
       return user;
    }
 
-   public ArrayList<User> searchUser(String query) {
+   public Set<User> searchUser(String query) {
       ResponseList<User> userResponses = null;
       String resource = "/users/search";
-      ArrayList<User> allUsers = new ArrayList<User>();
+      Set<User> allUsers = new HashSet<User>();
 
       try {
          if (decrementAndCheckRemaining(resource)) {
