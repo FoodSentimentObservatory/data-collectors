@@ -14,9 +14,12 @@ import ac.uk.abdn.foobs.db.entity.AgentEntity;
 import ac.uk.abdn.foobs.db.entity.GeoPointEntity;
 import ac.uk.abdn.foobs.db.entity.LocationEntity;
 import ac.uk.abdn.foobs.db.entity.PlatformEntity;
+import ac.uk.abdn.foobs.db.entity.PostEntity;
 import ac.uk.abdn.foobs.db.entity.PremisesEntity;
 import ac.uk.abdn.foobs.db.entity.RatingEntity;
 import ac.uk.abdn.foobs.db.entity.UserAccountEntity;
+
+import twitter4j.Status;
 
 public class DAO {
    
@@ -222,5 +225,41 @@ public class DAO {
       }
 
       return premises;
+   }
+
+   public static Set<UserAccountEntity> getTwitterAccounts() {
+      Set<UserAccountEntity> userAccountSet = new HashSet<UserAccountEntity>();
+
+      Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+      session.beginTransaction();
+
+      String hql = "from UserAccountEntity user " +
+                   "where user.platformAccountId is not null";
+      try {
+         List<UserAccountEntity> results = 
+                  session.createQuery(hql,UserAccountEntity.class)
+                           .getResultList();
+         userAccountSet.addAll(results);
+      } finally {
+         session.close();
+      }
+      return userAccountSet;
+   }
+
+   public static void saveTweet(UserAccountEntity user, Status tweet) {
+      Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+      Transaction transaction = session.beginTransaction();
+
+      try {
+         PostEntity post = new PostEntity(tweet);
+         post.setHasCreator(user);
+         session.saveOrUpdate(post);
+         session.getTransaction().commit();
+      } catch (Exception e) {
+         transaction.rollback();
+         e.printStackTrace();
+      } finally {
+         session.close();
+      }
    }
 }

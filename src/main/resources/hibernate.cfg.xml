@@ -2,7 +2,7 @@
    <session-factory>
       <property name="connection.driver_class">com.microsoft.sqlserver.jdbc.SQLServerDriver</property>
       <property name="connection.url">jdbc:sqlserver://FOODSENTOBS\MSSQLSERVER;databaseName=Foobs-Test;integratedSecurity=true;</property>
-      <property name="show_sql">true</property>
+      <property name="show_sql">false</property>
       <property name="current_session_context_class">thread</property>
 
       <property name="dialect">org.hibernate.dialect.SQLServerDialect</property>
@@ -15,6 +15,7 @@
       <mapping class="ac.uk.abdn.foobs.db.entity.RatingEntity"/>
       <mapping class="ac.uk.abdn.foobs.db.entity.PlatformEntity"/>
       <mapping class="ac.uk.abdn.foobs.db.entity.UserAccountEntity"/>
+      <mapping class="ac.uk.abdn.foobs.db.entity.PostEntity"/>
 
    </session-factory>
 </hibernate-configuration>

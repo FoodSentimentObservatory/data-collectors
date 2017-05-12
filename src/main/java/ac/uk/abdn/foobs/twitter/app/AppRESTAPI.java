@@ -80,7 +80,7 @@ public class AppRESTAPI extends BaseRESTAPI {
       ResponseList<Status> statuses = null;
       Set<Status> tweets = new HashSet<Status>();
       Paging paging = new Paging();
-      int page = 0;
+      int page = 1;
 
       while (tweets.size() < numberOfTweets) {
          paging.setPage(page);

@@ -3,6 +3,7 @@
    <Tasks>
       <ParseAndUploadRatings></ParseAndUploadRatings>
       <FindTwitterAccounts></FindTwitterAccounts>
+      <FindTweetsFromRestaurants></FindTweetsFromRestaurants>
    </Tasks>
    <Rating>
       <RatingFile></RatingFile>

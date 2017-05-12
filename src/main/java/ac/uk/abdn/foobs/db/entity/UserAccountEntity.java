@@ -1,6 +1,8 @@
 package ac.uk.abdn.foobs.db.entity;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Table;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -55,6 +58,9 @@ public class UserAccountEntity {
    @OneToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
    @JoinColumn(name="agentId")
    private AgentEntity agentId;
+
+   @OneToMany(fetch=FetchType.LAZY,mappedBy="hasCreator",cascade=CascadeType.ALL)
+   private Set<PostEntity> posts = new HashSet<PostEntity>();
 
    public UserAccountEntity() {}
 
@@ -200,6 +206,20 @@ public class UserAccountEntity {
     */
    public void setAgentId(AgentEntity agentId) {
       this.agentId = agentId;
+   }
+
+   /**
+    * @return the posts
+    */
+   public Set<PostEntity> getPosts() {
+      return posts;
+   }
+
+   /**
+    * @param posts the posts to set
+    */
+   public void setPosts(Set<PostEntity> posts) {
+      this.posts = posts;
    }
 
 }

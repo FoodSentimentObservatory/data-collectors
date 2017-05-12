@@ -6,9 +6,13 @@ import java.util.Set;
 
 import ac.uk.abdn.foobs.db.DAO;
 import ac.uk.abdn.foobs.db.entity.PremisesEntity;
+import ac.uk.abdn.foobs.db.entity.UserAccountEntity;
 import ac.uk.abdn.foobs.fsa.RatingsHandler;
+import ac.uk.abdn.foobs.twitter.app.AppRESTAPI;
 import ac.uk.abdn.foobs.twitter.user.TwitterHandleFinder;
 import ac.uk.abdn.foobs.twitter.user.UserRESTAPI;
+
+import twitter4j.Status;
 
 public class TaskManager {
    public static void manageTasks(Config config) {
@@ -21,6 +25,11 @@ public class TaskManager {
       if (config.getFindTwitterAccounts() == 1) {
          System.out.println("Finding twitter handles");
          findTwitterAccounts(config);
+      }
+
+      if (config.getFindTweetsFromRestaurants() == 1) {
+         System.out.println("Finding 200 tweets by each restaurant");
+         findTweetsFromRestaurants(config);
       }
 
    }
@@ -47,4 +56,15 @@ public class TaskManager {
       }
    }
 
+   private static void findTweetsFromRestaurants(Config config) {
+      Set<UserAccountEntity> users = DAO.getTwitterAccounts();
+
+      AppRESTAPI restAPI = new AppRESTAPI(config);
+      for (UserAccountEntity user : users) {
+         Set<Status> tweets = restAPI.showTweetsByUser(user.getPlatformAccountId(), 200);
+         for (Status tweet : tweets) {
+            DAO.saveTweet(user, tweet);
+         }
+      }
+   }
 }
