@@ -42,6 +42,7 @@ public class UserRESTAPI extends BaseRESTAPI {
       ResponseList<User> userResponses = null;
       String resource = "/users/search";
       Set<User> allUsers = new HashSet<User>();
+      int prevSetSize = allUsers.size();
 
       try {
          if (decrementAndCheckRemaining(resource)) {
@@ -49,8 +50,15 @@ public class UserRESTAPI extends BaseRESTAPI {
             // the user search returns 20 per page, we need to paginate
             do {
                userResponses = twitter.searchUsers(query, page);
+               prevSetSize = allUsers.size();
                
                allUsers.addAll(userResponses);
+
+               // This will ensure that if duplicates are inserted then no more queries
+               if (prevSetSize + userResponses.size() > allUsers.size() ||
+                     allUsers.size() == 0) {
+                  break;
+               }
 
                page++;
             } while (userResponses != null && userResponses.size() >= 20);

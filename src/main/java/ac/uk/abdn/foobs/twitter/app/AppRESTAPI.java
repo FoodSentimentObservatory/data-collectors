@@ -41,6 +41,7 @@ public class AppRESTAPI extends BaseRESTAPI {
       String resource = "/search/tweets";
       QueryResult result = null;
       Set<Status> tweets = new HashSet<Status>();
+      int prevTweetSize = tweets.size();
       long lastId = Long.MAX_VALUE;
 
       while (tweets.size() < numberOfTweets) {
@@ -54,7 +55,13 @@ public class AppRESTAPI extends BaseRESTAPI {
          try {
             if (decrementAndCheckRemaining(resource)) {
                result = twitter.search(query);
+               prevTweetSize = tweets.size();
                tweets.addAll(result.getTweets());
+               // This will ensure that if duplicates are inserted then no more queries
+               if (prevTweetSize + result.getTweets().size() > tweets.size() 
+                     || tweets.size() == 0) {
+                  break;
+               }
                for (Status tweet : tweets) {
                   if (tweet.getId() < lastId) {
                      lastId = tweet.getId();
@@ -79,6 +86,7 @@ public class AppRESTAPI extends BaseRESTAPI {
       String resource = "/statuses/user_timeline";
       ResponseList<Status> statuses = null;
       Set<Status> tweets = new HashSet<Status>();
+      int prevTweetSize = tweets.size();
       Paging paging = new Paging();
       int page = 1;
 
@@ -92,7 +100,13 @@ public class AppRESTAPI extends BaseRESTAPI {
          try {
             if (decrementAndCheckRemaining(resource)) {
                statuses = twitter.getUserTimeline(userHandle, paging);
+               prevTweetSize = tweets.size();
                tweets.addAll(statuses);
+               // This will ensure that if duplicates are inserted then no more queries
+               if (prevTweetSize + statuses.size() > tweets.size() 
+                     || tweets.size() == 0) {
+                  break;
+               }
             } else {
                System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
                Thread.sleep(getSecondsUntilResetForResource(resource)*1000);
