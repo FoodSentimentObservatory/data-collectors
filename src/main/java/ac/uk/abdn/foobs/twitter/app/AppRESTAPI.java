@@ -60,7 +60,7 @@ public class AppRESTAPI extends BaseRESTAPI {
                tweets.addAll(result.getTweets());
                // This will ensure that if duplicates are inserted then no more queries
                if (prevTweetSize + result.getTweets().size() > tweets.size() 
-                     || tweets.size() == 0) {
+                     || result.getTweets().size() == 0) {
                   break;
                }
                for (Status tweet : tweets) {
@@ -113,7 +113,7 @@ public class AppRESTAPI extends BaseRESTAPI {
                   tweets.addAll(statuses);
                   // This will ensure that if duplicates are inserted then no more queries
                   if (prevTweetSize + statuses.size() > tweets.size() 
-                        || tweets.size() == 0) {
+                        || statuses.size() == 0) {
                      break;
                   }
                } else {

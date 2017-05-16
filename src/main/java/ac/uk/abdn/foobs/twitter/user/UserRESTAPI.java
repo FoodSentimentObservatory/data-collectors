@@ -56,7 +56,7 @@ public class UserRESTAPI extends BaseRESTAPI {
 
                // This will ensure that if duplicates are inserted then no more queries
                if (prevSetSize + userResponses.size() > allUsers.size() ||
-                     allUsers.size() == 0) {
+                     userResponses.size() == 0) {
                   break;
                }
 
