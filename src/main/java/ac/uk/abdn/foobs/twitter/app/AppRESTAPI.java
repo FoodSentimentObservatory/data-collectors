@@ -15,6 +15,7 @@ import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import twitter4j.User;
 import twitter4j.conf.ConfigurationBuilder;
 
 public class AppRESTAPI extends BaseRESTAPI {
@@ -89,35 +90,46 @@ public class AppRESTAPI extends BaseRESTAPI {
       int prevTweetSize = tweets.size();
       Paging paging = new Paging();
       int page = 1;
+      boolean protectedUser = false;
+      try {
+         protectedUser = getUserByName(userHandle).isProtected();
+      } catch (NullPointerException e) {
+         System.out.println("No user fount by: " + userHandle);
+         return tweets;
+      }
 
-      while (tweets.size() < numberOfTweets) {
-         paging.setPage(page);
-         if (numberOfTweets - tweets.size() > 200) {
-            paging.setCount(200);
-         } else {
-            paging.setCount(numberOfTweets - tweets.size());
-         }
-         try {
-            if (decrementAndCheckRemaining(resource)) {
-               statuses = twitter.getUserTimeline(userHandle, paging);
-               prevTweetSize = tweets.size();
-               tweets.addAll(statuses);
-               // This will ensure that if duplicates are inserted then no more queries
-               if (prevTweetSize + statuses.size() > tweets.size() 
-                     || tweets.size() == 0) {
-                  break;
-               }
+      if (!protectedUser) {
+         while (tweets.size() < numberOfTweets) {
+            paging.setPage(page);
+            if (numberOfTweets - tweets.size() > 200) {
+               paging.setCount(200);
             } else {
-               System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
-               Thread.sleep(getSecondsUntilResetForResource(resource)*1000);
+               paging.setCount(numberOfTweets - tweets.size());
             }
-         } catch (TwitterException e) {
-            System.out.println(e.getErrorMessage());
-         } catch (InterruptedException e) {
-            System.out.println(e.getMessage());
-         }
+            try {
+               if (decrementAndCheckRemaining(resource)) {
+                  statuses = twitter.getUserTimeline(userHandle, paging);
+                  prevTweetSize = tweets.size();
+                  tweets.addAll(statuses);
+                  // This will ensure that if duplicates are inserted then no more queries
+                  if (prevTweetSize + statuses.size() > tweets.size() 
+                        || tweets.size() == 0) {
+                     break;
+                  }
+               } else {
+                  System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
+                  Thread.sleep(getSecondsUntilResetForResource(resource)*1000);
+               }
+            } catch (TwitterException e) {
+               System.out.println(e.getErrorMessage());
+            } catch (InterruptedException e) {
+               System.out.println(e.getMessage());
+            }
 
-         page++;
+            page++;
+         }
+      } else {
+         System.out.println(userHandle + " is protected");
       }
 
       return tweets;
@@ -153,5 +165,15 @@ public class AppRESTAPI extends BaseRESTAPI {
       Query query = new Query();
       query.setQuery("#"+hashtag);
       return search(query, numberOfTweets);
+   }
+
+   public User getUserByName(String twitterHandle) {
+      User user = null;
+      try {
+         user = twitter.showUser(twitterHandle);
+      } catch (TwitterException e) {
+         e.getStackTrace();
+      }
+      return user;
    }
 }

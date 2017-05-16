@@ -61,6 +61,7 @@ public class TaskManager {
 
       AppRESTAPI restAPI = new AppRESTAPI(config);
       for (UserAccountEntity user : users) {
+         System.out.println("Getting tweets for: " + user.getPlatformAccountId());
          Set<Status> tweets = restAPI.showTweetsByUser(user.getPlatformAccountId(), 200);
          for (Status tweet : tweets) {
             DAO.saveTweet(user, tweet);
