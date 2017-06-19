@@ -7,9 +7,10 @@ import java.util.stream.Collectors;
 
 import ac.uk.abdn.foobs.Config;
 import ac.uk.abdn.foobs.twitter.BaseRESTAPI;
-
+import twitter4j.GeoLocation;
 import twitter4j.Paging;
 import twitter4j.Query;
+import twitter4j.Query.Unit;
 import twitter4j.QueryResult;
 import twitter4j.ResponseList;
 import twitter4j.Status;
@@ -155,6 +156,17 @@ public class AppRESTAPI extends BaseRESTAPI {
       return search(query, numberOfTweets);
    }
 
+	public Set<Status> searchExactStringGeoCoded(String string, int numberOfTweets, GeoLocation centroid, double radius,
+			Unit unit) {
+
+		Query query = new Query();
+		query.setQuery("\"" + string + "\"");
+		query.setGeoCode(centroid, radius, unit);
+
+		return search(query, numberOfTweets);
+	}
+
+   
    public Set<Status> searchExactString(String string, int numberOfTweets) {
       Query query = new Query();
       query.setQuery("\""+string+"\"");
