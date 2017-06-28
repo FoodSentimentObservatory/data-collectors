@@ -5,7 +5,6 @@ import java.util.Set;
 
 import ac.uk.abdn.foobs.Config;
 import ac.uk.abdn.foobs.twitter.BaseRESTAPI;
-
 import twitter4j.ResponseList;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;

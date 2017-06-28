@@ -5,7 +5,6 @@ import org.w3c.dom.Element;
 import ac.uk.abdn.foobs.fsa.Scores;
 import ac.uk.abdn.foobs.twitter.user.UserRESTAPI;
 import ac.uk.abdn.foobs.utils.XMLUtils;
-
 import twitter4j.GeoLocation;
 
 public class EstablishmentUtil {

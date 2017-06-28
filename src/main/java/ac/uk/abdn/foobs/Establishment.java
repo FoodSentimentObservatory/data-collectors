@@ -7,7 +7,6 @@ import java.util.Date;
 
 import ac.uk.abdn.foobs.fsa.Scores;
 import ac.uk.abdn.foobs.twitter.user.UserRESTAPI;
-
 import twitter4j.GeoLocation;
 import twitter4j.User;
 

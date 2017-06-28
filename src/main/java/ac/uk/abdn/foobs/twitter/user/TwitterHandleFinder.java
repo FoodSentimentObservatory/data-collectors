@@ -10,7 +10,6 @@ import ac.uk.abdn.foobs.db.entity.AddressEntity;
 import ac.uk.abdn.foobs.db.entity.PlatformEntity;
 import ac.uk.abdn.foobs.db.entity.PremisesEntity;
 import ac.uk.abdn.foobs.db.entity.UserAccountEntity;
-
 import twitter4j.User;
 
 public class TwitterHandleFinder {

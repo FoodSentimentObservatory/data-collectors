@@ -4,7 +4,6 @@ import java.util.Set;
 import ac.uk.abdn.foobs.Config;
 import ac.uk.abdn.foobs.twitter.app.AppRESTAPI;
 import twitter4j.GeoLocation;
-import twitter4j.Query;
 import twitter4j.Query.Unit;
 import twitter4j.Status;
 
@@ -22,8 +21,9 @@ public class PrintGeolocatedTweets {
 		File file = new File("config.xml");
 
 		Config config = new Config(file);
-
+		
 		AppRESTAPI api = new AppRESTAPI(config);
+
 		// Scotland - rough approximation
 		Set<Status> tweets = api.searchExactStringGeoCoded("food standards scotland", 200,
 				new GeoLocation(56.496467, -3.801270), 177.312, Unit.km);

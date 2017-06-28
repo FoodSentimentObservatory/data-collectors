@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ac.uk.abdn.foobs.Config;
-
 import twitter4j.RateLimitStatus;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -14,6 +13,7 @@ public abstract class BaseRESTAPI {
    private Map<String, RateLimitStatusImpl> remaining = new HashMap<String, RateLimitStatusImpl>();
 
    public BaseRESTAPI(Config config) {
+	   System.out.println("calling connect to t");
       connectToTwitter(config);
       createOrUpdateRemainingMap();
    }

@@ -17,10 +17,13 @@ public class Config {
    private String dbConnectionUrl;
    private String ratingFile;
    private String ratingFileCountry;
+   private String keywordsFilename;
+   private String keywordsFileEncoding;
    private Integer parseAndUploadRatings;
    private Integer findTwitterAccounts;
    private Integer findTweetsFromRestaurants;
-
+   private Integer findTweetsContainingKeywords;
+   
    public Config(File file) {
       readAndSetConfig(file);
    }
@@ -58,6 +61,12 @@ public class Config {
       this.parseAndUploadRatings = XMLUtils.getIntValue(tasks, "ParseAndUploadRatings");
       this.findTwitterAccounts = XMLUtils.getIntValue(tasks, "FindTwitterAccounts");
       this.findTweetsFromRestaurants = XMLUtils.getIntValue(tasks, "FindTweetsFromRestaurants");
+      this.findTweetsContainingKeywords = XMLUtils.getIntValue(tasks, "FindTweetsContainingKeywords");
+      
+      Element keywordsFile = (Element)rootElement.getElementsByTagName("KeywordsFile").item(0);
+      this.keywordsFilename = XMLUtils.getStringValue(keywordsFile, "Filename");
+      this.keywordsFileEncoding = XMLUtils.getStringValue(keywordsFile, "FileEncoding");
+      
    }
 
    /**
@@ -178,5 +187,17 @@ public class Config {
    public void setFindTweetsFromRestaurants(Integer findTweetsFromRestaurants) {
       this.findTweetsFromRestaurants = findTweetsFromRestaurants;
    }
+
+public String getKeywordsFilename() {
+	return keywordsFilename;
+}
+
+public String getKeywordsFileEncoding() {
+	return keywordsFileEncoding;
+}
+
+public Integer getFindTweetsContainingKeywords() {
+	return findTweetsContainingKeywords;
+}
 
 }

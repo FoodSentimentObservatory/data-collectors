@@ -26,6 +26,7 @@ public class AppRESTAPI extends BaseRESTAPI {
    }
 
    protected void connectToTwitter(Config config) {
+
       try {
          ConfigurationBuilder cb = new ConfigurationBuilder();
          cb.setApplicationOnlyAuthEnabled(true);

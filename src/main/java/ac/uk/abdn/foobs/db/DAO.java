@@ -18,7 +18,6 @@ import ac.uk.abdn.foobs.db.entity.PostEntity;
 import ac.uk.abdn.foobs.db.entity.PremisesEntity;
 import ac.uk.abdn.foobs.db.entity.RatingEntity;
 import ac.uk.abdn.foobs.db.entity.UserAccountEntity;
-
 import twitter4j.Status;
 
 public class DAO {
