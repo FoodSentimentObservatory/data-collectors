@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 
 import ac.uk.abdn.foobs.db.DAO;
+import ac.uk.abdn.foobs.db.entity.AgentEntity;
 import ac.uk.abdn.foobs.db.entity.PlatformEntity;
 import ac.uk.abdn.foobs.db.entity.PremisesEntity;
 import ac.uk.abdn.foobs.db.entity.UserAccountEntity;
@@ -94,11 +95,28 @@ public class TaskManager {
 		PlatformEntity twitter = DAO.getPlatfromBasedOnName("Twitter");
 
 		AppRESTAPI restAPI = new AppRESTAPI(config);
-		Set<Status> tweets = restAPI.searchList(keywords, 200);
+		Set<Status> tweets = restAPI.searchList(keywords, 1);
 		for (Status tweet : tweets){
-			UserAccountEntity user = DAO.saveOrUpdateUserAccount(new UserAccountEntity(tweet.getUser()));
-			user.setPlatformId(twitter);
-			DAO.saveTweet(user, tweet);
+			
+			
+	        // create a UserAccountEntity for the Status user to ensure the correct
+	        // platformAccountId is used as part of the DB lookup.
+	        UserAccountEntity basicUser = new UserAccountEntity(tweet.getUser());
+			UserAccountEntity dbUser = DAO.getUserAccountByIdAndPlatform(basicUser.getPlatformAccountId(),  twitter);
+			if (dbUser != null){
+				// already have this user in the DB
+				basicUser = dbUser;
+				// TODO: This will not overwrite the existing record of the user with any changes they have made, 
+				// details from their profile was stored in the DB
+			} else {
+				// new user to the system, so initialise it
+			   basicUser.setPlatformId(twitter);
+			   AgentEntity agent = new AgentEntity();
+		       agent.setAgentType("Person");
+		       basicUser.setAgentId(agent);
+			}
+			DAO.saveOrUpdateUserAccount(basicUser);
+			DAO.saveTweet(basicUser, tweet);
 		}
 	}
 }

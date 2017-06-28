@@ -21,244 +21,256 @@ import ac.uk.abdn.foobs.db.entity.UserAccountEntity;
 import twitter4j.Status;
 
 public class DAO {
-   
-   public static void insertEstablishment(Establishment establishment, String country) {
-      if (getPremises(establishment.getFHRSID()) != null) {
-         System.out.println("Establishment alrady in database, will not save");
-         return;
-      }
 
-      PlatformEntity platform = getPlatfromBasedOnName("Twitter");
-      if (platform == null) {
-         System.out.println("Twitter is not present in platforms, adding.");
-         platform = new PlatformEntity("social network", "Twitter", "twitter.com");
-         platform = insertPlatform(platform);
-      }
+	public static void insertEstablishment(Establishment establishment, String country) {
+		if (getPremises(establishment.getFHRSID()) != null) {
+			System.out.println("Establishment alrady in database, will not save");
+			return;
+		}
 
-      Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-      Transaction transaction = session.beginTransaction();
+		PlatformEntity platform = getPlatfromBasedOnName("Twitter");
+		if (platform == null) {
+			System.out.println("Twitter is not present in platforms, adding.");
+			platform = new PlatformEntity("social network", "Twitter", "twitter.com");
+			platform = insertPlatform(platform);
+		}
 
-      try {
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		Transaction transaction = session.beginTransaction();
 
-         AddressEntity address = new AddressEntity();
-         address.setCountry(country);
-         address.setCity(establishment.getCity());
-         address.setLine1(establishment.getAddress());
-         if (establishment.getPostCode() != null) {
-            address.setPostcode(establishment.getPostCode());
-         }
+		try {
 
-         LocationEntity location = new LocationEntity();
-         location.setAddressAndDispayString(address);
+			AddressEntity address = new AddressEntity();
+			address.setCountry(country);
+			address.setCity(establishment.getCity());
+			address.setLine1(establishment.getAddress());
+			if (establishment.getPostCode() != null) {
+				address.setPostcode(establishment.getPostCode());
+			}
 
-         address.setLocationId(location);
-         
-         if (establishment.getLocation() != null) {
-            GeoPointEntity geoPoint = new GeoPointEntity(establishment.getLocation());
-            location.setGeoPoint(geoPoint);
-            geoPoint.setLocationId(location);
-            session.save(geoPoint);
-         } else {
-            location.setGeoPoint(null);
-         }
+			LocationEntity location = new LocationEntity();
+			location.setAddressAndDispayString(address);
 
-         AgentEntity agent = new AgentEntity();
-         agent.setAgentType("Premises");
+			address.setLocationId(location);
 
-         PremisesEntity premises = new PremisesEntity();
-         premises.setId(establishment.getFHRSID());
-         premises.setBusinessName(establishment.getBusinessName());
-         premises.setBusinessType(establishment.getBusinessType());
-         premises.setBelongToAgent(agent);
-         premises.setLocation(location);
+			if (establishment.getLocation() != null) {
+				GeoPointEntity geoPoint = new GeoPointEntity(establishment.getLocation());
+				location.setGeoPoint(geoPoint);
+				geoPoint.setLocationId(location);
+				session.save(geoPoint);
+			} else {
+				location.setGeoPoint(null);
+			}
 
-         RatingEntity rating = new RatingEntity();
-         rating.setNewRatingPending(establishment.getNewRatingPending());
-         rating.setRatingDate(establishment.getRatingDate());
-         rating.setRatingKey(establishment.getRatingKey());
-         rating.setRatingValue(establishment.getRatingValue());
-         rating.setSchemeType(establishment.getSchemeType());
-         rating.setPremisesId(premises);
-         premises.getRatings().add(rating);
+			AgentEntity agent = new AgentEntity();
+			agent.setAgentType("Premises");
 
-         if (establishment.getTwitterHandle() == null) {
+			PremisesEntity premises = new PremisesEntity();
+			premises.setId(establishment.getFHRSID());
+			premises.setBusinessName(establishment.getBusinessName());
+			premises.setBusinessType(establishment.getBusinessType());
+			premises.setBelongToAgent(agent);
+			premises.setLocation(location);
 
-         } else if (establishment.getTwitterHandle().equals("NONE")) {
-            UserAccountEntity userAccount = new UserAccountEntity();
-            userAccount.setAgentId(agent);
-            userAccount.setLastCheckedDate(new Date());
-            userAccount.setPlatformId(platform);
-            agent.setUserAccount(userAccount);
-            session.save(userAccount);
-         } else {
-            UserAccountEntity userAccount = new UserAccountEntity(establishment.getTwitter());
-            userAccount.setAgentId(agent);
-            userAccount.setPlatformId(platform);
+			RatingEntity rating = new RatingEntity();
+			rating.setNewRatingPending(establishment.getNewRatingPending());
+			rating.setRatingDate(establishment.getRatingDate());
+			rating.setRatingKey(establishment.getRatingKey());
+			rating.setRatingValue(establishment.getRatingValue());
+			rating.setSchemeType(establishment.getSchemeType());
+			rating.setPremisesId(premises);
+			premises.getRatings().add(rating);
 
-            agent.setUserAccount(userAccount);
-            session.save(userAccount);
-         }
+			if (establishment.getTwitterHandle() == null) {
 
-         session.save(rating);
-         session.save(premises);
-         session.save(address);
-         session.save(location);
-         session.save(agent);
+			} else if (establishment.getTwitterHandle().equals("NONE")) {
+				UserAccountEntity userAccount = new UserAccountEntity();
+				userAccount.setAgentId(agent);
+				userAccount.setLastCheckedDate(new Date());
+				userAccount.setPlatformId(platform);
+				agent.setUserAccount(userAccount);
+				session.save(userAccount);
+			} else {
+				UserAccountEntity userAccount = new UserAccountEntity(establishment.getTwitter());
+				userAccount.setAgentId(agent);
+				userAccount.setPlatformId(platform);
 
-         session.getTransaction().commit();
-      } catch (Exception e) {
-         System.out.println();
-         System.out.println();
-         System.out.println(establishment.getBusinessName());
-         System.out.println();
-         System.out.println();
-         transaction.rollback();
-         e.printStackTrace();
-      } finally {
-         session.close();
-      }
-   }
+				agent.setUserAccount(userAccount);
+				session.save(userAccount);
+			}
 
-   public static UserAccountEntity saveOrUpdateUserAccount(UserAccountEntity userAccount) {
+			session.save(rating);
+			session.save(premises);
+			session.save(address);
+			session.save(location);
+			session.save(agent);
 
-      Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-      Transaction transaction = session.beginTransaction();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			System.out.println();
+			System.out.println();
+			System.out.println(establishment.getBusinessName());
+			System.out.println();
+			System.out.println();
+			transaction.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+	}
 
-      try {
-         session.saveOrUpdate(userAccount);
-         session.getTransaction().commit();
-      } catch (Exception e) {
-         transaction.rollback();
-         e.printStackTrace();
-      } finally {
-         session.close();
-      }
-      return userAccount;
-   }
+	public static UserAccountEntity getUserAccountByIdAndPlatform(String platformAccountId,
+			PlatformEntity platformEntity) {
+		UserAccountEntity userAccount = null;
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		String hql = "from UserAccountEntity uae where uae.platformAccountId=:paid and uae.platformId=:pid";
+		try {
 
-   public static PremisesEntity saveOrUpdatePremises(PremisesEntity premises) {
+			List<UserAccountEntity> results = session.createQuery(hql, UserAccountEntity.class)
+					.setParameter("paid", platformAccountId)
+					.setParameter("pid", platformEntity)
+					.getResultList();
+			if (results.size() > 0) {
+				userAccount = results.get(0);
+			}
+		} finally {
+			session.close();
+		}
+		return userAccount;
 
-      Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-      Transaction transaction = session.beginTransaction();
+	}
 
-      try {
-         session.saveOrUpdate(premises);
-         session.getTransaction().commit();
-      } catch (Exception e) {
-         transaction.rollback();
-         e.printStackTrace();
-      } finally {
-         session.close();
-      }
-      return premises;
-   }
+	public static UserAccountEntity saveOrUpdateUserAccount(UserAccountEntity userAccount) {
 
-   public static PlatformEntity insertPlatform(PlatformEntity platform) {
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		Transaction transaction = session.beginTransaction();
 
-      Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-      Transaction transaction = session.beginTransaction();
+		try {
+			session.saveOrUpdate(userAccount);
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			transaction.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return userAccount;
+	}
 
-      try {
-         session.saveOrUpdate(platform);
-         session.getTransaction().commit();
-      } catch (Exception e) {
-         transaction.rollback();
-         e.printStackTrace();
-      } finally {
-         session.close();
-      }
-      return platform;
-   }
+	public static PremisesEntity saveOrUpdatePremises(PremisesEntity premises) {
 
-   public static Set<PremisesEntity> getPremisesWithUncheckedUserAccount(String accountName) {
-      Set<PremisesEntity> premisesSet = new HashSet<PremisesEntity>();
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		Transaction transaction = session.beginTransaction();
 
-      Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-      session.beginTransaction();
-      String hql = "from PremisesEntity as premises " +
-                   "where not exists (" +
-                      "from UserAccountEntity as account " +
-                      "where account.agentId = premises.belongToAgent " +
-                      "and account.platformId = (" +
-                         "select platform.Id " +
-                         "from PlatformEntity as platform " +
-                         "where platform.forumName=:name))";
-      try {
-         List<PremisesEntity> results = session.createQuery(hql,PremisesEntity.class)
-                           .setParameter("name", accountName)
-                           .getResultList();
-         premisesSet.addAll(results);
-      } finally {
-         session.close();
-      }
-      return premisesSet;
-   }
+		try {
+			session.saveOrUpdate(premises);
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			transaction.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return premises;
+	}
 
-   public static PlatformEntity getPlatfromBasedOnName(String name) {
-      PlatformEntity platform = null;
-      Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-      session.beginTransaction();
-      String hql = "from PlatformEntity platform where platform.forumName=:name";
-      try {
-         List<PlatformEntity> results = session.createQuery(hql,PlatformEntity.class)
-                           .setParameter("name", name)
-                           .getResultList();
-         if (results.size() > 0) {
-            platform = results.get(0);
-         }
-      } finally {
-         session.close();
-      }
-      return platform;
-   }
+	public static PlatformEntity insertPlatform(PlatformEntity platform) {
 
-   public static PremisesEntity getPremises(Integer id) {
-      PremisesEntity premises = null;
-      Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-      session.beginTransaction();
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		Transaction transaction = session.beginTransaction();
 
-      try {
-         premises = (PremisesEntity)session.get(PremisesEntity.class,id);
-      } finally {
-         session.close();
-      }
+		try {
+			session.saveOrUpdate(platform);
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			transaction.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return platform;
+	}
 
-      return premises;
-   }
+	public static Set<PremisesEntity> getPremisesWithUncheckedUserAccount(String accountName) {
+		Set<PremisesEntity> premisesSet = new HashSet<PremisesEntity>();
 
-   public static Set<UserAccountEntity> getTwitterAccounts() {
-      Set<UserAccountEntity> userAccountSet = new HashSet<UserAccountEntity>();
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		String hql = "from PremisesEntity as premises " + "where not exists (" + "from UserAccountEntity as account "
+				+ "where account.agentId = premises.belongToAgent " + "and account.platformId = ("
+				+ "select platform.Id " + "from PlatformEntity as platform " + "where platform.forumName=:name))";
+		try {
+			List<PremisesEntity> results = session.createQuery(hql, PremisesEntity.class)
+					.setParameter("name", accountName).getResultList();
+			premisesSet.addAll(results);
+		} finally {
+			session.close();
+		}
+		return premisesSet;
+	}
 
-      Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-      session.beginTransaction();
+	public static PlatformEntity getPlatfromBasedOnName(String name) {
+		PlatformEntity platform = null;
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		String hql = "from PlatformEntity platform where platform.forumName=:name";
+		try {
+			List<PlatformEntity> results = session.createQuery(hql, PlatformEntity.class).setParameter("name", name)
+					.getResultList();
+			if (results.size() > 0) {
+				platform = results.get(0);
+			}
+		} finally {
+			session.close();
+		}
+		return platform;
+	}
 
-      String hql = "from UserAccountEntity user " +
-                   "where user.platformAccountId is not null";
-      try {
-         List<UserAccountEntity> results = 
-                  session.createQuery(hql,UserAccountEntity.class)
-                           .getResultList();
-         userAccountSet.addAll(results);
-      } finally {
-         session.close();
-      }
-      return userAccountSet;
-   }
+	public static PremisesEntity getPremises(Integer id) {
+		PremisesEntity premises = null;
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
 
-   public static void saveTweet(UserAccountEntity user, Status tweet) {
-      Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-      Transaction transaction = session.beginTransaction();
+		try {
+			premises = (PremisesEntity) session.get(PremisesEntity.class, id);
+		} finally {
+			session.close();
+		}
 
-      try {
-         PostEntity post = new PostEntity(tweet);
-         post.setHasCreator(user);
-         session.saveOrUpdate(post);
-         session.getTransaction().commit();
-      } catch (Exception e) {
-         transaction.rollback();
-         e.printStackTrace();
-      } finally {
-         session.close();
-      }
-   }
+		return premises;
+	}
+
+	public static Set<UserAccountEntity> getTwitterAccounts() {
+		Set<UserAccountEntity> userAccountSet = new HashSet<UserAccountEntity>();
+
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+
+		String hql = "from UserAccountEntity user " + "where user.platformAccountId is not null";
+		try {
+			List<UserAccountEntity> results = session.createQuery(hql, UserAccountEntity.class).getResultList();
+			userAccountSet.addAll(results);
+		} finally {
+			session.close();
+		}
+		return userAccountSet;
+	}
+
+	public static void saveTweet(UserAccountEntity user, Status tweet) {
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		Transaction transaction = session.beginTransaction();
+
+		try {
+			PostEntity post = new PostEntity(tweet);
+			post.setHasCreator(user);
+			session.saveOrUpdate(post);
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			transaction.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+	}
 }
