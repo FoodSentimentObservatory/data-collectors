@@ -95,7 +95,7 @@ public class TaskManager {
 		PlatformEntity twitter = DAO.getPlatfromBasedOnName("Twitter");
 
 		AppRESTAPI restAPI = new AppRESTAPI(config);
-		Set<Status> tweets = restAPI.searchList(keywords, 1);
+		Set<Status> tweets = restAPI.searchList(keywords, 200);
 		for (Status tweet : tweets){
 			
 			
@@ -115,7 +115,7 @@ public class TaskManager {
 		       agent.setAgentType("Person");
 		       basicUser.setAgentId(agent);
 			}
-			DAO.saveOrUpdateUserAccount(basicUser);
+			basicUser = DAO.saveOrUpdateUserAccount(basicUser);
 			DAO.saveTweet(basicUser, tweet);
 		}
 	}
