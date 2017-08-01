@@ -17,6 +17,7 @@ import ac.uk.abdn.foobs.db.entity.PlatformEntity;
 import ac.uk.abdn.foobs.db.entity.PostEntity;
 import ac.uk.abdn.foobs.db.entity.PremisesEntity;
 import ac.uk.abdn.foobs.db.entity.RatingEntity;
+import ac.uk.abdn.foobs.db.entity.SearchDetailsEntity;
 import ac.uk.abdn.foobs.db.entity.UserAccountEntity;
 import twitter4j.Status;
 
@@ -265,6 +266,21 @@ public class DAO {
 			PostEntity post = new PostEntity(tweet);
 			post.setHasCreator(user);
 			session.saveOrUpdate(post);
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			transaction.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+	}
+	
+	public static void saveSearchDetails(SearchDetailsEntity searchDetails){
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		Transaction transaction = session.beginTransaction();
+
+		try {
+			session.saveOrUpdate(searchDetails);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			transaction.rollback();
