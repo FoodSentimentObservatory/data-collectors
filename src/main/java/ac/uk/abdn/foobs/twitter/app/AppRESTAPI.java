@@ -158,11 +158,14 @@ public class AppRESTAPI extends BaseRESTAPI {
       return search(query, numberOfTweets);
    }
 
-	public Set<Status> searchExactStringGeoCoded(String string, int numberOfTweets, GeoLocation centroid, double radius,
+	public Set<Status> searchKeywordListGeoCoded(List<String> words, int numberOfTweets, GeoLocation centroid, double radius,
 			Unit unit) {
 
 		Query query = new Query();
-		query.setQuery("\"" + string + "\"");
+		String queryString = words.stream().map(Object::toString).collect(Collectors.joining("\" OR \""));
+	    queryString = "\""+queryString+"\"";
+	    System.out.println(queryString);
+	    query.setQuery(queryString);
 		query.setGeoCode(centroid, radius, unit);
 
 		return search(query, numberOfTweets);

@@ -39,8 +39,12 @@ public class PostEntity {
 
    @Column(name="importedAt")
    private Date importedAt;
-
-   @ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
+   
+   @Column (name = "platformPostID")
+   private String platformPostID;
+   
+  
+@ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
    @JoinColumn(name="hasCreator")
    private UserAccountEntity hasCreator;
 
@@ -51,6 +55,7 @@ public class PostEntity {
       this.body = tweet.getText();
       this.createdAt = tweet.getCreatedAt();
       this.importedAt = new Date();
+      this.platformPostID = Long.toString(tweet.getId());
    }
 
    /**
@@ -143,4 +148,13 @@ public class PostEntity {
    public void setHasCreator(UserAccountEntity hasCreator) {
       this.hasCreator = hasCreator;
    }
+   
+   public String getPlatformPostID() {
+		return platformPostID;
+	}
+
+	public void setPlatformPostID(String platformPostID) {
+		this.platformPostID = platformPostID;
+	}
+
 }
