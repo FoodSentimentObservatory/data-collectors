@@ -14,7 +14,7 @@ import twitter4j.Status;
  * @author csc316
  *
  */
-public class PrintGeolocatedTweets {
+/**public class PrintGeolocatedTweets {
 
 	public static void main(String[] args) {
 
@@ -41,5 +41,5 @@ public class PrintGeolocatedTweets {
 
 	}
 
-}
+}*/
 

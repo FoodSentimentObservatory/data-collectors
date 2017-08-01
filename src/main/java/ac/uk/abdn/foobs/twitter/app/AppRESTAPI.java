@@ -46,7 +46,7 @@ public class AppRESTAPI extends BaseRESTAPI {
       Set<Status> tweets = new HashSet<Status>();
       int prevTweetSize = tweets.size();
       long lastId = Long.MAX_VALUE;
-
+      query.setLang("en");
       while (tweets.size() < numberOfTweets) {
          if (numberOfTweets - tweets.size() > 100) {
             // this is the maximum that could be retrieved at once
@@ -139,7 +139,8 @@ public class AppRESTAPI extends BaseRESTAPI {
 
    public Set<Status> searchList(List<String> words, int numberOfTweets) {
       Query query = new Query();
-      String queryString = words.stream().map(Object::toString).collect(Collectors.joining(" OR "));
+      String queryString = words.stream().map(Object::toString).collect(Collectors.joining("\" OR \""));
+      queryString = "\""+queryString+"\"";
       System.out.println(queryString);
       query.setQuery(queryString);
       return search(query, numberOfTweets);
@@ -157,11 +158,14 @@ public class AppRESTAPI extends BaseRESTAPI {
       return search(query, numberOfTweets);
    }
 
-	public Set<Status> searchExactStringGeoCoded(String string, int numberOfTweets, GeoLocation centroid, double radius,
+	public Set<Status> searchKeywordListGeoCoded(List<String> words, int numberOfTweets, GeoLocation centroid, double radius,
 			Unit unit) {
 
 		Query query = new Query();
-		query.setQuery("\"" + string + "\"");
+		String queryString = words.stream().map(Object::toString).collect(Collectors.joining("\" OR \""));
+	    queryString = "\""+queryString+"\"";
+	    System.out.println(queryString);
+	    query.setQuery(queryString);
 		query.setGeoCode(centroid, radius, unit);
 
 		return search(query, numberOfTweets);
