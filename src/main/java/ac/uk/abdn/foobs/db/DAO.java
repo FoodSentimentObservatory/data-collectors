@@ -275,6 +275,24 @@ public class DAO {
 		}
 	}
 	
+	public static void saveTweet(UserAccountEntity user, Status tweet, SearchDetailsEntity searchDetails) {
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		Transaction transaction = session.beginTransaction();
+
+		try {
+			PostEntity post = new PostEntity(tweet);
+			post.setHasCreator(user);
+			post.setSearchDetailsId(searchDetails);
+			session.saveOrUpdate(post);
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			transaction.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+	}
+	
 	public static void saveSearchDetails(SearchDetailsEntity searchDetails){
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
