@@ -48,6 +48,10 @@ public class PostEntity {
    @JoinColumn(name="hasCreator")
    private UserAccountEntity hasCreator;
 
+@ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
+   @JoinColumn(name="SearchId")
+   private SearchDetailsEntity searchDetailsId;
+
    public PostEntity() {}
 
    public PostEntity(Status tweet) {
@@ -155,6 +159,15 @@ public class PostEntity {
 
 	public void setPlatformPostID(String platformPostID) {
 		this.platformPostID = platformPostID;
+	}
+	
+	public SearchDetailsEntity getSearchDetailsId() {
+			return searchDetailsId;
+		}
+	
+	public void setSearchDetailsId(SearchDetailsEntity searchDetailsId) {
+		this.searchDetailsId = searchDetailsId;
+		
 	}
 
 }

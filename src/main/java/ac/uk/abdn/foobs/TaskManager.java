@@ -16,6 +16,7 @@ import ac.uk.abdn.foobs.db.entity.GeoPointEntity;
 import ac.uk.abdn.foobs.db.entity.LocationEntity;
 import ac.uk.abdn.foobs.db.entity.PlatformEntity;
 import ac.uk.abdn.foobs.db.entity.PremisesEntity;
+import ac.uk.abdn.foobs.db.entity.SearchDetailsEntity;
 import ac.uk.abdn.foobs.db.entity.UserAccountEntity;
 import ac.uk.abdn.foobs.fsa.RatingsHandler;
 import ac.uk.abdn.foobs.twitter.app.AppRESTAPI;
@@ -109,10 +110,28 @@ public class TaskManager {
         // radius for Plymouth: 50
         AppRESTAPI restAPI = new AppRESTAPI(config);
         GeoLocation geoLocation = new   GeoLocation (50.700517,-3.993530);
-Date startDate = new Date();
-float radius = 50;
-        Set<Status> tweets = restAPI.searchKeywordListGeoCoded(keywords, 10000, geoLocation, radius, Unit.km);
-Date endDate = new Date();
+        Date startDate = new Date();
+        float radius = 50;
+        Set<Status> tweets = restAPI.searchKeywordListGeoCoded(keywords, 1000000, geoLocation, radius, Unit.km);
+        Date endDate = new Date();
+        
+     // populate the following however is suitable
+        searchDetails.setStartOfSearch(startDate);
+        searchDetails.setEndOfSearch(endDate);
+        String queryString = keywords.stream().map(Object::toString).collect(Collectors.joining("\" OR \""));
+        queryString = "\""+queryString+"\"";
+        searchDetails.setKeywords(queryString);
+        String note = " "; // anything that you want to note about the search
+        searchDetails.setNote(note);
+        searchDetails.setRadius(radius);
+        LocationEntity location = new LocationEntity();
+        location.setDisplayString("");
+        GeoPointEntity geoPoint = new GeoPointEntity(geoLocation);
+        geoPoint.setLocationId(location);
+        location.setGeoPoint(geoPoint);
+        searchDetails.setLocationId(location);
+        DAO.saveSearchDetails(searchDetails);
+        
         for (Status tweet : tweets){
                     
                     
@@ -129,28 +148,13 @@ Date endDate = new Date();
                                 // new user to the system, so initialise it
                        basicUser.setPlatformId(twitter);
                        AgentEntity agent = new AgentEntity();
-               agent.setAgentType("Person");
-               basicUser.setAgentId(agent);
+                       agent.setAgentType("Person");
+                       basicUser.setAgentId(agent);
                     }
                     basicUser = DAO.saveOrUpdateUserAccount(basicUser);
                     DAO.saveTweet(basicUser, tweet, searchDetails);
         }
-        // populate the following however is suitable
-        searchDetails.setStartOfSearch(startDate);
-        searchDetails.setEndOfSearch(endDate);
-        String queryString = keywords.stream().map(Object::toString).collect(Collectors.joining("\" OR \""));
-        queryString = "\""+queryString+"\"";
-        searchDetails.setKeywords(queryString);
-        String note = " "; // anything that you want to note about the search
-        searchDetails.setNote(note);
-        searchDetails.setRadius(radius);
-        LocationEntity location = new LocationEntity();
-        GeoPointEntity geoPoint = new GeoPointEntity(geoLocation);
-        geoPoint.setLocationId(location);
-        location.setGeoPoint(geoPoint);
-
         
-        DAO.saveSearchDetails(searchDetails);
 }
 
 }

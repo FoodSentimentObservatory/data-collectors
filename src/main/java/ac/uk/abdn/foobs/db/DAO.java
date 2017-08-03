@@ -17,6 +17,7 @@ import ac.uk.abdn.foobs.db.entity.PlatformEntity;
 import ac.uk.abdn.foobs.db.entity.PostEntity;
 import ac.uk.abdn.foobs.db.entity.PremisesEntity;
 import ac.uk.abdn.foobs.db.entity.RatingEntity;
+import ac.uk.abdn.foobs.db.entity.SearchDetailsEntity;
 import ac.uk.abdn.foobs.db.entity.UserAccountEntity;
 import twitter4j.Status;
 
@@ -118,14 +119,14 @@ public class DAO {
 			session.close();
 		}
 	}
-	public static void saveTweet(UserAccountEntity user, Status tweet, SearchDetails searchDetails) {
+	public static void saveTweet(UserAccountEntity user, Status tweet, SearchDetailsEntity searchDetails) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
 
         try {
                     PostEntity post = new PostEntity(tweet);
                     post.setHasCreator(user);
-                    post.setSearchDetailsId(searchDetailsId);
+                    post.setSearchDetailsId(searchDetails);
                     session.saveOrUpdate(post);
                     session.getTransaction().commit();
         } catch (Exception e) {
@@ -135,6 +136,22 @@ public class DAO {
                     session.close();
         }
 }
+	public static void saveSearchDetails(SearchDetailsEntity searchDetails){
+				Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+				Transaction transaction = session.beginTransaction();
+		
+				try {
+					session.saveOrUpdate(searchDetails.getLocationId().getGeoPoint());
+					session.saveOrUpdate(searchDetails.getLocationId());
+					session.saveOrUpdate(searchDetails);
+					session.getTransaction().commit();
+				} catch (Exception e) {
+					transaction.rollback();
+					e.printStackTrace();
+				} finally {
+					session.close();
+				}
+			}
 
 	public static UserAccountEntity getUserAccountByIdAndPlatform(String platformAccountId,
 			PlatformEntity platformEntity) {
