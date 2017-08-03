@@ -27,64 +27,64 @@ import twitter4j.Query.Unit;
 import twitter4j.Status;
 
 public class TaskManager {
-	public static void manageTasks(Config config) {
+    public static void manageTasks(Config config) {
 
-		if (config.getParseAndUploadRatings() == 1) {
-			System.out.println("Will parse and upload ratings.");
-			parseAndUploadRatings(config);
-		}
+        if (config.getParseAndUploadRatings() == 1) {
+            System.out.println("Will parse and upload ratings.");
+            parseAndUploadRatings(config);
+        }
 
-		if (config.getFindTwitterAccounts() == 1) {
-			System.out.println("Finding twitter handles");
-			findTwitterAccounts(config);
-		}
+        if (config.getFindTwitterAccounts() == 1) {
+            System.out.println("Finding twitter handles");
+            findTwitterAccounts(config);
+        }
 
-		if (config.getFindTweetsFromRestaurants() == 1) {
-			System.out.println("Finding 200 tweets by each restaurant");
-			findTweetsFromRestaurants(config);
-		}
+        if (config.getFindTweetsFromRestaurants() == 1) {
+            System.out.println("Finding 200 tweets by each restaurant");
+            findTweetsFromRestaurants(config);
+        }
 
-		if (config.getFindTweetsContainingKeywords() == 1){
-			System.out.println("Finding 200 tweets containing keywords");
-			findTweetsContainingKeywords(config);
-		}
-	}
+        if (config.getFindTweetsContainingKeywords() == 1){
+            System.out.println("Finding 200 tweets containing keywords");
+            findTweetsContainingKeywords(config);
+        }
+    }
 
-	private static void parseAndUploadRatings(Config config) {
-		File ratingsFile = new File(config.getRatingFile());
+    private static void parseAndUploadRatings(Config config) {
+        File ratingsFile = new File(config.getRatingFile());
 
-		UserRESTAPI restAPI = new UserRESTAPI(config);
-		ArrayList<Establishment> establishmentList = RatingsHandler.parseXml(ratingsFile, restAPI);
-		System.out.println("Parsing done, uploading to database.");
-		for (int i = 0; i < establishmentList.size(); i++) {
-			DAO.insertEstablishment(establishmentList.get(i), config.getRatingFileCountry());
-		}
-	}
+        UserRESTAPI restAPI = new UserRESTAPI(config);
+        ArrayList<Establishment> establishmentList = RatingsHandler.parseXml(ratingsFile, restAPI);
+        System.out.println("Parsing done, uploading to database.");
+        for (int i = 0; i < establishmentList.size(); i++) {
+            DAO.insertEstablishment(establishmentList.get(i), config.getRatingFileCountry());
+        }
+    }
 
-	private static void findTwitterAccounts(Config config) {
-		Set<PremisesEntity> premisesSet = DAO.getPremisesWithUncheckedUserAccount("Twitter");
+    private static void findTwitterAccounts(Config config) {
+        Set<PremisesEntity> premisesSet = DAO.getPremisesWithUncheckedUserAccount("Twitter");
 
-		UserRESTAPI restAPI = new UserRESTAPI(config);
-		TwitterHandleFinder finder = new TwitterHandleFinder(restAPI);
-		for (PremisesEntity premises : premisesSet) {
-			finder.findAndInsertTwitterAccountForPremises(premises);
-		}
-	}
+        UserRESTAPI restAPI = new UserRESTAPI(config);
+        TwitterHandleFinder finder = new TwitterHandleFinder(restAPI);
+        for (PremisesEntity premises : premisesSet) {
+            finder.findAndInsertTwitterAccountForPremises(premises);
+        }
+    }
 
-	private static void findTweetsFromRestaurants(Config config) {
-		Set<UserAccountEntity> users = DAO.getTwitterAccounts();
+    private static void findTweetsFromRestaurants(Config config) {
+        Set<UserAccountEntity> users = DAO.getTwitterAccounts();
 
-		AppRESTAPI restAPI = new AppRESTAPI(config);
-		for (UserAccountEntity user : users) {
-			System.out.println("Getting tweets for: " + user.getPlatformAccountId());
-			Set<Status> tweets = restAPI.showTweetsByUser(user.getPlatformAccountId(), 200);
-			for (Status tweet : tweets) {
-				DAO.saveTweet(user, tweet);
-			}
-		}
-	}
+        AppRESTAPI restAPI = new AppRESTAPI(config);
+        for (UserAccountEntity user : users) {
+            System.out.println("Getting tweets for: " + user.getPlatformAccountId());
+            Set<Status> tweets = restAPI.showTweetsByUser(user.getPlatformAccountId(), 200);
+            for (Status tweet : tweets) {
+                DAO.saveTweet(user, tweet);
+            }
+        }
+    }
 
-	private static void findTweetsContainingKeywords(Config config) {
+    private static void findTweetsContainingKeywords(Config config) {
         List<String> keywords = new ArrayList<String>();
 
         SearchDetailsEntity searchDetails = new SearchDetailsEntity();
@@ -132,10 +132,6 @@ public class TaskManager {
         searchDetails.setLocationId(location);
         DAO.saveSearchDetails(searchDetails);
         
-Date startDate = new Date();
-float radius = 50;
-        Set<Status> tweets = restAPI.searchKeywordListGeoCoded(keywords, 10000, geoLocation, radius, Unit.km);
-Date endDate = new Date();
         for (Status tweet : tweets){
                     
                     
@@ -154,30 +150,11 @@ Date endDate = new Date();
                        AgentEntity agent = new AgentEntity();
                        agent.setAgentType("Person");
                        basicUser.setAgentId(agent);
-
-               agent.setAgentType("Person");
-               basicUser.setAgentId(agent);
                     }
                     basicUser = DAO.saveOrUpdateUserAccount(basicUser);
                     DAO.saveTweet(basicUser, tweet, searchDetails);
         }
         
-        // populate the following however is suitable
-        searchDetails.setStartOfSearch(startDate);
-        searchDetails.setEndOfSearch(endDate);
-        String queryString = keywords.stream().map(Object::toString).collect(Collectors.joining("\" OR \""));
-        queryString = "\""+queryString+"\"";
-        searchDetails.setKeywords(queryString);
-        String note = " "; // anything that you want to note about the search
-        searchDetails.setNote(note);
-        searchDetails.setRadius(radius);
-        LocationEntity location = new LocationEntity();
-        GeoPointEntity geoPoint = new GeoPointEntity(geoLocation);
-        geoPoint.setLocationId(location);
-        location.setGeoPoint(geoPoint);
-
-        
-        DAO.saveSearchDetails(searchDetails);
 }
 
 }

@@ -119,22 +119,14 @@ public class DAO {
 			session.close();
 		}
 	}
-
 	public static void saveTweet(UserAccountEntity user, Status tweet, SearchDetailsEntity searchDetails) {
-
-	public static void saveTweet(UserAccountEntity user, Status tweet, SearchDetails searchDetails) {
-
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
 
         try {
                     PostEntity post = new PostEntity(tweet);
                     post.setHasCreator(user);
-
                     post.setSearchDetailsId(searchDetails);
-
-                    post.setSearchDetailsId(searchDetailsId);
-
                     session.saveOrUpdate(post);
                     session.getTransaction().commit();
         } catch (Exception e) {
@@ -144,7 +136,6 @@ public class DAO {
                     session.close();
         }
 }
-
 	public static void saveSearchDetails(SearchDetailsEntity searchDetails){
 				Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 				Transaction transaction = session.beginTransaction();
@@ -161,7 +152,6 @@ public class DAO {
 					session.close();
 				}
 			}
-
 
 	public static UserAccountEntity getUserAccountByIdAndPlatform(String platformAccountId,
 			PlatformEntity platformEntity) {
@@ -301,30 +291,14 @@ public class DAO {
 		return userAccountSet;
 	}
 
-	public static void saveTweet(UserAccountEntity user, Status tweet, SearchDetailsEntity searchDetails) {
+	public static void saveTweet(UserAccountEntity user, Status tweet) {
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
 
 		try {
 			PostEntity post = new PostEntity(tweet);
 			post.setHasCreator(user);
-			post.setSearchDetailsId(searchDetails);
 			session.saveOrUpdate(post);
-			session.getTransaction().commit();
-		} catch (Exception e) {
-			transaction.rollback();
-			e.printStackTrace();
-		} finally {
-			session.close();
-		}
-	}
-	
-	public static void saveSearchDetails(SearchDetailsEntity searchDetails){
-		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-		Transaction transaction = session.beginTransaction();
-
-		try {
-			session.saveOrUpdate(searchDetails);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			transaction.rollback();

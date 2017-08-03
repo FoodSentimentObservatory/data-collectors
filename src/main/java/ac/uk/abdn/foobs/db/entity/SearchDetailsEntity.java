@@ -22,17 +22,6 @@ import org.hibernate.annotations.GenericGenerator;
 public class SearchDetailsEntity {
 
 	@Id
-
-import org.hibernate.annotations.GenericGenerator;
-
-import ac.uk.abdn.foobs.db.DAO;
-import twitter4j.GeoLocation;
-
-@Entity
-@Table(name = "")
-public class SearchDetailsEntity {
-
-	@javax.persistence.Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
 	private Long Id;
@@ -53,9 +42,6 @@ public class SearchDetailsEntity {
 	private LocationEntity locationId;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "searchDetailsId", cascade = CascadeType.ALL)
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "posts", cascade = CascadeType.ALL)
-
 	private Set<PostEntity> posts = new HashSet<PostEntity>();
 
 	public Long getId() {
