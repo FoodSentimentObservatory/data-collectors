@@ -44,6 +44,10 @@ public class PostEntity {
    private String platformPostID;
    
   
+  @ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
+  @JoinColumn(name="searchDetailsId")
+  private SearchDetailsEntity searchDetailsId;
+
 @ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
    @JoinColumn(name="hasCreator")
    private UserAccountEntity hasCreator;
@@ -168,6 +172,20 @@ public class PostEntity {
 	public void setSearchDetailsId(SearchDetailsEntity searchDetailsId) {
 		this.searchDetailsId = searchDetailsId;
 		
+   public SearchDetailsEntity getSearchDetailsId() {
+      return searchDetailsId;
+   }
+
+   public void setSearchDetailsId(SearchDetailsEntity searchDetailsId) {
+      this.searchDetailsId = searchDetailsId;
+   }
+
+   public String getPlatformPostID() {
+		  return platformPostID;
+	 } 
+
+	 public void setPlatformPostID(String platformPostID) {
+		  this.platformPostID = platformPostID;
 	}
 
 }

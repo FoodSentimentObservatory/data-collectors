@@ -4,6 +4,7 @@
       <property name="connection.url">
       	jdbc:sqlserver://FOODSENTOBS\MSSQLSERVER;databaseName=Foobs-Test-3;integratedSecurity=true;
       	</property>
+      <property name="connection.url">jdbc:sqlserver://FOODSENTOBS\MSSQLSERVER;databaseName=Foobs-Test-2;integratedSecurity=true;</property>
       <property name="show_sql">false</property>
       <property name="current_session_context_class">thread</property>
 

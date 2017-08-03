@@ -32,6 +32,11 @@ public class LocationEntity {
    @OneToOne(fetch=FetchType.EAGER,mappedBy="locationId",cascade=CascadeType.ALL)
    private SearchDetailsEntity search;
    
+
+   @OneToOne(fetch=FetchType.EAGER,mappedBy="locationId",cascade=CascadeType.ALL)
+   private SearchDetailsEntity search;
+
+
    @OneToOne(fetch=FetchType.LAZY,mappedBy="locationId",cascade=CascadeType.ALL)
    private GeoPointEntity geoPoint;
 

@@ -132,6 +132,10 @@ public class TaskManager {
         searchDetails.setLocationId(location);
         DAO.saveSearchDetails(searchDetails);
         
+Date startDate = new Date();
+float radius = 50;
+        Set<Status> tweets = restAPI.searchKeywordListGeoCoded(keywords, 10000, geoLocation, radius, Unit.km);
+Date endDate = new Date();
         for (Status tweet : tweets){
                     
                     
@@ -150,11 +154,30 @@ public class TaskManager {
                        AgentEntity agent = new AgentEntity();
                        agent.setAgentType("Person");
                        basicUser.setAgentId(agent);
+
+               agent.setAgentType("Person");
+               basicUser.setAgentId(agent);
                     }
                     basicUser = DAO.saveOrUpdateUserAccount(basicUser);
                     DAO.saveTweet(basicUser, tweet, searchDetails);
         }
         
+        // populate the following however is suitable
+        searchDetails.setStartOfSearch(startDate);
+        searchDetails.setEndOfSearch(endDate);
+        String queryString = keywords.stream().map(Object::toString).collect(Collectors.joining("\" OR \""));
+        queryString = "\""+queryString+"\"";
+        searchDetails.setKeywords(queryString);
+        String note = " "; // anything that you want to note about the search
+        searchDetails.setNote(note);
+        searchDetails.setRadius(radius);
+        LocationEntity location = new LocationEntity();
+        GeoPointEntity geoPoint = new GeoPointEntity(geoLocation);
+        geoPoint.setLocationId(location);
+        location.setGeoPoint(geoPoint);
+
+        
+        DAO.saveSearchDetails(searchDetails);
 }
 
 }
