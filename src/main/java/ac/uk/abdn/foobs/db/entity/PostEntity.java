@@ -39,13 +39,17 @@ public class PostEntity {
 
    @Column(name="importedAt")
    private Date importedAt;
-
-   @ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
+   
+   @Column (name = "platformPostID")
+   private String platformPostID;
+   
+  
+@ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
    @JoinColumn(name="hasCreator")
    private UserAccountEntity hasCreator;
-  
-   @ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
-   @JoinColumn(name="searchDetailsId")
+
+@ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
+   @JoinColumn(name="SearchId")
    private SearchDetailsEntity searchDetailsId;
 
    public PostEntity() {}
@@ -55,6 +59,7 @@ public class PostEntity {
       this.body = tweet.getText();
       this.createdAt = tweet.getCreatedAt();
       this.importedAt = new Date();
+      this.platformPostID = Long.toString(tweet.getId());
    }
 
    /**
@@ -147,12 +152,22 @@ public class PostEntity {
    public void setHasCreator(UserAccountEntity hasCreator) {
       this.hasCreator = hasCreator;
    }
+   
+   public String getPlatformPostID() {
+    return platformPostID;
+  }
 
-public SearchDetailsEntity getSearchDetailsId() {
-	return searchDetailsId;
-}
+  public void setPlatformPostID(String platformPostID) {
+    this.platformPostID = platformPostID;
+  }
+  
+  public SearchDetailsEntity getSearchDetailsId() {
+      return searchDetailsId;
+    }
+  
+  public void setSearchDetailsId(SearchDetailsEntity searchDetailsId) {
+    this.searchDetailsId = searchDetailsId;
+    
+  }
 
-public void setSearchDetailsId(SearchDetailsEntity searchDetailsId) {
-	this.searchDetailsId = searchDetailsId;
-}
 }

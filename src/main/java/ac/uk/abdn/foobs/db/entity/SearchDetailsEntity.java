@@ -14,17 +14,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
+import javax.persistence.Id;
 import org.hibernate.annotations.GenericGenerator;
 
-import ac.uk.abdn.foobs.db.DAO;
-import twitter4j.GeoLocation;
-
 @Entity
-@Table(name = "")
+@Table(name = "Search")
 public class SearchDetailsEntity {
 
-	@javax.persistence.Id
+	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
 	private Long Id;
@@ -38,13 +35,13 @@ public class SearchDetailsEntity {
 	@Column(name = "Note")
 	private String note;
 	@Column(name = "Radius")
-	private float radius;
+	private double radius;
 
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "locationId")
 	private LocationEntity locationId;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "posts", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "searchDetailsId", cascade = CascadeType.ALL)
 	private Set<PostEntity> posts = new HashSet<PostEntity>();
 
 	public Long getId() {
@@ -91,12 +88,12 @@ public class SearchDetailsEntity {
 		this.locationId = locationId;
 	}
 
-	public float getRadius() {
+	public double getRadius() {
 		return radius;
 	}
 
-	public void setRadius(float radius) {
-		this.radius = radius;
+	public void setRadius(double radius2) {
+		this.radius = radius2;
 	}
 
 	public Set<PostEntity> getPosts() {
