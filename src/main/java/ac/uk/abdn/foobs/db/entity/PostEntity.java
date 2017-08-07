@@ -67,6 +67,7 @@ public class PostEntity {
 		this.platformPostID = Long.toString(tweet.getId());
 		if (tweet.getGeoLocation() != null) {
 			this.locationId = new LocationEntity();
+			this.locationId.setDisplayString(tweet.getGeoLocation().toString());
 			this.locationId.setGeoPoint(new GeoPointEntity(tweet.getGeoLocation()));
 		}
 	}
