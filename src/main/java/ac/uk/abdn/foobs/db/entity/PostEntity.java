@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -18,156 +19,178 @@ import org.hibernate.annotations.GenericGenerator;
 import twitter4j.Status;
 
 @Entity
-@Table(name="Post")
+@Table(name = "Post")
 public class PostEntity {
-   @Id
-   @GeneratedValue(strategy=GenerationType.AUTO,generator="native")
-   @GenericGenerator(name="native",strategy="native")
-   private Long Id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+	@GenericGenerator(name = "native", strategy = "native")
+	private Long Id;
 
-   @Column(name="postType")
-   private String postType;
+	@Column(name = "postType")
+	private String postType;
 
-   @Column(name="title")
-   private String title;
+	@Column(name = "title")
+	private String title;
 
-   @Column(name="body")
-   private String body;
+	@Column(name = "body")
+	private String body;
 
-   @Column(name="createdAt")
-   private Date createdAt;
+	@Column(name = "createdAt")
+	private Date createdAt;
 
-   @Column(name="importedAt")
-   private Date importedAt;
-   
-   @Column (name = "platformPostID")
-   private String platformPostID;
-   
-  
-@ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
-   @JoinColumn(name="hasCreator")
-   private UserAccountEntity hasCreator;
+	@Column(name = "importedAt")
+	private Date importedAt;
 
-@ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
-   @JoinColumn(name="SearchId")
-   private SearchDetailsEntity searchDetailsId;
+	@Column(name = "platformPostID")
+	private String platformPostID;
 
-   public PostEntity() {}
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "locationId")
+	private LocationEntity locationId;
 
-   public PostEntity(Status tweet) {
-      this.postType = "tweet";
-      this.body = tweet.getText();
-      this.createdAt = tweet.getCreatedAt();
-      this.importedAt = new Date();
-      this.platformPostID = Long.toString(tweet.getId());
-   }
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "hasCreator")
+	private UserAccountEntity hasCreator;
 
-   /**
-    * @return the id
-    */
-   public Long getId() {
-      return Id;
-   }
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "SearchId")
+	private SearchDetailsEntity searchDetailsId;
 
-   /**
-    * @return the postType
-    */
-   public String getPostType() {
-      return postType;
-   }
+	public PostEntity() {
+	}
 
-   /**
-    * @param postType the postType to set
-    */
-   public void setPostType(String postType) {
-      this.postType = postType;
-   }
+	public PostEntity(Status tweet) {
+		this.postType = "tweet";
+		this.body = tweet.getText();
+		this.createdAt = tweet.getCreatedAt();
+		this.importedAt = new Date();
+		this.platformPostID = Long.toString(tweet.getId());
+		if (tweet.getGeoLocation() != null) {
+			this.locationId = new LocationEntity();
+			this.locationId.setGeoPoint(new GeoPointEntity(tweet.getGeoLocation()));
+		}
+	}
 
-   /**
-    * @return the title
-    */
-   public String getTitle() {
-      return title;
-   }
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return Id;
+	}
 
-   /**
-    * @param title the title to set
-    */
-   public void setTitle(String title) {
-      this.title = title;
-   }
+	/**
+	 * @return the postType
+	 */
+	public String getPostType() {
+		return postType;
+	}
 
-   /**
-    * @return the body
-    */
-   public String getBody() {
-      return body;
-   }
+	/**
+	 * @param postType
+	 *            the postType to set
+	 */
+	public void setPostType(String postType) {
+		this.postType = postType;
+	}
 
-   /**
-    * @param body the body to set
-    */
-   public void setBody(String body) {
-      this.body = body;
-   }
+	/**
+	 * @return the title
+	 */
+	public String getTitle() {
+		return title;
+	}
 
-   /**
-    * @return the createdAt
-    */
-   public Date getCreatedAt() {
-      return createdAt;
-   }
+	/**
+	 * @param title
+	 *            the title to set
+	 */
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-   /**
-    * @param createdAt the createdAt to set
-    */
-   public void setCreatedAt(Date createdAt) {
-      this.createdAt = createdAt;
-   }
+	/**
+	 * @return the body
+	 */
+	public String getBody() {
+		return body;
+	}
 
-   /**
-    * @return the importedAt
-    */
-   public Date getImportedAt() {
-      return importedAt;
-   }
+	/**
+	 * @param body
+	 *            the body to set
+	 */
+	public void setBody(String body) {
+		this.body = body;
+	}
 
-   /**
-    * @param importedAt the importedAt to set
-    */
-   public void setImportedAt(Date importedAt) {
-      this.importedAt = importedAt;
-   }
+	/**
+	 * @return the createdAt
+	 */
+	public Date getCreatedAt() {
+		return createdAt;
+	}
 
-   /**
-    * @return the hasCreator
-    */
-   public UserAccountEntity getHasCreator() {
-      return hasCreator;
-   }
+	/**
+	 * @param createdAt
+	 *            the createdAt to set
+	 */
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
 
-   /**
-    * @param hasCreator the hasCreator to set
-    */
-   public void setHasCreator(UserAccountEntity hasCreator) {
-      this.hasCreator = hasCreator;
-   }
-   
-   public String getPlatformPostID() {
-    return platformPostID;
-  }
+	/**
+	 * @return the importedAt
+	 */
+	public Date getImportedAt() {
+		return importedAt;
+	}
 
-  public void setPlatformPostID(String platformPostID) {
-    this.platformPostID = platformPostID;
-  }
-  
-  public SearchDetailsEntity getSearchDetailsId() {
-      return searchDetailsId;
-    }
-  
-  public void setSearchDetailsId(SearchDetailsEntity searchDetailsId) {
-    this.searchDetailsId = searchDetailsId;
-    
-  }
+	/**
+	 * @param importedAt
+	 *            the importedAt to set
+	 */
+	public void setImportedAt(Date importedAt) {
+		this.importedAt = importedAt;
+	}
+
+	/**
+	 * @return the hasCreator
+	 */
+	public UserAccountEntity getHasCreator() {
+		return hasCreator;
+	}
+
+	/**
+	 * @param hasCreator
+	 *            the hasCreator to set
+	 */
+	public void setHasCreator(UserAccountEntity hasCreator) {
+		this.hasCreator = hasCreator;
+	}
+
+	public String getPlatformPostID() {
+		return platformPostID;
+	}
+
+	public void setPlatformPostID(String platformPostID) {
+		this.platformPostID = platformPostID;
+	}
+
+	public SearchDetailsEntity getSearchDetailsId() {
+		return searchDetailsId;
+	}
+
+	public void setSearchDetailsId(SearchDetailsEntity searchDetailsId) {
+		this.searchDetailsId = searchDetailsId;
+
+	}
+
+	public LocationEntity getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(LocationEntity locationId) {
+		this.locationId = locationId;
+	}
 
 }
