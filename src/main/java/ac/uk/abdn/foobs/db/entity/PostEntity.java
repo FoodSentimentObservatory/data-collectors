@@ -21,6 +21,7 @@ import twitter4j.Status;
 @Entity
 @Table(name = "Post")
 public class PostEntity {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
@@ -193,5 +194,6 @@ public class PostEntity {
 	public void setLocationId(LocationEntity locationId) {
 		this.locationId = locationId;
 	}
+
 
 }

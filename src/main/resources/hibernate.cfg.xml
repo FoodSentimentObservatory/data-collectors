@@ -2,8 +2,10 @@
    <session-factory>
       <property name="connection.driver_class">com.microsoft.sqlserver.jdbc.SQLServerDriver</property>
       <property name="connection.url">
+
          jdbc:sqlserver://FOODSENTOBS\MSSQLSERVER;databaseName=Foobs-Test-3;integratedSecurity=true;
          </property>
+
       <property name="show_sql">false</property>
       <property name="current_session_context_class">thread</property>
 
@@ -18,7 +20,10 @@
       <mapping class="ac.uk.abdn.foobs.db.entity.PlatformEntity"/>
       <mapping class="ac.uk.abdn.foobs.db.entity.UserAccountEntity"/>
       <mapping class="ac.uk.abdn.foobs.db.entity.PostEntity"/><mapping
-         class="ac.uk.abdn.foobs.db.entity.SearchDetailsEntity"/>
+
+            class="ac.uk.abdn.foobs.db.entity.SearchDetailsEntity"/>
+</mapping>
+
 
    </session-factory>
 </hibernate-configuration>
