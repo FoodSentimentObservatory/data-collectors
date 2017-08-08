@@ -27,7 +27,7 @@ public class Config {
    public Config(File file) {
       readAndSetConfig(file);
    }
-
+//chnage added by Nikol
    private void readAndSetConfig(File file) {
       Document document = XMLUtils.readXml(file);
 
