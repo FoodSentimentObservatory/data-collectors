@@ -197,8 +197,8 @@ public class TaskManager {
         
         
         
-        DAO.saveSearchDetails(searchDetails);
-        DAO.saveSearchDetails(searchDetails2);
+        DAO.saveSearchDetails((SearchDetailsEntity) searchDetails);
+        DAO.saveSearchDetails((SearchDetailsEntity) searchDetails2);
         
         
         /// move to saveTweets
