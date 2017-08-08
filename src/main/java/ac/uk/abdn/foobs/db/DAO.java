@@ -124,7 +124,11 @@ public class DAO {
         Transaction transaction = session.beginTransaction();
 
         try {
-                    PostEntity post = new PostEntity(tweet);
+        	 PostEntity post = new PostEntity(tweet);
+        	 if (post.getLocationId()!=null) {
+        		 session.saveOrUpdate(post.getLocationId());
+        		 session.saveOrUpdate(post.getLocationId().getGeoPoint());
+        	 }
                     post.setHasCreator(user);
                     post.setSearchDetailsId(searchDetails);
                     session.saveOrUpdate(post);
@@ -141,8 +145,8 @@ public class DAO {
 				Transaction transaction = session.beginTransaction();
 		
 				try {
-					session.saveOrUpdate(searchDetails.getLocationId().getGeoPoint());
 					session.saveOrUpdate(searchDetails.getLocationId());
+					session.saveOrUpdate(searchDetails.getLocationId().getGeoPoint());
 					session.saveOrUpdate("ac.uk.abdn.foobs.db.entity.SearchDetailsEntity",searchDetails);
 					session.getTransaction().commit();
 				} catch (Exception e) {

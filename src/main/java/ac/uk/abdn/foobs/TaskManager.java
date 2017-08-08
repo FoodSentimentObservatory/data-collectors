@@ -126,7 +126,7 @@ public class TaskManager {
        
       //  double radius = 177.312;
        
-        String temporary_keywords_for_testing = "\"University of Aberdeen\" or and\"";
+        String temporary_keywords_for_testing = "and";
         
         //Create all searches here .. This will go into loop
         
