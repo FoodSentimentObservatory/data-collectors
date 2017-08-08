@@ -16,7 +16,6 @@ import javax.persistence.Table;
 import ac.uk.abdn.foobs.db.entity.SearchDetailsEntity;
 
 @Entity
-@Table(name = "Search")
 public class SearchObject extends SearchDetailsEntity{
 	
 	public Long id;
