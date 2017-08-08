@@ -240,6 +240,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 
 					requestCounter++;
 					System.out.println("Searching Twitter");
+					System.out.println("Query: " +query.getQuery().toString());
 					result = twitter.search(query);
 					
 
