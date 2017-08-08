@@ -152,6 +152,7 @@ public class TaskManager {
       
         
         SearchObject searchDetails2 = new SearchObject();
+        searchDetails.setKeywords(temporary_keywords_for_testing);
         
          location = new LocationEntity();
          geoLocation = new   GeoLocation(56.496467, -3.801270);

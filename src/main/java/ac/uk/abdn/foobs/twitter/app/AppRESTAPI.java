@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import ac.uk.abdn.foobs.Config;
 import ac.uk.abdn.foobs.twitter.BaseRESTAPI;
-
 import twitter4j.GeoLocation;
 import twitter4j.Paging;
 import twitter4j.Query;
@@ -300,9 +299,43 @@ public class AppRESTAPI extends BaseRESTAPI {
 				}
 			}
 			
+			// MAke SURE Completed gets removed from to do list
+	           List<Object[]> temp = new ArrayList (queriesWithSearchDeatils);
+				for (Object[] search : temp) {
+					SearchObject so = (SearchObject) search[0];
+
+					
+					// THREAD FOR SAVING NEEDS TO BE CALLED HERE OTHERWISE
+					// IF FINISHED BEFORE WINDOW RATE LIMIT EXCEEDED 
+					//  THE BATCH OF RESULTS FROM THE SEARCH THAT COMPLETED LAST WILL NEVER BE SAVED!!!
+					//System.out.println("Should be saving current results now .. ");
+
+					if (so.isCompleted()) {
+						System.out.println("\n------------SAVING LAST BATCH OF SEARCH RESULTS------------ ");
+						System.out.println("Search ID:  "+so.getUniqueID());
+						System.out.println("Group ID: " + so.getId());
+						UUID idOfSearch = so.getUniqueID();	
+						saveTweets ((HashSet) searchWindowResults.get(idOfSearch));
+						
+						
+						//remove from execution queue because completed
+						queriesWithSearchDeatils.remove(search);	
+						//remove results so it does not get saved when rate limit by other searches is completed
+						searchWindowResults.remove(idOfSearch);
+					}
+
+				}
+				
+				
+	            //IF all searches completed then exit
+				if (queriesWithSearchDeatils.size()==0) {
+					System.out.println("ALL searches COMPLETED exiting.. ");
+	                break;
+				}
+
+			}
+
 		}
-   }
-   
    
    
    
