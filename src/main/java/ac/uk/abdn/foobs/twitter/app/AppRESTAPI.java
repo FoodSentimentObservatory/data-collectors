@@ -57,11 +57,18 @@ public class AppRESTAPI extends BaseRESTAPI {
 		
 		int count =0;
 		
+		ArrayList threads = new ArrayList ();
+		
 		for (Status tweet : tweets) {
-            count++;
-            if (count%1000==0) {
-            	System.out.print(".");
-            }
+			
+			
+            //count++;
+            //if (count%1000==0) {
+            //	System.out.print(".");
+            //}
+			
+			Runnable saveSingleTweet = () -> {  
+			
 			// create a UserAccountEntity for the Status user to ensure the
 			// correct
 			// platformAccountId is used as part of the DB lookup.
@@ -82,7 +89,22 @@ public class AppRESTAPI extends BaseRESTAPI {
 			}
 			basicUser = DAO.saveOrUpdateUserAccount(basicUser);
 			DAO.saveTweet(basicUser, tweet, searchDetails);
+			};
+			// start the thread
+			threads.add(saveSingleTweet);
+			 new Thread(saveSingleTweet).start();
 		}
+		
+		
+		for(int i = 0; i < threads.size(); i++)
+			try {
+				((Thread) threads.get(i)).join();
+			} catch (InterruptedException e) {
+				System.out.println("Threading issue");
+				e.printStackTrace();
+			}
+		
+		
 	}
 
 	/**
