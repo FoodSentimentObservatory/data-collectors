@@ -10,3 +10,4 @@ eclimd.log
 src/main/resources/twitter4j.properties
 config.xml
 .DS_Store
+src/test/

@@ -24,7 +24,7 @@ public class SearchDetailsEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
-	private Long Id;
+	private Long id;
 
 	@Column(name = "StartOfSearch")
 	private Date startOfSearch;
@@ -47,7 +47,7 @@ public class SearchDetailsEntity {
 	private Set<PostEntity> posts = new HashSet<PostEntity>();
 
 	public Long getId() {
-		return Id;
+		return id;
 	}
 
 	public Date getStartOfSearch() {

@@ -20,6 +20,7 @@ import ac.uk.abdn.foobs.db.entity.SearchDetailsEntity;
 import ac.uk.abdn.foobs.db.entity.UserAccountEntity;
 import ac.uk.abdn.foobs.fsa.RatingsHandler;
 import ac.uk.abdn.foobs.twitter.app.AppRESTAPI;
+import ac.uk.abdn.foobs.twitter.app.SearchObject;
 import ac.uk.abdn.foobs.twitter.user.TwitterHandleFinder;
 import ac.uk.abdn.foobs.twitter.user.UserRESTAPI;
 import twitter4j.GeoLocation;
@@ -89,7 +90,7 @@ public class TaskManager {
 
         List<String> keywords = new ArrayList<String>();
 
-        SearchDetailsEntity searchDetails = new SearchDetailsEntity();
+        
         
         String[] keywordsArray;
         try {
@@ -103,39 +104,104 @@ public class TaskManager {
                     keywords.add(keyword);
         }
         System.out.println(keywords);
+        
+        
+        
+        //ignore the keywords until config is read properly
+        
+        
+        
         PlatformEntity twitter = DAO.getPlatfromBasedOnName("Twitter");
+        AppRESTAPI restAPI = new AppRESTAPI(config);
+        
         // GeoLocation(56.496467, -3.801270) approx coordinates for Scotland
         // GeoLocation(53.157312, -1.362305) approx coordinates for England
         // GeoLocation (52.104256,-0.516357) approx coordinates for England including London
         // radius for all the above: 177.312
         // GeoLocation (50.700517,-3.993530) approx coordinates for Plymouth
         // radius for Plymouth: 50
-        AppRESTAPI restAPI = new AppRESTAPI(config);
-
-        GeoLocation geoLocation = new   GeoLocation (52.104256,-0.516357);
-        Date startDate = new Date();
-        double radius = 177.312;
-
-        Set<Status> tweets = restAPI.searchKeywordListGeoCoded(keywords, 1000000, geoLocation, radius, Unit.km);
-        Date endDate = new Date();
         
-     // populate the following however is suitable
-        searchDetails.setStartOfSearch(startDate);
-        searchDetails.setEndOfSearch(endDate);
-        String queryString = keywords.stream().map(Object::toString).collect(Collectors.joining("\" OR \""));
-        queryString = "\""+queryString+"\"";
-        searchDetails.setKeywords(queryString);
-        String note = " "; // anything that you want to note about the search
-        searchDetails.setNote(note);
-        searchDetails.setRadius(radius);
+        // This will be read from the config
+     //   GeoLocation geoLocation = new   GeoLocation (52.104256,-0.516357);
+       
+      //  double radius = 177.312;
+       
+        String temporary_keywords_for_testing = "\"University of Aberdeen\" or and\"";
+        
+        //Create all searches here .. This will go into loop
+        
+        ArrayList searches = new ArrayList();
+        
+        SearchObject searchDetails = new SearchObject();
+        searchDetails.setKeywords(temporary_keywords_for_testing);
+       
         LocationEntity location = new LocationEntity();
-        location.setDisplayString("");
+        GeoLocation geoLocation = new   GeoLocation(53.157312, -1.362305);
         GeoPointEntity geoPoint = new GeoPointEntity(geoLocation);
         geoPoint.setLocationId(location);
         location.setGeoPoint(geoPoint);
-        searchDetails.setLocationId(location);
-        DAO.saveSearchDetails(searchDetails);
+        location.setDisplayString("England");
         
+        searchDetails.setRadius(177.312);
+        
+        searchDetails.setLocationId(location);
+        searchDetails.setLocationId(location);
+        
+        searchDetails.setNote("England");
+        
+      
+        
+        SearchObject searchDetails2 = new SearchObject();
+        
+         location = new LocationEntity();
+         geoLocation = new   GeoLocation(56.496467, -3.801270);
+         geoPoint = new GeoPointEntity(geoLocation);
+        geoPoint.setLocationId(location);
+        location.setGeoPoint(geoPoint);
+        location.setDisplayString("Scotland");
+        
+        searchDetails2.setRadius(177.312);
+        
+        searchDetails2.setLocationId(location);
+        searchDetails2.setLocationId(location);
+        
+        searchDetails2.setNote("Scotland");
+        
+        
+        searches.add(searchDetails);
+		searches.add(searchDetails2);
+        
+        //Loop will end here
+        
+        
+        
+        
+        
+        Date startDate = new Date();
+       // Set<Status> tweets = restAPI.searchKeywordListGeoCoded(keywords, 1000000, geoLocation, radius, Unit.km);
+        restAPI.searchKeywordListGeoCodedMultipleSearches(searches);
+        Date endDate = new Date();
+        
+     // populate the following however is suitable
+       
+        //Looop to add the times
+        
+        searchDetails.setStartOfSearch(startDate);
+        searchDetails.setEndOfSearch(endDate);
+       
+        
+        
+        //String queryString = keywords.stream().map(Object::toString).collect(Collectors.joining("\" OR \""));
+        //queryString = "\""+queryString+"\"";
+        
+        
+        
+        DAO.saveSearchDetails(searchDetails);
+        DAO.saveSearchDetails(searchDetails2);
+        
+        
+        /// move to saveTweets
+        /*
         for (Status tweet : tweets){
                     
                     
@@ -157,7 +223,7 @@ public class TaskManager {
                     }
                     basicUser = DAO.saveOrUpdateUserAccount(basicUser);
                     DAO.saveTweet(basicUser, tweet, searchDetails);
-        }
+        } */
         
 }
 
