@@ -92,7 +92,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 			Query query = new Query();
 			
 			String queryString = search.getKeywords() ;
-			queryString = "\"" + queryString + "\"";
+			
 			System.out.println("\n---------------GENRATING SEARCH QUERY-----------");
 			System.out.println("Search ID: " + search.getUniqueID() );
 			System.out.println("Keywords: "  + queryString);
