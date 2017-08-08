@@ -12,15 +12,18 @@ import java.util.UUID;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import ac.uk.abdn.foobs.db.entity.SearchDetailsEntity;
 
 @Entity
 public class SearchObject extends SearchDetailsEntity{
 	
-	public Long id;
 	
+	
+	@Transient
 	public UUID uniqueID;
+	@Transient
 	public boolean completed =false;
 	
 	
@@ -36,13 +39,6 @@ public class SearchObject extends SearchDetailsEntity{
 		this.uniqueID = UUID.randomUUID();
 	}
 	
-	
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 
 	public UUID getUniqueID() {

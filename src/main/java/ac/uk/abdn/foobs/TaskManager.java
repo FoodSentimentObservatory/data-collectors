@@ -196,7 +196,6 @@ public class TaskManager {
         //queryString = "\""+queryString+"\"";
         
         
-        
         DAO.saveSearchDetails((SearchDetailsEntity) searchDetails);
         DAO.saveSearchDetails((SearchDetailsEntity) searchDetails2);
         
