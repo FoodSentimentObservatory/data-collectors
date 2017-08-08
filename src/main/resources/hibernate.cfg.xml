@@ -21,8 +21,8 @@
       <mapping class="ac.uk.abdn.foobs.db.entity.UserAccountEntity"/>
       <mapping class="ac.uk.abdn.foobs.db.entity.PostEntity"/><mapping
 
-            class="ac.uk.abdn.foobs.db.entity.SearchDetailsEntity"/>
-</mapping>
+            class="ac.uk.abdn.foobs.db.entity.SearchDetailsEntity"/><mapping
+   		class="ac.uk.abdn.foobs.twitter.app.SearchObject"/>
 
 
    </session-factory>
