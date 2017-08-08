@@ -10,6 +10,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import ac.uk.abdn.foobs.Config;
+import ac.uk.abdn.foobs.db.DAO;
+import ac.uk.abdn.foobs.db.entity.AgentEntity;
+import ac.uk.abdn.foobs.db.entity.PlatformEntity;
+import ac.uk.abdn.foobs.db.entity.SearchDetailsEntity;
+import ac.uk.abdn.foobs.db.entity.UserAccountEntity;
 import ac.uk.abdn.foobs.twitter.BaseRESTAPI;
 import twitter4j.GeoLocation;
 import twitter4j.Paging;
@@ -45,8 +50,32 @@ public class AppRESTAPI extends BaseRESTAPI {
    }
 
    //
-   public static void saveTweets (Set<Status> tweets) {
+   public  void saveTweets (Set<Status> tweets, SearchDetailsEntity searchDetails) {
+	PlatformEntity twitter =   DAO.getPlatfromBasedOnName("Twitter");
+	   
 		System.out.println("Saving request received for " + tweets.size() + " tweets");
+		for (Status tweet : tweets){
+            
+            
+		    // create a UserAccountEntity for the Status user to ensure the correct
+		    // platformAccountId is used as part of the DB lookup.
+		    UserAccountEntity basicUser = new UserAccountEntity(tweet.getUser());
+		                    UserAccountEntity dbUser = DAO.getUserAccountByIdAndPlatform(basicUser.getPlatformAccountId(),  twitter);
+		                    if (dbUser != null){
+		                                // already have this user in the DB
+		                                basicUser = dbUser;
+		                                // TODO: This will not overwrite the existing record of the user with any changes they have made, 
+		                                // details from their profile was stored in the DB
+		                    } else {
+		                                // new user to the system, so initialise it
+		                       basicUser.setPlatformId(twitter);
+		                       AgentEntity agent = new AgentEntity();
+		                       agent.setAgentType("Person");
+		                       basicUser.setAgentId(agent);
+		                    }
+		                    basicUser = DAO.saveOrUpdateUserAccount(basicUser);
+		                    DAO.saveTweet(basicUser, tweet, searchDetails);
+		        }
 	}
    
    /**
@@ -177,7 +206,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 						System.out.println("\n------------SAVING END OF SEARCH WINDOW RESULTS------------ ");
 						System.out.println("Search ID:  "+so.getUniqueID());
 						System.out.println("Group ID: " + so.getId());
-						saveTweets ((HashSet) searchWindowResults.get(idOfSearch));
+						saveTweets ((HashSet) searchWindowResults.get(idOfSearch),so);
 						
 						//reset window results storage variable
 						((HashSet) searchWindowResults.get(idOfSearch)).clear();
@@ -315,7 +344,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 						System.out.println("Search ID:  "+so.getUniqueID());
 						System.out.println("Group ID: " + so.getId());
 						UUID idOfSearch = so.getUniqueID();	
-						saveTweets ((HashSet) searchWindowResults.get(idOfSearch));
+						saveTweets ((HashSet) searchWindowResults.get(idOfSearch),so);
 						
 						
 						//remove from execution queue because completed

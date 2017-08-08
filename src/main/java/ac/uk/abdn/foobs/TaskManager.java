@@ -180,7 +180,13 @@ public class TaskManager {
         
         Date startDate = new Date();
        // Set<Status> tweets = restAPI.searchKeywordListGeoCoded(keywords, 1000000, geoLocation, radius, Unit.km);
+       
+        DAO.saveSearchDetails((SearchDetailsEntity) searchDetails);
+        DAO.saveSearchDetails((SearchDetailsEntity) searchDetails2);
+        
         restAPI.searchKeywordListGeoCodedMultipleSearches(searches);
+        
+        
         Date endDate = new Date();
         
      // populate the following however is suitable
@@ -189,15 +195,21 @@ public class TaskManager {
         
         searchDetails.setStartOfSearch(startDate);
         searchDetails.setEndOfSearch(endDate);
+        
+        searchDetails2.setStartOfSearch(startDate);
+        searchDetails2.setEndOfSearch(endDate);
        
+        
+
+        DAO.saveSearchDetails((SearchDetailsEntity) searchDetails);
+        DAO.saveSearchDetails((SearchDetailsEntity) searchDetails2);
         
         
         //String queryString = keywords.stream().map(Object::toString).collect(Collectors.joining("\" OR \""));
         //queryString = "\""+queryString+"\"";
         
         
-        DAO.saveSearchDetails((SearchDetailsEntity) searchDetails);
-        DAO.saveSearchDetails((SearchDetailsEntity) searchDetails2);
+       
         
         
         /// move to saveTweets
