@@ -239,10 +239,12 @@ public class AppRESTAPI extends BaseRESTAPI {
 					SearchObject so = (SearchObject) ((Object[]) queriesWithSearchDeatils.get(i))[0];
 
 					requestCounter++;
-					
+					System.out.println("Searching Twitter");
 					result = twitter.search(query);
+					
 
 					tweets.addAll(result.getTweets());
+					System.out.println("Result : "+ tweets.size());
 
 				//	System.out.println("Result size for search id " + so.getUniqueID() + "  common id " + so.getId()
 					//		+ " : " + result.getTweets().size());
