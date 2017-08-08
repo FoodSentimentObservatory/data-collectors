@@ -152,7 +152,7 @@ public class TaskManager {
       
         
         SearchObject searchDetails2 = new SearchObject();
-        searchDetails.setKeywords(temporary_keywords_for_testing);
+        searchDetails2.setKeywords(temporary_keywords_for_testing);
         
          location = new LocationEntity();
          geoLocation = new   GeoLocation(56.496467, -3.801270);
@@ -179,6 +179,8 @@ public class TaskManager {
         
         
         Date startDate = new Date();
+        searchDetails.setStartOfSearch(startDate);
+        searchDetails2.setStartOfSearch(startDate);
        // Set<Status> tweets = restAPI.searchKeywordListGeoCoded(keywords, 1000000, geoLocation, radius, Unit.km);
        
         DAO.saveSearchDetails((SearchDetailsEntity) searchDetails);
@@ -193,10 +195,10 @@ public class TaskManager {
        
         //Looop to add the times
         
-        searchDetails.setStartOfSearch(startDate);
+        
         searchDetails.setEndOfSearch(endDate);
         
-        searchDetails2.setStartOfSearch(startDate);
+       
         searchDetails2.setEndOfSearch(endDate);
        
         
