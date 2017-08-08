@@ -143,7 +143,7 @@ public class DAO {
 				try {
 					session.saveOrUpdate(searchDetails.getLocationId().getGeoPoint());
 					session.saveOrUpdate(searchDetails.getLocationId());
-					session.saveOrUpdate(searchDetails);
+					session.saveOrUpdate("ac.uk.abdn.foobs.db.entity.SearchDetailsEntity",searchDetails);
 					session.getTransaction().commit();
 				} catch (Exception e) {
 					transaction.rollback();

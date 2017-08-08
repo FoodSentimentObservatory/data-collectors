@@ -21,7 +21,6 @@ import javax.persistence.InheritanceType;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "Search")
 public class SearchDetailsEntity {
 

@@ -16,25 +16,24 @@ import javax.persistence.Transient;
 
 import ac.uk.abdn.foobs.db.entity.SearchDetailsEntity;
 
-@Entity
+
 public class SearchObject extends SearchDetailsEntity{
 	
 	
 	
-	@Transient
+
 	public UUID uniqueID;
-	@Transient
+
 	public boolean completed =false;
 	
 	
 	
 	//default max value so we get the most recent tweet available - i.e. new search
-	@Transient
+
 	public long lastKonwnID=Long.MAX_VALUE;
 	//optional set if some searches were were performed  previously 
 		//and this will ensure that once teh ID is found in a search 
 		//again the search will not go further in the past
-	@Transient
 	public long lastKonwnCachedID=0;
 	
 	public SearchObject () {
