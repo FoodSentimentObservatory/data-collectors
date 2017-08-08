@@ -145,7 +145,7 @@ public class TaskManager {
         searchDetails.setRadius(177.312);
         
         searchDetails.setLocationId(location);
-        searchDetails.setLocationId(location);
+      
         
         searchDetails.setNote("England");
         
@@ -164,7 +164,7 @@ public class TaskManager {
         searchDetails2.setRadius(177.312);
         
         searchDetails2.setLocationId(location);
-        searchDetails2.setLocationId(location);
+      
         
         searchDetails2.setNote("Scotland");
         

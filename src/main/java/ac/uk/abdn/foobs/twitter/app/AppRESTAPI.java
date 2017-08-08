@@ -30,80 +30,88 @@ import twitter4j.conf.ConfigurationBuilder;
 
 public class AppRESTAPI extends BaseRESTAPI {
 
-   public AppRESTAPI(Config config) {
-      super(config);
-   }
-
-   protected void connectToTwitter(Config config) {
-
-      try {
-         ConfigurationBuilder cb = new ConfigurationBuilder();
-         cb.setApplicationOnlyAuthEnabled(true);
-         cb.setOAuthConsumerKey(config.getTwitterAppConsumerKey());
-         cb.setOAuthConsumerSecret(config.getTwitterAppConsumerSecret());
-         TwitterFactory tf = new TwitterFactory(cb.build());
-         twitter = tf.getInstance();
-         twitter.getOAuth2Token();
-      } catch (TwitterException e) {
-         System.out.println(e.getErrorMessage());
-      }
-   }
-
-   //
-   public  void saveTweets (Set<Status> tweets, SearchDetailsEntity searchDetails) {
-	PlatformEntity twitter =   DAO.getPlatfromBasedOnName("Twitter");
-	   
-		System.out.println("Saving request received for " + tweets.size() + " tweets");
-		for (Status tweet : tweets){
-            
-            
-		    // create a UserAccountEntity for the Status user to ensure the correct
-		    // platformAccountId is used as part of the DB lookup.
-		    UserAccountEntity basicUser = new UserAccountEntity(tweet.getUser());
-		                    UserAccountEntity dbUser = DAO.getUserAccountByIdAndPlatform(basicUser.getPlatformAccountId(),  twitter);
-		                    if (dbUser != null){
-		                                // already have this user in the DB
-		                                basicUser = dbUser;
-		                                // TODO: This will not overwrite the existing record of the user with any changes they have made, 
-		                                // details from their profile was stored in the DB
-		                    } else {
-		                                // new user to the system, so initialise it
-		                       basicUser.setPlatformId(twitter);
-		                       AgentEntity agent = new AgentEntity();
-		                       agent.setAgentType("Person");
-		                       basicUser.setAgentId(agent);
-		                    }
-		                    basicUser = DAO.saveOrUpdateUserAccount(basicUser);
-		                    DAO.saveTweet(basicUser, tweet, searchDetails);
-		        }
+	public AppRESTAPI(Config config) {
+		super(config);
 	}
-   
-   /**
-    * 
-    * @param searches
-    */
-   
-   public  void searchKeywordListGeoCodedMultipleSearches(List<SearchObject> searches) {
+
+	protected void connectToTwitter(Config config) {
+
+		try {
+			ConfigurationBuilder cb = new ConfigurationBuilder();
+			cb.setApplicationOnlyAuthEnabled(true);
+			cb.setOAuthConsumerKey(config.getTwitterAppConsumerKey());
+			cb.setOAuthConsumerSecret(config.getTwitterAppConsumerSecret());
+			TwitterFactory tf = new TwitterFactory(cb.build());
+			twitter = tf.getInstance();
+			twitter.getOAuth2Token();
+		} catch (TwitterException e) {
+			System.out.println(e.getErrorMessage());
+		}
+	}
+
+	//
+	public void saveTweets(Set<Status> tweets, SearchDetailsEntity searchDetails) {
+		PlatformEntity twitter = DAO.getPlatfromBasedOnName("Twitter");
+
+		System.out.println("Saving request received for " + tweets.size() + " tweets");
+		
+		int count =0;
+		
+		for (Status tweet : tweets) {
+            count++;
+            if (count%1000==0) {
+            	System.out.print(".");
+            }
+			// create a UserAccountEntity for the Status user to ensure the
+			// correct
+			// platformAccountId is used as part of the DB lookup.
+			UserAccountEntity basicUser = new UserAccountEntity(tweet.getUser());
+			UserAccountEntity dbUser = DAO.getUserAccountByIdAndPlatform(basicUser.getPlatformAccountId(), twitter);
+			if (dbUser != null) {
+				// already have this user in the DB
+				basicUser = dbUser;
+				// TODO: This will not overwrite the existing record of the user
+				// with any changes they have made,
+				// details from their profile was stored in the DB
+			} else {
+				// new user to the system, so initialise it
+				basicUser.setPlatformId(twitter);
+				AgentEntity agent = new AgentEntity();
+				agent.setAgentType("Person");
+				basicUser.setAgentId(agent);
+			}
+			basicUser = DAO.saveOrUpdateUserAccount(basicUser);
+			DAO.saveTweet(basicUser, tweet, searchDetails);
+		}
+	}
+
+	/**
+	 * 
+	 * @param searches
+	 */
+
+	public void searchKeywordListGeoCodedMultipleSearches(List<SearchObject> searches) {
 
 		List<Object[]> result = new ArrayList();
 		// prepare list of QUERIES from SearchOBJECT list
 
 		for (SearchObject search : searches) {
 			Query query = new Query();
-			
-			String queryString = search.getKeywords() ;
-			
+
+			String queryString = search.getKeywords();
+
 			System.out.println("\n---------------GENRATING SEARCH QUERY-----------");
-			System.out.println("Search ID: " + search.getUniqueID() );
-			System.out.println("Keywords: "  + queryString);
-	
+			System.out.println("Search ID: " + search.getUniqueID());
+			System.out.println("Keywords: " + queryString);
+
 			query.setQuery(queryString);
-			query.setGeoCode(new GeoLocation(search.getLocationId().getGeoPoint().getLatitude(),search.getLocationId().getGeoPoint().getLongitude()), search.getRadius(), Unit.km);
+			query.setGeoCode(new GeoLocation(search.getLocationId().getGeoPoint().getLatitude(),
+					search.getLocationId().getGeoPoint().getLongitude()), search.getRadius(), Unit.km);
 			// NO point bothering with any other number as we will
 			// search for all we can get
 			query.setCount(100);
 			query.setLang("en");
-		
+
 			// create a tuple with query and
 			Object temp[] = new Object[2];
 			temp[0] = search;
@@ -113,12 +121,13 @@ public class AppRESTAPI extends BaseRESTAPI {
 
 		searchMultiple(result);
 	}
-   /**
-    * 
-    * @param queriesWithSearchDeatils
-    */
-   
-   public  void searchMultiple(List<Object[]> queriesWithSearchDeatils) {
+
+	/**
+	 * 
+	 * @param queriesWithSearchDeatils
+	 */
+
+	public void searchMultiple(List<Object[]> queriesWithSearchDeatils) {
 		// ------------------------------TO BE MOVED-----------
 		// !!! this needs to be moved to connect to twitter and pulled from
 		// config file
@@ -172,8 +181,6 @@ public class AppRESTAPI extends BaseRESTAPI {
 		// ------------------------------END STORRAGE -----------
 
 		while (true) {
-			
-			
 
 			// check when new search started
 			if (newsearch) {
@@ -186,7 +193,21 @@ public class AppRESTAPI extends BaseRESTAPI {
 			}
 
 			try {
+
 				if (requestCounter == RATE_LIMIT || (requestCounter + queriesWithSearchDeatils.size()) > RATE_LIMIT) {
+
+					for (Object[] search : queriesWithSearchDeatils) {
+						SearchObject so = (SearchObject) search[0];
+						UUID idOfSearch = so.getUniqueID();
+						System.out.println("\n------------SAVING END OF SEARCH WINDOW RESULTS------------ ");
+						System.out.println("Search ID:  " + so.getUniqueID());
+						System.out.println("Group ID: " + so.getId());
+						saveTweets((HashSet) searchWindowResults.get(idOfSearch), so);
+
+						// reset window results storage variable
+						((HashSet) searchWindowResults.get(idOfSearch)).clear();
+					}
+
 					System.out.println("\n------------SEARCH WINDOW END------------ ");
 					System.out.println("\n Rate limit reached at " + LocalDateTime.now());
 					System.out.println("Request Calls made " + requestCounter);
@@ -196,27 +217,20 @@ public class AppRESTAPI extends BaseRESTAPI {
 					long searchLenght = currTime - searchStart;
 					System.out.println("Search window took ~ : " + searchLenght / 60000
 							+ "minutes (if output 0 then less than 1 minute)");
-					System.out.println("Will wait for: ~ " + ((WINDOW_LENGHT - searchLenght) / 60000)
-							+ "minutes (if output 0 then less than 1 minute)");
+					if (WINDOW_LENGHT - searchLenght + 3000 <= 0) {
+						System.out.println("We wasted  ~ " + ((WINDOW_LENGHT - searchLenght) / 60000)
+								+ "minutes waiting for tweets to save");
+					} else
 
-					
-					for (Object[] search : queriesWithSearchDeatils) {
-						SearchObject so = (SearchObject) search[0];
-						UUID idOfSearch = so.getUniqueID();	
-						System.out.println("\n------------SAVING END OF SEARCH WINDOW RESULTS------------ ");
-						System.out.println("Search ID:  "+so.getUniqueID());
-						System.out.println("Group ID: " + so.getId());
-						saveTweets ((HashSet) searchWindowResults.get(idOfSearch),so);
-						
-						//reset window results storage variable
-						((HashSet) searchWindowResults.get(idOfSearch)).clear();
+					{
+						System.out.println("Will wait for: ~ " + ((WINDOW_LENGHT - searchLenght) / 60000)
+								+ "minutes (if output = 0 then teh search will resume in less than a minute)");
+
+						Thread.sleep(WINDOW_LENGHT - searchLenght + 3000);
+						System.out.println("Resuming search at " + LocalDateTime.now());
+						newsearch = true;
+						continue;
 					}
-					
-					// added 3 seconds grace period just in case....
-					Thread.sleep(WINDOW_LENGHT - searchLenght + 3000);
-					System.out.println("Resuming search at " + LocalDateTime.now());
-					newsearch = true;
-					continue;
 				}
 
 			} catch (InterruptedException e) {
@@ -226,39 +240,38 @@ public class AppRESTAPI extends BaseRESTAPI {
 
 			// loop to perform all searches
 			try {
-				//System.out.println("------TASKS REMAINING ----------");
-				//System.out.println(queriesWithSearchDeatils.size());
+				// System.out.println("------TASKS REMAINING ----------");
+				// System.out.println(queriesWithSearchDeatils.size());
 				for (int i = 0; i < queriesWithSearchDeatils.size(); i++) {
-					
-					
-					//OPTIONAL show progress
-					if  (requestCounter%20 ==0) {System.out.println("");}
+
+					// OPTIONAL show progress
+					if (requestCounter % 20 == 0) {
+						System.out.println("");
+					}
 					System.out.print(".");
-					
+
 					Query query = (Query) ((Object[]) queriesWithSearchDeatils.get(i))[1];
 					SearchObject so = (SearchObject) ((Object[]) queriesWithSearchDeatils.get(i))[0];
 
 					requestCounter++;
-					System.out.println("Searching Twitter");
-					System.out.println("Query: " +query.getQuery().toString());
+
 					result = twitter.search(query);
-					
 
 					tweets.addAll(result.getTweets());
-					System.out.println("Result : "+ tweets.size());
 
-				//	System.out.println("Result size for search id " + so.getUniqueID() + "  common id " + so.getId()
-					//		+ " : " + result.getTweets().size());
+					// System.out.println("Result size for search id " +
+					// so.getUniqueID() + " common id " + so.getId()
+					// + " : " + result.getTweets().size());
 
 					// ------------------------------STOPPING CONDITION (no more
 					// Tweets for one search)-----------
 					if (result.getTweets().size() == 0) {
 						System.out.println("\n------------COMPLETED SEARCH ALERT------------ ");
-						System.out.println("Search ID:  "+so.getUniqueID());
+						System.out.println("Search ID:  " + so.getUniqueID());
 						System.out.println("Group ID: " + so.getId());
 						System.out.println("No more Tweets found in this search. Marking as complete...");
-						System.out.println("Tweets found in this search window: "+((HashSet) searchWindowResults.get(so.getUniqueID())).size());
-						
+						System.out.println("Tweets found in this search window: "
+								+ ((HashSet) searchWindowResults.get(so.getUniqueID())).size());
 
 						((SearchObject) ((Object[]) queriesWithSearchDeatils.get(i))[0]).setCompleted(true);
 					}
@@ -266,32 +279,33 @@ public class AppRESTAPI extends BaseRESTAPI {
 					// more Tweets)-----------
 
 					for (Status tweet : tweets) {
-						
 
 						if (tweet.getId() < so.getLastKonwnID()) {
 							((SearchObject) ((Object[]) queriesWithSearchDeatils.get(i))[0])
 									.setLastKonwnID(tweet.getId());
 
 						}
-						
-						//check if this search contains any ID that we already know
-						if (so.getLastKonwnCachedID()!=0&&tweet.getId()<=so.getLastKonwnCachedID()) {
+
+						// check if this search contains any ID that we already
+						// know
+						if (so.getLastKonwnCachedID() != 0 && tweet.getId() <= so.getLastKonwnCachedID()) {
 							System.out.println("\n------------BEGINING OF CACHED SEARCH FOUND ------------ ");
-							System.out.println("Search ID:  "+so.getUniqueID());
+							System.out.println("Search ID:  " + so.getUniqueID());
 							System.out.println("Group ID: " + so.getId());
-							System.out.println("Tweets "+so.getLastKonwnCachedID() +" found -> will not search further in the past, so marking as complete");
+							System.out.println("Tweets " + so.getLastKonwnCachedID()
+									+ " found -> will not search further in the past, so marking as complete");
 							((SearchObject) ((Object[]) queriesWithSearchDeatils.get(i))[0]).setCompleted(true);
 							break;
 						}
-						
-						
-					
+
 						((HashSet) searchWindowResults.get(so.getUniqueID())).add(tweet);
-						
+
 					}
-					
-		//			System.out.println("Search ID:  "+so.getUniqueID());
-		//			System.out.println("Tweet ID :  "+((SearchObject)((Object[]) queriesWithSearchDeatils.get(i))[0]).getLastKonwnID());
+
+					// System.out.println("Search ID: "+so.getUniqueID());
+					// System.out.println("Tweet ID :
+					// "+((SearchObject)((Object[])
+					// queriesWithSearchDeatils.get(i))[0]).getLastKonwnID());
 
 					query.setMaxId(
 							((SearchObject) ((Object[]) queriesWithSearchDeatils.get(i))[0]).getLastKonwnID() - 1);
@@ -304,11 +318,12 @@ public class AppRESTAPI extends BaseRESTAPI {
 					// RESET tweets
 					tweets.clear();
 
-					
-					//System.out.println("Request counter: " + requestCounter);
-					//System.out
-					//		.println("Unique  Tweets: " + ((HashSet) searchWindowResults.get(so.getUniqueID())).size());
-					//System.out.println("All  Tweets: " + (int) allWindowsResults.get(so.getUniqueID()));
+					// System.out.println("Request counter: " + requestCounter);
+					// System.out
+					// .println("Unique Tweets: " + ((HashSet)
+					// searchWindowResults.get(so.getUniqueID())).size());
+					// System.out.println("All Tweets: " + (int)
+					// allWindowsResults.get(so.getUniqueID()));
 
 				}
 
@@ -330,202 +345,197 @@ public class AppRESTAPI extends BaseRESTAPI {
 					requestCounter = RATE_LIMIT;
 				}
 			}
-			
+
 			// MAke SURE Completed gets removed from to do list
-	           List<Object[]> temp = new ArrayList (queriesWithSearchDeatils);
-				for (Object[] search : temp) {
-					SearchObject so = (SearchObject) search[0];
+			List<Object[]> temp = new ArrayList(queriesWithSearchDeatils);
+			for (Object[] search : temp) {
+				SearchObject so = (SearchObject) search[0];
 
-					
-					// THREAD FOR SAVING NEEDS TO BE CALLED HERE OTHERWISE
-					// IF FINISHED BEFORE WINDOW RATE LIMIT EXCEEDED 
-					//  THE BATCH OF RESULTS FROM THE SEARCH THAT COMPLETED LAST WILL NEVER BE SAVED!!!
-					//System.out.println("Should be saving current results now .. ");
+				// THREAD FOR SAVING NEEDS TO BE CALLED HERE OTHERWISE
+				// IF FINISHED BEFORE WINDOW RATE LIMIT EXCEEDED
+				// THE BATCH OF RESULTS FROM THE SEARCH THAT COMPLETED LAST WILL
+				// NEVER BE SAVED!!!
+				// System.out.println("Should be saving current results now ..
+				// ");
 
-					if (so.isCompleted()) {
-						System.out.println("\n------------SAVING LAST BATCH OF SEARCH RESULTS------------ ");
-						System.out.println("Search ID:  "+so.getUniqueID());
-						System.out.println("Group ID: " + so.getId());
-						UUID idOfSearch = so.getUniqueID();	
-						saveTweets ((HashSet) searchWindowResults.get(idOfSearch),so);
-						
-						
-						//remove from execution queue because completed
-						queriesWithSearchDeatils.remove(search);	
-						//remove results so it does not get saved when rate limit by other searches is completed
-						searchWindowResults.remove(idOfSearch);
-					}
+				if (so.isCompleted()) {
+					System.out.println("\n------------SAVING LAST BATCH OF SEARCH RESULTS------------ ");
+					System.out.println("Search ID:  " + so.getUniqueID());
+					System.out.println("Group ID: " + so.getId());
+					UUID idOfSearch = so.getUniqueID();
+					saveTweets((HashSet) searchWindowResults.get(idOfSearch), so);
 
-				}
-				
-				
-	            //IF all searches completed then exit
-				if (queriesWithSearchDeatils.size()==0) {
-					System.out.println("ALL searches COMPLETED exiting.. ");
-	                break;
+					// remove from execution queue because completed
+					queriesWithSearchDeatils.remove(search);
+					// remove results so it does not get saved when rate limit
+					// by other searches is completed
+					searchWindowResults.remove(idOfSearch);
 				}
 
 			}
 
+			// IF all searches completed then exit
+			if (queriesWithSearchDeatils.size() == 0) {
+				System.out.println("ALL searches COMPLETED exiting.. ");
+				break;
+			}
+
 		}
-   
-   
-   
-   
-   
-   
-   
-   public Set<Status> search(Query query, int numberOfTweets) {
-      String resource = "/search/tweets";
-      QueryResult result = null;
-      Set<Status> tweets = new HashSet<Status>();
-      int prevTweetSize = tweets.size();
-      long lastId = Long.MAX_VALUE;
-      query.setLang("en");
-      while (tweets.size() < numberOfTweets) {
-         if (numberOfTweets - tweets.size() > 100) {
-            // this is the maximum that could be retrieved at once
-            query.setCount(100);
-         } else {
-            query.setCount(numberOfTweets - tweets.size());
-         }
 
-         try {
-            if (decrementAndCheckRemaining(resource)) {
-               result = twitter.search(query);
-               prevTweetSize = tweets.size();
-               tweets.addAll(result.getTweets());
-               // This will ensure that if duplicates are inserted then no more queries
-               if (prevTweetSize + result.getTweets().size() > tweets.size() 
-                     || result.getTweets().size() == 0) {
-                  break;
-               }
-               for (Status tweet : tweets) {
-                  if (tweet.getId() < lastId) {
-                     lastId = tweet.getId();
-                  }
-               }
-               query.setMaxId(lastId - 1);
-            } else {
-               System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
-               Thread.sleep(getSecondsUntilResetForResource(resource)*1000);
-            }
-         } catch (TwitterException e) {
-            System.out.println(e.getErrorMessage());
-         } catch (InterruptedException e) {
-            System.out.println(e.getMessage());
-         }
-      }
-      
-      return tweets;
-   }
+	}
 
-   public Set<Status> showTweetsByUser(String userHandle, int numberOfTweets) {
-      String resource = "/statuses/user_timeline";
-      ResponseList<Status> statuses = null;
-      Set<Status> tweets = new HashSet<Status>();
-      int prevTweetSize = tweets.size();
-      Paging paging = new Paging();
-      int page = 1;
-      boolean protectedUser = false;
-      try {
-         protectedUser = getUserByName(userHandle).isProtected();
-      } catch (NullPointerException e) {
-         System.out.println("No user fount by: " + userHandle);
-         return tweets;
-      }
+	public Set<Status> search(Query query, int numberOfTweets) {
+		String resource = "/search/tweets";
+		QueryResult result = null;
+		Set<Status> tweets = new HashSet<Status>();
+		int prevTweetSize = tweets.size();
+		long lastId = Long.MAX_VALUE;
+		query.setLang("en");
+		while (tweets.size() < numberOfTweets) {
+			if (numberOfTweets - tweets.size() > 100) {
+				// this is the maximum that could be retrieved at once
+				query.setCount(100);
+			} else {
+				query.setCount(numberOfTweets - tweets.size());
+			}
 
-      if (!protectedUser) {
-         while (tweets.size() < numberOfTweets) {
-            paging.setPage(page);
-            if (numberOfTweets - tweets.size() > 200) {
-               paging.setCount(200);
-            } else {
-               paging.setCount(numberOfTweets - tweets.size());
-            }
-            try {
-               if (decrementAndCheckRemaining(resource)) {
-                  statuses = twitter.getUserTimeline(userHandle, paging);
-                  prevTweetSize = tweets.size();
-                  tweets.addAll(statuses);
-                  // This will ensure that if duplicates are inserted then no more queries
-                  if (prevTweetSize + statuses.size() > tweets.size() 
-                        || statuses.size() == 0) {
-                     break;
-                  }
-               } else {
-                  System.out.println("Twitter Limit exceeded for " + resource + ", wait for " + getSecondsUntilResetForResource(resource) + " seconds");
-                  Thread.sleep(getSecondsUntilResetForResource(resource)*1000);
-               }
-            } catch (TwitterException e) {
-               System.out.println(e.getErrorMessage());
-            } catch (InterruptedException e) {
-               System.out.println(e.getMessage());
-            }
+			try {
+				if (decrementAndCheckRemaining(resource)) {
+					result = twitter.search(query);
+					prevTweetSize = tweets.size();
+					tweets.addAll(result.getTweets());
+					// This will ensure that if duplicates are inserted then no
+					// more queries
+					if (prevTweetSize + result.getTweets().size() > tweets.size() || result.getTweets().size() == 0) {
+						break;
+					}
+					for (Status tweet : tweets) {
+						if (tweet.getId() < lastId) {
+							lastId = tweet.getId();
+						}
+					}
+					query.setMaxId(lastId - 1);
+				} else {
+					System.out.println("Twitter Limit exceeded for " + resource + ", wait for "
+							+ getSecondsUntilResetForResource(resource) + " seconds");
+					Thread.sleep(getSecondsUntilResetForResource(resource) * 1000);
+				}
+			} catch (TwitterException e) {
+				System.out.println(e.getErrorMessage());
+			} catch (InterruptedException e) {
+				System.out.println(e.getMessage());
+			}
+		}
 
-            page++;
-         }
-      } else {
-         System.out.println(userHandle + " is protected");
-      }
+		return tweets;
+	}
 
-      return tweets;
-   }
+	public Set<Status> showTweetsByUser(String userHandle, int numberOfTweets) {
+		String resource = "/statuses/user_timeline";
+		ResponseList<Status> statuses = null;
+		Set<Status> tweets = new HashSet<Status>();
+		int prevTweetSize = tweets.size();
+		Paging paging = new Paging();
+		int page = 1;
+		boolean protectedUser = false;
+		try {
+			protectedUser = getUserByName(userHandle).isProtected();
+		} catch (NullPointerException e) {
+			System.out.println("No user fount by: " + userHandle);
+			return tweets;
+		}
 
-   public Set<Status> searchList(List<String> words, int numberOfTweets) {
-      Query query = new Query();
-      String queryString = words.stream().map(Object::toString).collect(Collectors.joining("\" OR \""));
-      queryString = "\""+queryString+"\"";
-      System.out.println(queryString);
-      query.setQuery(queryString);
-      return search(query, numberOfTweets);
-   }
+		if (!protectedUser) {
+			while (tweets.size() < numberOfTweets) {
+				paging.setPage(page);
+				if (numberOfTweets - tweets.size() > 200) {
+					paging.setCount(200);
+				} else {
+					paging.setCount(numberOfTweets - tweets.size());
+				}
+				try {
+					if (decrementAndCheckRemaining(resource)) {
+						statuses = twitter.getUserTimeline(userHandle, paging);
+						prevTweetSize = tweets.size();
+						tweets.addAll(statuses);
+						// This will ensure that if duplicates are inserted then
+						// no more queries
+						if (prevTweetSize + statuses.size() > tweets.size() || statuses.size() == 0) {
+							break;
+						}
+					} else {
+						System.out.println("Twitter Limit exceeded for " + resource + ", wait for "
+								+ getSecondsUntilResetForResource(resource) + " seconds");
+						Thread.sleep(getSecondsUntilResetForResource(resource) * 1000);
+					}
+				} catch (TwitterException e) {
+					System.out.println(e.getErrorMessage());
+				} catch (InterruptedException e) {
+					System.out.println(e.getMessage());
+				}
 
-   public Set<Status> searchRepliesToUser(String userHandle, int numberOfTweets) {
-      Query query = new Query();
-      query.setQuery("to:"+userHandle);
-      return search(query, numberOfTweets);
-   }
+				page++;
+			}
+		} else {
+			System.out.println(userHandle + " is protected");
+		}
 
-   public Set<Status> searchMentionsOfUser(String userHandle, int numberOfTweets) {
-      Query query = new Query();
-      query.setQuery("@"+userHandle);
-      return search(query, numberOfTweets);
-   }
+		return tweets;
+	}
 
-	public Set<Status> searchKeywordListGeoCoded(List<String> words, int numberOfTweets, GeoLocation centroid, double radius,
-			Unit unit) {
+	public Set<Status> searchList(List<String> words, int numberOfTweets) {
+		Query query = new Query();
+		String queryString = words.stream().map(Object::toString).collect(Collectors.joining("\" OR \""));
+		queryString = "\"" + queryString + "\"";
+		System.out.println(queryString);
+		query.setQuery(queryString);
+		return search(query, numberOfTweets);
+	}
+
+	public Set<Status> searchRepliesToUser(String userHandle, int numberOfTweets) {
+		Query query = new Query();
+		query.setQuery("to:" + userHandle);
+		return search(query, numberOfTweets);
+	}
+
+	public Set<Status> searchMentionsOfUser(String userHandle, int numberOfTweets) {
+		Query query = new Query();
+		query.setQuery("@" + userHandle);
+		return search(query, numberOfTweets);
+	}
+
+	public Set<Status> searchKeywordListGeoCoded(List<String> words, int numberOfTweets, GeoLocation centroid,
+			double radius, Unit unit) {
 
 		Query query = new Query();
 		String queryString = words.stream().map(Object::toString).collect(Collectors.joining("\" OR \""));
-	    queryString = "\""+queryString+"\"";
-	    System.out.println(queryString);
-	    query.setQuery(queryString);
+		queryString = "\"" + queryString + "\"";
+		System.out.println(queryString);
+		query.setQuery(queryString);
 		query.setGeoCode(centroid, radius, unit);
 
 		return search(query, numberOfTweets);
 	}
 
-   
-   public Set<Status> searchExactString(String string, int numberOfTweets) {
-      Query query = new Query();
-      query.setQuery("\""+string+"\"");
-      return search(query, numberOfTweets);
-   }
+	public Set<Status> searchExactString(String string, int numberOfTweets) {
+		Query query = new Query();
+		query.setQuery("\"" + string + "\"");
+		return search(query, numberOfTweets);
+	}
 
-   public Set<Status> searchHashTag(String hashtag, int numberOfTweets) {
-      Query query = new Query();
-      query.setQuery("#"+hashtag);
-      return search(query, numberOfTweets);
-   }
+	public Set<Status> searchHashTag(String hashtag, int numberOfTweets) {
+		Query query = new Query();
+		query.setQuery("#" + hashtag);
+		return search(query, numberOfTweets);
+	}
 
-   public User getUserByName(String twitterHandle) {
-      User user = null;
-      try {
-         user = twitter.showUser(twitterHandle);
-      } catch (TwitterException e) {
-         e.getStackTrace();
-      }
-      return user;
-   }
+	public User getUserByName(String twitterHandle) {
+		User user = null;
+		try {
+			user = twitter.showUser(twitterHandle);
+		} catch (TwitterException e) {
+			e.getStackTrace();
+		}
+		return user;
+	}
 }
