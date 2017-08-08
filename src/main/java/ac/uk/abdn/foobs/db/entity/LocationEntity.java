@@ -32,13 +32,12 @@ public class LocationEntity {
    @OneToOne(fetch=FetchType.EAGER,mappedBy="locationId",cascade=CascadeType.ALL)
    private SearchDetailsEntity search;
    
-
-   @OneToOne(fetch=FetchType.EAGER,mappedBy="locationId",cascade=CascadeType.ALL)
-   private SearchDetailsEntity search;
-
-
    @OneToOne(fetch=FetchType.LAZY,mappedBy="locationId",cascade=CascadeType.ALL)
    private GeoPointEntity geoPoint;
+   
+   @OneToOne(fetch=FetchType.LAZY,mappedBy="locationId",cascade=CascadeType.ALL)
+   private PostEntity post;
+   
 
    /**
     * @return the id
@@ -112,5 +111,13 @@ public class LocationEntity {
    public void setGeoPoint(GeoPointEntity geoPoint) {
       this.geoPoint = geoPoint;
    }
+
+public PostEntity getPost() {
+	return post;
+}
+
+public void setPost(PostEntity post) {
+	this.post = post;
+}
 
 }

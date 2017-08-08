@@ -35,7 +35,9 @@ public class SearchDetailsEntity {
 	@Column(name = "Note")
 	private String note;
 	@Column(name = "Radius")
-	private float radius;
+
+	private double radius;
+
 
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "locationId")
@@ -88,12 +90,14 @@ public class SearchDetailsEntity {
 		this.locationId = locationId;
 	}
 
-	public float getRadius() {
+
+	public double getRadius() {
 		return radius;
 	}
 
-	public void setRadius(float radius) {
-		this.radius = radius;
+	public void setRadius(double radius2) {
+		this.radius = radius2;
+
 	}
 
 	public Set<PostEntity> getPosts() {

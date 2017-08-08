@@ -27,64 +27,66 @@ import twitter4j.Query.Unit;
 import twitter4j.Status;
 
 public class TaskManager {
-    public static void manageTasks(Config config) {
 
-        if (config.getParseAndUploadRatings() == 1) {
-            System.out.println("Will parse and upload ratings.");
-            parseAndUploadRatings(config);
-        }
+	public static void manageTasks(Config config) {
 
-        if (config.getFindTwitterAccounts() == 1) {
-            System.out.println("Finding twitter handles");
-            findTwitterAccounts(config);
-        }
+		if (config.getParseAndUploadRatings() == 1) {
+			System.out.println("Will parse and upload ratings.");
+			parseAndUploadRatings(config);
+		}
 
-        if (config.getFindTweetsFromRestaurants() == 1) {
-            System.out.println("Finding 200 tweets by each restaurant");
-            findTweetsFromRestaurants(config);
-        }
+		if (config.getFindTwitterAccounts() == 1) {
+			System.out.println("Finding twitter handles");
+			findTwitterAccounts(config);
+		}
 
-        if (config.getFindTweetsContainingKeywords() == 1){
-            System.out.println("Finding 200 tweets containing keywords");
-            findTweetsContainingKeywords(config);
-        }
-    }
+		if (config.getFindTweetsFromRestaurants() == 1) {
+			System.out.println("Finding 200 tweets by each restaurant");
+			findTweetsFromRestaurants(config);
+		}
 
-    private static void parseAndUploadRatings(Config config) {
-        File ratingsFile = new File(config.getRatingFile());
+		if (config.getFindTweetsContainingKeywords() == 1){
+			System.out.println("Finding 200 tweets containing keywords");
+			findTweetsContainingKeywords(config);
+		}
+	}
 
-        UserRESTAPI restAPI = new UserRESTAPI(config);
-        ArrayList<Establishment> establishmentList = RatingsHandler.parseXml(ratingsFile, restAPI);
-        System.out.println("Parsing done, uploading to database.");
-        for (int i = 0; i < establishmentList.size(); i++) {
-            DAO.insertEstablishment(establishmentList.get(i), config.getRatingFileCountry());
-        }
-    }
+	private static void parseAndUploadRatings(Config config) {
+		File ratingsFile = new File(config.getRatingFile());
 
-    private static void findTwitterAccounts(Config config) {
-        Set<PremisesEntity> premisesSet = DAO.getPremisesWithUncheckedUserAccount("Twitter");
+		UserRESTAPI restAPI = new UserRESTAPI(config);
+		ArrayList<Establishment> establishmentList = RatingsHandler.parseXml(ratingsFile, restAPI);
+		System.out.println("Parsing done, uploading to database.");
+		for (int i = 0; i < establishmentList.size(); i++) {
+			DAO.insertEstablishment(establishmentList.get(i), config.getRatingFileCountry());
+		}
+	}
 
-        UserRESTAPI restAPI = new UserRESTAPI(config);
-        TwitterHandleFinder finder = new TwitterHandleFinder(restAPI);
-        for (PremisesEntity premises : premisesSet) {
-            finder.findAndInsertTwitterAccountForPremises(premises);
-        }
-    }
+	private static void findTwitterAccounts(Config config) {
+		Set<PremisesEntity> premisesSet = DAO.getPremisesWithUncheckedUserAccount("Twitter");
 
-    private static void findTweetsFromRestaurants(Config config) {
-        Set<UserAccountEntity> users = DAO.getTwitterAccounts();
+		UserRESTAPI restAPI = new UserRESTAPI(config);
+		TwitterHandleFinder finder = new TwitterHandleFinder(restAPI);
+		for (PremisesEntity premises : premisesSet) {
+			finder.findAndInsertTwitterAccountForPremises(premises);
+		}
+	}
 
-        AppRESTAPI restAPI = new AppRESTAPI(config);
-        for (UserAccountEntity user : users) {
-            System.out.println("Getting tweets for: " + user.getPlatformAccountId());
-            Set<Status> tweets = restAPI.showTweetsByUser(user.getPlatformAccountId(), 200);
-            for (Status tweet : tweets) {
-                DAO.saveTweet(user, tweet);
-            }
-        }
-    }
+	private static void findTweetsFromRestaurants(Config config) {
+		Set<UserAccountEntity> users = DAO.getTwitterAccounts();
 
-    private static void findTweetsContainingKeywords(Config config) {
+		AppRESTAPI restAPI = new AppRESTAPI(config);
+		for (UserAccountEntity user : users) {
+			System.out.println("Getting tweets for: " + user.getPlatformAccountId());
+			Set<Status> tweets = restAPI.showTweetsByUser(user.getPlatformAccountId(), 200);
+			for (Status tweet : tweets) {
+				DAO.saveTweet(user, tweet);
+			}
+		}
+	}
+
+	private static void findTweetsContainingKeywords(Config config) {
+
         List<String> keywords = new ArrayList<String>();
 
         SearchDetailsEntity searchDetails = new SearchDetailsEntity();
@@ -109,9 +111,11 @@ public class TaskManager {
         // GeoLocation (50.700517,-3.993530) approx coordinates for Plymouth
         // radius for Plymouth: 50
         AppRESTAPI restAPI = new AppRESTAPI(config);
-        GeoLocation geoLocation = new   GeoLocation (50.700517,-3.993530);
+
+        GeoLocation geoLocation = new   GeoLocation (52.104256,-0.516357);
         Date startDate = new Date();
-        float radius = 50;
+        double radius = 177.312;
+
         Set<Status> tweets = restAPI.searchKeywordListGeoCoded(keywords, 1000000, geoLocation, radius, Unit.km);
         Date endDate = new Date();
         
