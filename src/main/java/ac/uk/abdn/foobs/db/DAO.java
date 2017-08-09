@@ -122,6 +122,74 @@ public class DAO {
 	}
 	
 	
+	
+	public static void saveTweetChunks( Set<Status> tweets, SearchDetailsEntity searchDetails, PlatformEntity platformEntity) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        
+        Transaction transaction = session.beginTransaction();
+		
+        try {
+        for (Status tweet : tweets) {
+        
+		UserAccountEntity userAccount = null;
+		 UserAccountEntity basicUser = new UserAccountEntity(tweet.getUser());
+		
+		String hql = "from UserAccountEntity uae where uae.platformAccountId=:paid and uae.platformId=:pid";
+        
+		  
+			  
+		List<UserAccountEntity> results = session.createQuery(hql, UserAccountEntity.class)
+				.setParameter("paid", basicUser.getPlatformAccountId())
+				.setParameter("pid", platformEntity)
+				.getResultList();
+		if (results.size() > 0) {
+			userAccount = results.get(0);
+		}
+		
+		if (userAccount != null) {
+			// already have this user in the DB
+			basicUser = userAccount;
+			// TODO: This will not overwrite the existing record of
+			// the user
+			// with any changes they have made,
+			// details from their profile was stored in the DB
+		} else {
+			// new user to the system, so initialise it
+			basicUser.setPlatformId(platformEntity);
+			AgentEntity agent = new AgentEntity();
+			agent.setAgentType("Person");
+			basicUser.setAgentId(agent);
+		}
+		
+		
+		session.saveOrUpdate(basicUser);
+
+      
+        	 PostEntity post = new PostEntity(tweet);
+        	 if (post.getLocationId()!=null) {
+        		 session.saveOrUpdate(post.getLocationId());
+        		 session.saveOrUpdate(post.getLocationId().getGeoPoint());
+        	 }
+                    post.setHasCreator(basicUser);
+                    post.setSearchDetailsId(searchDetails);
+                    session.saveOrUpdate(post);
+		  }            
+                    
+        
+                    session.getTransaction().commit();
+        } catch (Exception e) {
+                    transaction.rollback();
+                    e.printStackTrace();
+        } finally {
+                    session.close();
+        }
+}
+	
+	
+	
+	
+	
+	
 	public static void saveTweetMultithread( Status tweet, SearchDetailsEntity searchDetails, PlatformEntity platformEntity,SessionFactory factory) {
         Session session = factory.getCurrentSession();
         
