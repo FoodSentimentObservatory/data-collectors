@@ -68,7 +68,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 		for (Status tweet : tweets) {
 			count++;
 			temp_chunk.add(tweet);
-			if (count % 100 == 0) {
+			if (count % 1000 == 0) {
 				chunks.add(temp_chunk);
 				System.out.println("Cutting off at: "+count+ " "+temp_chunk.size());
 				temp_chunk= new HashSet();
@@ -83,24 +83,24 @@ public class AppRESTAPI extends BaseRESTAPI {
 
 		
 		
-		//int i =0;
+		int i =0;
 		for (Set<Status> chunk : chunks) {
-		//	i++;
+			i++;
 			
 			// count++;
 			// if (count%1000==0) {
 			// System.out.print(".");
 			// }
-	//		System.out.println("Saving : "+i );
-	//		System.out.println("Saving : "+chunk.size() + "tweets in one transaction" );
+			System.out.println("Saving : "+i );
+			System.out.println("Saving : "+chunk.size() + "tweets in one transaction" );
 			
-	//		DAO.saveTweetChunks(chunk,searchDetails,twitter);
+			DAO.saveTweetChunks(chunk,searchDetails,twitter);
 			
 		 
-	//	}	
+		}	
 			
 			
-			
+			/*
 			SessionFactory factory = HibernateUtil.getSessionFactory();
 			
 			SaveTweetsThread thread = new SaveTweetsThread(chunk, twitter, searchDetails,factory);
@@ -121,7 +121,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 				System.out.println("Threading issue");
 				e.printStackTrace();
 			}
-			
+			*/
         
 	}
 

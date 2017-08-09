@@ -146,20 +146,13 @@ public class DAO {
 			userAccount = results.get(0);
 		}
 		
-		if (userAccount != null) {
-			// already have this user in the DB
-			basicUser = userAccount;
-			// TODO: This will not overwrite the existing record of
-			// the user
-			// with any changes they have made,
-			// details from their profile was stored in the DB
-		} else {
+		
 			// new user to the system, so initialise it
 			basicUser.setPlatformId(platformEntity);
 			AgentEntity agent = new AgentEntity();
 			agent.setAgentType("Person");
 			basicUser.setAgentId(agent);
-		}
+		
 		
 		
 		session.saveOrUpdate(basicUser);
