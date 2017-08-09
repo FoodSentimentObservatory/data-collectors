@@ -119,6 +119,32 @@ public class DAO {
 			session.close();
 		}
 	}
+	
+	
+	public static void saveTweetMultithread(UserAccountEntity user, Status tweet, SearchDetailsEntity searchDetails) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+     
+        Transaction transaction = session.beginTransaction();
+
+        try {
+        	 PostEntity post = new PostEntity(tweet);
+        	 if (post.getLocationId()!=null) {
+        		 session.merge(post.getLocationId());
+        		 session.merge(post.getLocationId().getGeoPoint());
+        	 }
+                    post.setHasCreator(user);
+                    post.setSearchDetailsId(searchDetails);
+                    session.merge(post);
+                    session.getTransaction().commit();
+        } catch (Exception e) {
+                    transaction.rollback();
+                    e.printStackTrace();
+        } finally {
+                    session.close();
+        }
+}
+	
+	
 	public static void saveTweet(UserAccountEntity user, Status tweet, SearchDetailsEntity searchDetails) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
      
@@ -344,24 +370,7 @@ public class DAO {
 		return userAccountSet;
 	}
 
-	public static void saveTweetMultithread(UserAccountEntity user, Status tweet) {
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction transaction = session.beginTransaction();
-
-		try {
-			PostEntity post = new PostEntity(tweet);
-			post.setHasCreator(user);
-			session.saveOrUpdate(post);
-			session.getTransaction().commit();
-		} catch (Exception e) {
-			transaction.rollback();
-			e.printStackTrace();
-		}
-		finally {
-			
-			session.close();
-		}
-	}
+	
 	
 	public static void saveTweet(UserAccountEntity user, Status tweet) {
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();

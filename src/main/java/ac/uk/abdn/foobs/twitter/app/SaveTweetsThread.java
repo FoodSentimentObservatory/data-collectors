@@ -49,12 +49,12 @@ public class SaveTweetsThread extends Thread {
 				basicUser.setAgentId(agent);
 			}
 			basicUser = DAO.saveOrUpdateUserAccount( basicUser);
-			DAO.saveTweet(basicUser, chunk_tweet);
+			DAO.saveTweetMultithread(basicUser, chunk_tweet,searchDetails);
 		
 		
 			
 			
 		}
-		System.out.print(".");
+		System.out.print("*");
     }
 }
