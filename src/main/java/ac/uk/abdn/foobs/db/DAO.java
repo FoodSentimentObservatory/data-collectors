@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import ac.uk.abdn.foobs.Establishment;
@@ -121,8 +122,8 @@ public class DAO {
 	}
 	
 	
-	public static void saveTweetMultithread( Status tweet, SearchDetailsEntity searchDetails, PlatformEntity platformEntity) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+	public static void saveTweetMultithread( Status tweet, SearchDetailsEntity searchDetails, PlatformEntity platformEntity,SessionFactory factory) {
+        Session session = factory.getCurrentSession();
         
         UserAccountEntity userAccount = null;
         UserAccountEntity basicUser = new UserAccountEntity(tweet.getUser());

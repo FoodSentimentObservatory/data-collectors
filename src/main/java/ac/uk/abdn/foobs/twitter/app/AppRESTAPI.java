@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 import ac.uk.abdn.foobs.Config;
 import ac.uk.abdn.foobs.db.DAO;
@@ -82,21 +83,22 @@ public class AppRESTAPI extends BaseRESTAPI {
 
 		
 		
-		int i =0;
+		//int i =0;
 		for (Set<Status> chunk : chunks) {
-			i++;
+			//i++;
+			/*
 			// count++;
 			// if (count%1000==0) {
 			// System.out.print(".");
 			// }
 			System.out.println("Saving : "+i );
 			System.out.println("Saving : "+chunk.size() + "tweets" );
-			/*
 			for (Status chunk_tweet : chunk) {
 			DAO.saveTweetMultithread(chunk_tweet,searchDetails,twitter);
 			}*/
+		 SessionFactory factory = HibernateUtil.getSessionFactory();
 			
-			SaveTweetsThread thread = new SaveTweetsThread(chunk, twitter, searchDetails);
+			SaveTweetsThread thread = new SaveTweetsThread(chunk, twitter, searchDetails,factory);
 			// start the thread
 
 			threads.add(thread);
@@ -105,7 +107,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 			
 		}
 
-		/*
+		
 		System.out.println("Waiting for threads to finish");
 		for (int i = 0; i < threads.size(); i++)
 			try {
@@ -114,7 +116,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 				System.out.println("Threading issue");
 				e.printStackTrace();
 			}
-        */
+        
 	}
 
 	/**
