@@ -28,28 +28,9 @@ public class SaveTweetsThread extends Thread {
 		
 		for (Status chunk_tweet : chunk) {
 
-			// create a UserAccountEntity for the Status user to ensure
-			// the
-			// correct
-			// platformAccountId is used as part of the DB lookup.
-			UserAccountEntity basicUser = new UserAccountEntity(chunk_tweet.getUser());
-			UserAccountEntity dbUser = DAO.getUserAccountByIdAndPlatform(basicUser.getPlatformAccountId(), twitter);
-			if (dbUser != null) {
-				// already have this user in the DB
-				basicUser = dbUser;
-				// TODO: This will not overwrite the existing record of
-				// the user
-				// with any changes they have made,
-				// details from their profile was stored in the DB
-			} else {
-				// new user to the system, so initialise it
-				basicUser.setPlatformId(twitter);
-				AgentEntity agent = new AgentEntity();
-				agent.setAgentType("Person");
-				basicUser.setAgentId(agent);
-			}
-			basicUser = DAO.saveOrUpdateUserAccount( basicUser);
-			DAO.saveTweetMultithread(basicUser, chunk_tweet,searchDetails);
+			
+			
+			DAO.saveTweetMultithread(chunk_tweet,searchDetails,twitter);
 		
 		
 			

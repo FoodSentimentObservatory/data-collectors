@@ -121,18 +121,51 @@ public class DAO {
 	}
 	
 	
-	public static void saveTweetMultithread(UserAccountEntity user, Status tweet, SearchDetailsEntity searchDetails) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-     
-        Transaction transaction = session.beginTransaction();
+	public static void saveTweetMultithread( Status tweet, SearchDetailsEntity searchDetails, PlatformEntity platformEntity) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        
+        UserAccountEntity userAccount = null;
+        UserAccountEntity basicUser = new UserAccountEntity(tweet.getUser());
+		Transaction transaction = session.beginTransaction();
+		
+		
+		String hql = "from UserAccountEntity uae where uae.platformAccountId=:paid and uae.platformId=:pid";
+        
+		  try {
+			  
+		List<UserAccountEntity> results = session.createQuery(hql, UserAccountEntity.class)
+				.setParameter("paid", basicUser.getPlatformAccountId())
+				.setParameter("pid", platformEntity)
+				.getResultList();
+		if (results.size() > 0) {
+			userAccount = results.get(0);
+		}
+		
+		if (userAccount != null) {
+			// already have this user in the DB
+			basicUser = userAccount;
+			// TODO: This will not overwrite the existing record of
+			// the user
+			// with any changes they have made,
+			// details from their profile was stored in the DB
+		} else {
+			// new user to the system, so initialise it
+			basicUser.setPlatformId(platformEntity);
+			AgentEntity agent = new AgentEntity();
+			agent.setAgentType("Person");
+			basicUser.setAgentId(agent);
+		}
+		
+		
+		session.saveOrUpdate(basicUser);
 
-        try {
+      
         	 PostEntity post = new PostEntity(tweet);
         	 if (post.getLocationId()!=null) {
         		 session.saveOrUpdate(post.getLocationId());
         		 session.saveOrUpdate(post.getLocationId().getGeoPoint());
         	 }
-                    post.setHasCreator(user);
+                    post.setHasCreator(basicUser);
                     post.setSearchDetailsId(searchDetails);
                     session.saveOrUpdate(post);
                     session.getTransaction().commit();
