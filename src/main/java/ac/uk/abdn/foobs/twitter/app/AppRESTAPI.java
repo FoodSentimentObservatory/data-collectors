@@ -74,11 +74,14 @@ public class AppRESTAPI extends BaseRESTAPI {
 			}
 
 		}
+		chunks.add(temp_chunk);
 		
 		System.out.println("Processed tweets : "+count);
 
 		System.out.println("Workload split in " + chunks.size() + " threads");
 
+		
+		
 		int i =0;
 		for (Set<Status> chunk : chunks) {
 			i++;
@@ -88,17 +91,18 @@ public class AppRESTAPI extends BaseRESTAPI {
 			// }
 			System.out.println("Saving : "+i );
 			System.out.println("Saving : "+chunk.size() + "tweets" );
+			/*
 			for (Status chunk_tweet : chunk) {
 			DAO.saveTweetMultithread(chunk_tweet,searchDetails,twitter);
-			}
-			/*
+			}*/
+			
 			SaveTweetsThread thread = new SaveTweetsThread(chunk, twitter, searchDetails);
 			// start the thread
 
 			threads.add(thread);
 
 			thread.start();
-			*/
+			
 		}
 
 		/*
