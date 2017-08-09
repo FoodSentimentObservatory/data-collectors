@@ -69,10 +69,13 @@ public class AppRESTAPI extends BaseRESTAPI {
 			temp_chunk.add(tweet);
 			if (count % 200 == 0) {
 				chunks.add(temp_chunk);
-				temp_chunk.clear();
+				System.out.println("Cutting off at: "+count+ " "+temp_chunk.size());
+				temp_chunk= new HashSet();
 			}
 
 		}
+		
+		System.out.println("Processed tweets : "+count);
 
 		System.out.println("Workload split in " + chunks.size() + " threads");
 
