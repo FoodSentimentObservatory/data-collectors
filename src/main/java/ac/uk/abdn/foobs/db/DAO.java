@@ -176,7 +176,7 @@ public class DAO {
 			}
 		}
 		finally {
-			transaction.rollback();
+			transaction.commit();
 		}
 		
 		return userAccount;
@@ -213,13 +213,13 @@ public class DAO {
 
 		try {
 			session.saveOrUpdate(userAccount);
-			session.getTransaction().commit();
+			//session.getTransaction().commit();
 		} catch (Exception e) {
 			transaction.rollback();
 			e.printStackTrace();
 		} 
 		finally {
-			transaction.rollback();
+			transaction.commit();
 		}
 
 		return userAccount;
@@ -350,13 +350,13 @@ public class DAO {
 			PostEntity post = new PostEntity(tweet);
 			post.setHasCreator(user);
 			session.saveOrUpdate(post);
-			session.getTransaction().commit();
+			//session.getTransaction().commit();
 		} catch (Exception e) {
 			transaction.rollback();
 			e.printStackTrace();
 		}
 		finally {
-			transaction.rollback();
+			transaction.commit();
 		}
 	}
 	
