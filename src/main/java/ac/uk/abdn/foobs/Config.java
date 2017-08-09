@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -37,6 +38,7 @@ public class Config {
    List <String> radius = new ArrayList<>();
    List <String> note = new ArrayList<>();
    List <String> unit = new ArrayList<>();
+   ArrayList<List<String>> keywordListsForSearches = new ArrayList<>();
    public Config(File file) {
       readAndSetConfig(file);
    }
@@ -93,6 +95,12 @@ public class Config {
 	         String radiusS = XMLUtils.getStringValue(eElement, "Radius");
 	         String noteS = XMLUtils.getStringValue(eElement, "Note");
 	         String unitS = XMLUtils.getStringValue(eElement, "Unit");
+	         String kFileName = XMLUtils.getStringValue(eElement, "Filename");
+	         String kFileEncoding = XMLUtils.getStringValue(eElement, "FileEncoding");
+	         List<String> fileData = new ArrayList<>();
+	         fileData.add(kFileName);
+	         fileData.add(kFileEncoding);
+	         keywordListsForSearches.add(fileData);
 	         latitude.add(latitudeS);
 	         longitude.add(longitudeS);
 	         radius.add(radiusS);
@@ -107,6 +115,9 @@ public class Config {
   public int getSearchLength() {
 	  return searchLength;
   }
+  public ArrayList<List<String>> getFileData() {
+	  return keywordListsForSearches;
+  }
   ///return lists of all GeoPoints from the config file
    public List<String> getLatitude() {
 	   return latitude;
@@ -116,15 +127,15 @@ public class Config {
 	   }
    ///returns a list of all radiuses
    public List<String> getRadius() {
-	   return latitude;
+	   return radius;
 	   }
    ///returns a list of all units
    public List<String> getUnit() {
-	   return latitude;
+	   return unit;
 	   }
    ///returns a list of all notes
    public List<String> getNote() {
-	   return latitude;
+	   return note;
 	   }
    /**
     * @return the twitterAppConsumerKey
