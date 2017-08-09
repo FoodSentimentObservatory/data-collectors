@@ -1,10 +1,14 @@
 package ac.uk.abdn.foobs;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import twitter4j.GeoLocation;
 import ac.uk.abdn.foobs.utils.XMLUtils;
 
 public class Config {
@@ -23,7 +27,16 @@ public class Config {
    private Integer findTwitterAccounts;
    private Integer findTweetsFromRestaurants;
    private Integer findTweetsContainingKeywords;
-   
+   ///private ArrayList <String> geoPoint;
+  /// private String radius;
+   ///private String note;
+  /// private String unit;
+   private Integer searchLength;
+   List <String> latitude = new ArrayList<>();
+   List <String> longitude = new ArrayList<>();
+   List <String> radius = new ArrayList<>();
+   List <String> note = new ArrayList<>();
+   List <String> unit = new ArrayList<>();
    public Config(File file) {
       readAndSetConfig(file);
    }
@@ -67,8 +80,52 @@ public class Config {
       this.keywordsFilename = XMLUtils.getStringValue(keywordsFile, "Filename");
       this.keywordsFileEncoding = XMLUtils.getStringValue(keywordsFile, "FileEncoding");
       
+     ///generates a list of all nodes with that tag, aka all searches 
+     NodeList searches = rootElement.getElementsByTagName("Search");
+      searchLength = searches.getLength();
+    ///looping through each of the searches and adding the values to the relevant lists, which are then used by the functions
+      for (int temp = 0; temp < searches.getLength(); temp++) {       
+	       Node nNode =(Node) searches.item(temp);
+	       if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+	         Element eElement = (Element) nNode;
+	         String latitudeS = XMLUtils.getStringValue(eElement, "Latitude");
+	         String longitudeS = XMLUtils.getStringValue(eElement, "Longitude");
+	         String radiusS = XMLUtils.getStringValue(eElement, "Radius");
+	         String noteS = XMLUtils.getStringValue(eElement, "Note");
+	         String unitS = XMLUtils.getStringValue(eElement, "Unit");
+	         latitude.add(latitudeS);
+	         longitude.add(longitudeS);
+	         radius.add(radiusS);
+	         note.add(noteS);
+	         unit.add(unitS);
+	         
+	         
+	       }
+  		}
    }
-
+   ///method to get the amount of searches which can be used to create a forloop and access the relevant values
+  public int getSearchLength() {
+	  return searchLength;
+  }
+  ///return lists of all GeoPoints from the config file
+   public List<String> getLatitude() {
+	   return latitude;
+	   }
+   public List<String> getLongitude() {
+	   return longitude;
+	   }
+   ///returns a list of all radiuses
+   public List<String> getRadius() {
+	   return latitude;
+	   }
+   ///returns a list of all units
+   public List<String> getUnit() {
+	   return latitude;
+	   }
+   ///returns a list of all notes
+   public List<String> getNote() {
+	   return latitude;
+	   }
    /**
     * @return the twitterAppConsumerKey
     */
