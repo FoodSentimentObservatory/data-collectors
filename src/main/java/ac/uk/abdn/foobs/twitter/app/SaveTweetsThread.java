@@ -24,7 +24,7 @@ public class SaveTweetsThread extends Thread {
     }
 
     public void run() {
-    	Session session = HibernateUtil.getSessionFactory().openSession();
+    	
 		try {
 		for (Status chunk_tweet : chunk) {
 
@@ -33,8 +33,7 @@ public class SaveTweetsThread extends Thread {
 			// correct
 			// platformAccountId is used as part of the DB lookup.
 			UserAccountEntity basicUser = new UserAccountEntity(chunk_tweet.getUser());
-			UserAccountEntity dbUser = DAO.getUserAccountByIdAndPlatformMutithread(session,
-					basicUser.getPlatformAccountId(), twitter);
+			UserAccountEntity dbUser = DAO.getUserAccountByIdAndPlatformMutithread(basicUser.getPlatformAccountId(), twitter);
 			if (dbUser != null) {
 				// already have this user in the DB
 				basicUser = dbUser;
@@ -49,7 +48,7 @@ public class SaveTweetsThread extends Thread {
 				agent.setAgentType("Person");
 				basicUser.setAgentId(agent);
 			}
-			basicUser = DAO.saveOrUpdateUserAccountMultithread(session, basicUser);
+			basicUser = DAO.saveOrUpdateUserAccountMultithread( basicUser);
 			DAO.saveTweet(basicUser, chunk_tweet, searchDetails);
 		}
 		} catch (Exception e) {
@@ -57,7 +56,7 @@ public class SaveTweetsThread extends Thread {
 		}
 		finally {
 			System.out.print(".");
-			session.close();
+			
 		}
     }
 }

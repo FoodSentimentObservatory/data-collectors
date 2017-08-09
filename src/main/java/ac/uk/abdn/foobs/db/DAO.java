@@ -158,10 +158,10 @@ public class DAO {
 				}
 			}
 
-	public static UserAccountEntity getUserAccountByIdAndPlatformMutithread(Session session,String platformAccountId,
+	public static UserAccountEntity getUserAccountByIdAndPlatformMutithread(String platformAccountId,
 			PlatformEntity platformEntity) {
 		UserAccountEntity userAccount = null;
-		
+		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = session.beginTransaction();
 		String hql = "from UserAccountEntity uae where uae.platformAccountId=:paid and uae.platformId=:pid";
 		
@@ -177,6 +177,7 @@ public class DAO {
 		}
 		finally {
 			transaction.commit();
+			session.close();
 		}
 		
 		return userAccount;
@@ -206,20 +207,21 @@ public class DAO {
 
 	}
 
-	public static UserAccountEntity saveOrUpdateUserAccountMultithread(Session session,UserAccountEntity userAccount) {
+	public static UserAccountEntity saveOrUpdateUserAccountMultithread(UserAccountEntity userAccount) {
 
-	
+		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = session.beginTransaction();
 
 		try {
 			session.saveOrUpdate(userAccount);
-			//session.getTransaction().commit();
+			session.getTransaction().commit();
 		} catch (Exception e) {
 			transaction.rollback();
 			e.printStackTrace();
 		} 
 		finally {
-			transaction.commit();
+			
+			session.close();
 		}
 
 		return userAccount;
@@ -342,21 +344,22 @@ public class DAO {
 		return userAccountSet;
 	}
 
-	public static void saveTweetMultithread(Session session,UserAccountEntity user, Status tweet) {
-		
+	public static void saveTweetMultithread(UserAccountEntity user, Status tweet) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = session.beginTransaction();
 
 		try {
 			PostEntity post = new PostEntity(tweet);
 			post.setHasCreator(user);
 			session.saveOrUpdate(post);
-			//session.getTransaction().commit();
+			session.getTransaction().commit();
 		} catch (Exception e) {
 			transaction.rollback();
 			e.printStackTrace();
 		}
 		finally {
-			transaction.commit();
+			
+			session.close();
 		}
 	}
 	
