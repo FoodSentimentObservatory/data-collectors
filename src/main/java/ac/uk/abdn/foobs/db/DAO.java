@@ -121,6 +121,7 @@ public class DAO {
 	}
 	public static void saveTweet(UserAccountEntity user, Status tweet, SearchDetailsEntity searchDetails) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+     
         Transaction transaction = session.beginTransaction();
 
         try {
@@ -157,6 +158,29 @@ public class DAO {
 				}
 			}
 
+	public static UserAccountEntity getUserAccountByIdAndPlatformMutithread(Session session,String platformAccountId,
+			PlatformEntity platformEntity) {
+		UserAccountEntity userAccount = null;
+		
+		session.beginTransaction();
+		String hql = "from UserAccountEntity uae where uae.platformAccountId=:paid and uae.platformId=:pid";
+		try {
+
+			List<UserAccountEntity> results = session.createQuery(hql, UserAccountEntity.class)
+					.setParameter("paid", platformAccountId)
+					.setParameter("pid", platformEntity)
+					.getResultList();
+			if (results.size() > 0) {
+				userAccount = results.get(0);
+			}
+		} finally {
+			session.close();
+		}
+		return userAccount;
+
+	}
+	
+	
 	public static UserAccountEntity getUserAccountByIdAndPlatform(String platformAccountId,
 			PlatformEntity platformEntity) {
 		UserAccountEntity userAccount = null;
@@ -179,6 +203,24 @@ public class DAO {
 
 	}
 
+	public static UserAccountEntity saveOrUpdateUserAccountMultithread(Session session,UserAccountEntity userAccount) {
+
+	
+		Transaction transaction = session.beginTransaction();
+
+		try {
+			session.saveOrUpdate(userAccount);
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			transaction.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return userAccount;
+	}
+	
+	
 	public static UserAccountEntity saveOrUpdateUserAccount(UserAccountEntity userAccount) {
 
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -295,6 +337,23 @@ public class DAO {
 		return userAccountSet;
 	}
 
+	public static void saveTweetMultithread(Session session,UserAccountEntity user, Status tweet) {
+		
+		Transaction transaction = session.beginTransaction();
+
+		try {
+			PostEntity post = new PostEntity(tweet);
+			post.setHasCreator(user);
+			session.saveOrUpdate(post);
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			transaction.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+	}
+	
 	public static void saveTweet(UserAccountEntity user, Status tweet) {
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();

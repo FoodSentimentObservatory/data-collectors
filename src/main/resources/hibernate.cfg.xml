@@ -2,6 +2,7 @@
    <session-factory>
       <property name="connection.driver_class">com.microsoft.sqlserver.jdbc.SQLServerDriver</property>
       <property name="connection.url">
+      <property name="connection.pool_size">100</property>
 
          jdbc:sqlserver://FOODSENTOBS\MSSQLSERVER;databaseName=Foobs-Test-3;integratedSecurity=true;
          </property>

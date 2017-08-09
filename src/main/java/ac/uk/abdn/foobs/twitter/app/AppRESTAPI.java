@@ -9,8 +9,11 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.hibernate.Session;
+
 import ac.uk.abdn.foobs.Config;
 import ac.uk.abdn.foobs.db.DAO;
+import ac.uk.abdn.foobs.db.HibernateUtil;
 import ac.uk.abdn.foobs.db.entity.AgentEntity;
 import ac.uk.abdn.foobs.db.entity.PlatformEntity;
 import ac.uk.abdn.foobs.db.entity.SearchDetailsEntity;
@@ -54,57 +57,80 @@ public class AppRESTAPI extends BaseRESTAPI {
 		PlatformEntity twitter = DAO.getPlatfromBasedOnName("Twitter");
 
 		System.out.println("Saving request received for " + tweets.size() + " tweets");
-		
-		int count =0;
-		
-		ArrayList threads = new ArrayList ();
-		
+
+		int count = 0;
+
+		ArrayList threads = new ArrayList();
+		Set<Set<Status>> chunks = new HashSet();
+		Set<Status> temp_chunk = new HashSet();
+
 		for (Status tweet : tweets) {
-			
-			
-            //count++;
-            //if (count%1000==0) {
-            //	System.out.print(".");
-            //}
-			
-			Runnable saveSingleTweet = () -> {  
-			
-			// create a UserAccountEntity for the Status user to ensure the
-			// correct
-			// platformAccountId is used as part of the DB lookup.
-			UserAccountEntity basicUser = new UserAccountEntity(tweet.getUser());
-			UserAccountEntity dbUser = DAO.getUserAccountByIdAndPlatform(basicUser.getPlatformAccountId(), twitter);
-			if (dbUser != null) {
-				// already have this user in the DB
-				basicUser = dbUser;
-				// TODO: This will not overwrite the existing record of the user
-				// with any changes they have made,
-				// details from their profile was stored in the DB
-			} else {
-				// new user to the system, so initialise it
-				basicUser.setPlatformId(twitter);
-				AgentEntity agent = new AgentEntity();
-				agent.setAgentType("Person");
-				basicUser.setAgentId(agent);
+			count++;
+			temp_chunk.add(tweet);
+			if (count % 200 == 0) {
+				chunks.add(temp_chunk);
+				temp_chunk.clear();
 			}
-			basicUser = DAO.saveOrUpdateUserAccount(basicUser);
-			DAO.saveTweet(basicUser, tweet, searchDetails);
+
+		}
+
+		System.out.println("Workload split in " + chunks.size() + " threads");
+
+		for (Set<Status> chunk : chunks) {
+			// count++;
+			// if (count%1000==0) {
+			// System.out.print(".");
+			// }
+
+			Runnable saveSingleTweet = () -> {
+				Session session = HibernateUtil.getSessionFactory().openSession();
+				for (Status chunk_tweet : chunk) {
+
+					// create a UserAccountEntity for the Status user to ensure
+					// the
+					// correct
+					// platformAccountId is used as part of the DB lookup.
+					UserAccountEntity basicUser = new UserAccountEntity(chunk_tweet.getUser());
+					UserAccountEntity dbUser = DAO.getUserAccountByIdAndPlatformMutithread(session,
+							basicUser.getPlatformAccountId(), twitter);
+					if (dbUser != null) {
+						// already have this user in the DB
+						basicUser = dbUser;
+						// TODO: This will not overwrite the existing record of
+						// the user
+						// with any changes they have made,
+						// details from their profile was stored in the DB
+					} else {
+						// new user to the system, so initialise it
+						basicUser.setPlatformId(twitter);
+						AgentEntity agent = new AgentEntity();
+						agent.setAgentType("Person");
+						basicUser.setAgentId(agent);
+					}
+					basicUser = DAO.saveOrUpdateUserAccountMultithread(session, basicUser);
+					DAO.saveTweet(basicUser, chunk_tweet, searchDetails);
+				}
+				System.out.print(".");
+				session.close();
+
 			};
 			// start the thread
+
 			threads.add(saveSingleTweet);
-			 new Thread(saveSingleTweet).start();
+
+			new Thread(saveSingleTweet).start();
 		}
+
 		
-		
-		for(int i = 0; i < threads.size(); i++)
+		System.out.println("Waiting fro threads to finish");
+		for (int i = 0; i < threads.size(); i++)
 			try {
 				((Thread) threads.get(i)).join();
 			} catch (InterruptedException e) {
 				System.out.println("Threading issue");
 				e.printStackTrace();
 			}
-		
-		
+
 	}
 
 	/**
