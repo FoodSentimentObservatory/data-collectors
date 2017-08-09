@@ -81,17 +81,21 @@ public class AppRESTAPI extends BaseRESTAPI {
 			// if (count%1000==0) {
 			// System.out.print(".");
 			// }
-
-			 SaveTweetsThread thread = new SaveTweetsThread(chunk, twitter, searchDetails);
+			for (Status chunk_tweet : chunk) {
+			DAO.saveTweetMultithread(chunk_tweet,searchDetails,twitter);
+			}
+			/*
+			SaveTweetsThread thread = new SaveTweetsThread(chunk, twitter, searchDetails);
 			// start the thread
 
 			threads.add(thread);
 
 			thread.start();
+			*/
 		}
 
-		
-		System.out.println("Waiting fro threads to finish");
+		/*
+		System.out.println("Waiting for threads to finish");
 		for (int i = 0; i < threads.size(); i++)
 			try {
 				((Thread) threads.get(i)).join();
@@ -99,7 +103,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 				System.out.println("Threading issue");
 				e.printStackTrace();
 			}
-
+        */
 	}
 
 	/**
