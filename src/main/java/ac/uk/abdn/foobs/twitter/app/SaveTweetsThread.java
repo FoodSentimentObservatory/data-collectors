@@ -25,7 +25,7 @@ public class SaveTweetsThread extends Thread {
 
     public void run() {
     	
-		try {
+		
 		for (Status chunk_tweet : chunk) {
 
 			// create a UserAccountEntity for the Status user to ensure
@@ -49,14 +49,12 @@ public class SaveTweetsThread extends Thread {
 				basicUser.setAgentId(agent);
 			}
 			basicUser = DAO.saveOrUpdateUserAccount( basicUser);
-			DAO.saveTweet(basicUser, chunk_tweet, searchDetails);
-		}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		finally {
-			System.out.print(".");
+			DAO.saveTweet(basicUser, chunk_tweet);
+		
+		
+			
 			
 		}
+		System.out.print(".");
     }
 }
