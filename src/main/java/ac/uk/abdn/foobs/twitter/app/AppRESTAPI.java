@@ -70,7 +70,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 			temp_chunk.add(tweet);
 			if (count % 1000 == 0) {
 				chunks.add(temp_chunk);
-				System.out.println("Cutting off at: "+count+ " "+temp_chunk.size());
+				//System.out.println("Cutting off at: "+count+ " "+temp_chunk.size());
 				temp_chunk= new HashSet();
 			}
 
@@ -93,8 +93,9 @@ public class AppRESTAPI extends BaseRESTAPI {
 			// }
 			System.out.println("Saving : "+i );
 			System.out.println("Saving : "+chunk.size() + "tweets in one transaction" );
-			
+			System.out.println("Start saving at at " + LocalDateTime.now());
 			DAO.saveTweetChunks(chunk,searchDetails,twitter);
+			System.out.println("Finished saving at at " + LocalDateTime.now());
 			
 		 
 		}	
