@@ -68,7 +68,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 		for (Status tweet : tweets) {
 			count++;
 			temp_chunk.add(tweet);
-			if (count % 200 == 0) {
+			if (count % 1000 == 0) {
 				chunks.add(temp_chunk);
 				System.out.println("Cutting off at: "+count+ " "+temp_chunk.size());
 				temp_chunk= new HashSet();
@@ -79,7 +79,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 		
 		System.out.println("Processed tweets : "+count);
 
-		System.out.println("Workload split in " + chunks.size() + " threads");
+		System.out.println("Workload split in " + chunks.size() + " chunks");
 
 		
 		
@@ -92,7 +92,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 			// System.out.print(".");
 			// }
 			System.out.println("Saving : "+i );
-			System.out.println("Saving : "+chunk.size() + "tweets" );
+			System.out.println("Saving : "+chunk.size() + "tweets in one transaction" );
 			
 			DAO.saveTweetChunks(chunk,searchDetails,twitter);
 			
