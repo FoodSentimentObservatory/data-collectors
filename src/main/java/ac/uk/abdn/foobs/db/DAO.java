@@ -162,9 +162,10 @@ public class DAO {
 			PlatformEntity platformEntity) {
 		UserAccountEntity userAccount = null;
 		
-		session.beginTransaction();
+		Transaction transaction = session.beginTransaction();
 		String hql = "from UserAccountEntity uae where uae.platformAccountId=:paid and uae.platformId=:pid";
 		
+		try {
 
 			List<UserAccountEntity> results = session.createQuery(hql, UserAccountEntity.class)
 					.setParameter("paid", platformAccountId)
@@ -173,6 +174,10 @@ public class DAO {
 			if (results.size() > 0) {
 				userAccount = results.get(0);
 			}
+		}
+		finally {
+			transaction.rollback();
+		}
 		
 		return userAccount;
 
@@ -213,6 +218,9 @@ public class DAO {
 			transaction.rollback();
 			e.printStackTrace();
 		} 
+		finally {
+			transaction.rollback();
+		}
 
 		return userAccount;
 	}
@@ -346,6 +354,9 @@ public class DAO {
 		} catch (Exception e) {
 			transaction.rollback();
 			e.printStackTrace();
+		}
+		finally {
+			transaction.rollback();
 		}
 	}
 	
