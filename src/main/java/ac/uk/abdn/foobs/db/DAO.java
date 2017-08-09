@@ -129,12 +129,12 @@ public class DAO {
         try {
         	 PostEntity post = new PostEntity(tweet);
         	 if (post.getLocationId()!=null) {
-        		 session.merge(post.getLocationId());
-        		 session.merge(post.getLocationId().getGeoPoint());
+        		 session.saveOrUpdate(post.getLocationId());
+        		 session.saveOrUpdate(post.getLocationId().getGeoPoint());
         	 }
                     post.setHasCreator(user);
                     post.setSearchDetailsId(searchDetails);
-                    session.merge(post);
+                    session.saveOrUpdate(post);
                     session.getTransaction().commit();
         } catch (Exception e) {
                     transaction.rollback();
