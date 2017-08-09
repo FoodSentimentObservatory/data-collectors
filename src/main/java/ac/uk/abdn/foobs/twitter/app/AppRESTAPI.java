@@ -76,11 +76,15 @@ public class AppRESTAPI extends BaseRESTAPI {
 
 		System.out.println("Workload split in " + chunks.size() + " threads");
 
+		int i =0;
 		for (Set<Status> chunk : chunks) {
+			i++;
 			// count++;
 			// if (count%1000==0) {
 			// System.out.print(".");
 			// }
+			System.out.println("Saving : "+i );
+			System.out.println("Saving : "+chunk.size() + "tweets" );
 			for (Status chunk_tweet : chunk) {
 			DAO.saveTweetMultithread(chunk_tweet,searchDetails,twitter);
 			}
