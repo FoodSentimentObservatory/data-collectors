@@ -82,43 +82,12 @@ public class AppRESTAPI extends BaseRESTAPI {
 			// System.out.print(".");
 			// }
 
-			Runnable saveSingleTweet = () -> {
-				Session session = HibernateUtil.getSessionFactory().openSession();
-				for (Status chunk_tweet : chunk) {
-
-					// create a UserAccountEntity for the Status user to ensure
-					// the
-					// correct
-					// platformAccountId is used as part of the DB lookup.
-					UserAccountEntity basicUser = new UserAccountEntity(chunk_tweet.getUser());
-					UserAccountEntity dbUser = DAO.getUserAccountByIdAndPlatformMutithread(session,
-							basicUser.getPlatformAccountId(), twitter);
-					if (dbUser != null) {
-						// already have this user in the DB
-						basicUser = dbUser;
-						// TODO: This will not overwrite the existing record of
-						// the user
-						// with any changes they have made,
-						// details from their profile was stored in the DB
-					} else {
-						// new user to the system, so initialise it
-						basicUser.setPlatformId(twitter);
-						AgentEntity agent = new AgentEntity();
-						agent.setAgentType("Person");
-						basicUser.setAgentId(agent);
-					}
-					basicUser = DAO.saveOrUpdateUserAccountMultithread(session, basicUser);
-					DAO.saveTweet(basicUser, chunk_tweet, searchDetails);
-				}
-				System.out.print(".");
-				session.close();
-
-			};
+			 SaveTweetsThread thread = new SaveTweetsThread(chunk, twitter, searchDetails);
 			// start the thread
 
-			threads.add(saveSingleTweet);
+			threads.add(thread);
 
-			new Thread(saveSingleTweet).start();
+			thread.start();
 		}
 
 		
@@ -587,3 +556,5 @@ public class AppRESTAPI extends BaseRESTAPI {
 		return user;
 	}
 }
+
+
