@@ -68,7 +68,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 		for (Status tweet : tweets) {
 			count++;
 			temp_chunk.add(tweet);
-			if (count % 1000 == 0) {
+			if (count % 100 == 0) {
 				chunks.add(temp_chunk);
 				System.out.println("Cutting off at: "+count+ " "+temp_chunk.size());
 				temp_chunk= new HashSet();
