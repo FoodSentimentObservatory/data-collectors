@@ -122,7 +122,7 @@ public class DAO {
 	
 	
 	public static void saveTweetMultithread(UserAccountEntity user, Status tweet, SearchDetailsEntity searchDetails) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
      
         Transaction transaction = session.beginTransaction();
 
