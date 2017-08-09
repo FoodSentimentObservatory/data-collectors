@@ -133,7 +133,7 @@ public class DAO {
         
 		UserAccountEntity userAccount = null;
 		 UserAccountEntity basicUser = new UserAccountEntity(tweet.getUser());
-		
+		/*
 		String hql = "from UserAccountEntity uae where uae.platformAccountId=:paid and uae.platformId=:pid";
         
 		  
@@ -145,7 +145,7 @@ public class DAO {
 		if (results.size() > 0) {
 			userAccount = results.get(0);
 		}
-		
+		*/
 		
 			// new user to the system, so initialise it
 			basicUser.setPlatformId(platformEntity);
