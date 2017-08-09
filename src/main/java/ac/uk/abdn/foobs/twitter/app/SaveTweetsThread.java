@@ -33,7 +33,7 @@ public class SaveTweetsThread extends Thread {
 			// correct
 			// platformAccountId is used as part of the DB lookup.
 			UserAccountEntity basicUser = new UserAccountEntity(chunk_tweet.getUser());
-			UserAccountEntity dbUser = DAO.getUserAccountByIdAndPlatformMutithread(basicUser.getPlatformAccountId(), twitter);
+			UserAccountEntity dbUser = DAO.getUserAccountByIdAndPlatform(basicUser.getPlatformAccountId(), twitter);
 			if (dbUser != null) {
 				// already have this user in the DB
 				basicUser = dbUser;
@@ -48,7 +48,7 @@ public class SaveTweetsThread extends Thread {
 				agent.setAgentType("Person");
 				basicUser.setAgentId(agent);
 			}
-			basicUser = DAO.saveOrUpdateUserAccountMultithread( basicUser);
+			basicUser = DAO.saveOrUpdateUserAccount( basicUser);
 			DAO.saveTweet(basicUser, chunk_tweet, searchDetails);
 		}
 		} catch (Exception e) {
