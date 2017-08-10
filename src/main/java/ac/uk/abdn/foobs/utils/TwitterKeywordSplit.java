@@ -1,10 +1,11 @@
 package ac.uk.abdn.foobs.utils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TwitterKeywordSplit {
 
-public  ArrayList <String> createKeywordStrings (ArrayList <String> list) {
+public static  ArrayList <String> createKeywordStrings (List<String> keywords) {
 		
 		ArrayList <String> keywordslist =  new ArrayList <String> ();
 		int THRESHOLD = 30;
@@ -12,9 +13,9 @@ public  ArrayList <String> createKeywordStrings (ArrayList <String> list) {
 		char quotes='"';
 		
 		
-		for (int i=0 ; i <list.size();i++ ) {
+		for (int i=0 ; i <keywords.size();i++ ) {
 			
-		String word =  list.get(i).trim();
+		String word =  keywords.get(i).trim();
 		
 		//System.out.println("Processing"+word);
 		

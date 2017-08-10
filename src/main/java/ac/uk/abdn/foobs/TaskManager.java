@@ -23,6 +23,7 @@ import ac.uk.abdn.foobs.twitter.app.AppRESTAPI;
 import ac.uk.abdn.foobs.twitter.app.SearchObject;
 import ac.uk.abdn.foobs.twitter.user.TwitterHandleFinder;
 import ac.uk.abdn.foobs.twitter.user.UserRESTAPI;
+import ac.uk.abdn.foobs.utils.TwitterKeywordSplit;
 import twitter4j.GeoLocation;
 import twitter4j.Query.Unit;
 import twitter4j.Status;
@@ -88,22 +89,73 @@ public class TaskManager {
 
 	private static void findTweetsContainingKeywords(Config config) {
 
-        List<String> keywords = new ArrayList<String>();
+       
 
         
+        ArrayList <SearchObject> searches = new ArrayList <SearchObject> ();
         
-        String[] keywordsArray;
-        try {
-                    keywordsArray = FileUtils
-                                            .readFileToString(new File(config.getKeywordsFilename()), config.getKeywordsFileEncoding()).split("\n");
-        } catch (IOException e) {
-                    keywordsArray = new String[0];
-                    e.printStackTrace(System.err);
-        }
-        for (String keyword : keywordsArray) {
-                    keywords.add(keyword);
-        }
-        System.out.println(keywords);
+        
+        
+        
+        //Read search details from config
+        int searchCount = config.getSearchLength();
+		  List<String> latitude = config.getLatitude();
+		  List<String> longitude = config.getLongitude();
+		  List<String> radius = config.getRadius();
+		  List<String> note = config.getNote();
+		  List<String> unit = config.getUnit();
+	      List<List <String>> keywordFiles = config.getFileData();
+	      Date startDate = new Date();
+        
+	      //prepare search objects for all the searches
+	      for (int i=0; i<searchCount; i++) {
+	    	  
+	    	  String[] keywordsArray;
+	          try {
+	                      keywordsArray = FileUtils
+	                                              .readFileToString(new File(keywordFiles.get(i).get(0)), keywordFiles.get(i).get(1)).split("\n");
+	          } catch (IOException e) {
+	                      keywordsArray = new String[0];
+	                      e.printStackTrace(System.err);
+	          }
+	          List<String> keywords = new ArrayList<String>();
+	          
+	          for (String keyword : keywordsArray) {
+                  keywords.add(keyword);
+	          }
+	          
+	          System.out.println("Keywords loaded from file" + keywords);
+	          System.out.println("Preparing search strings for "+note.get(i) );
+	          
+	    	  ArrayList <String> keywrodssplit = TwitterKeywordSplit.createKeywordStrings(keywords);
+	    	  
+	    	  System.out.println("Keyword split results: ");
+	    	  
+	    	  for (int j =0; j <keywrodssplit.size();j++) {
+	    		  System.out.println("Keyword list number: " +j +1 +"" + keywrodssplit.get(j));
+	    	  }
+	    	 
+	    	  for (int j =0; j <keywrodssplit.size();j++) {
+	    		  SearchObject searchDetails = new SearchObject();
+	    	        searchDetails.setKeywords(keywrodssplit.get(j));
+	    	       
+	    	        LocationEntity location = new LocationEntity();
+	    	        GeoLocation geoLocation = new   GeoLocation(Double.parseDouble(latitude.get(i)), Double.parseDouble(longitude.get(i)));
+	    	        GeoPointEntity geoPoint = new GeoPointEntity(geoLocation);
+	    	        geoPoint.setLocationId(location);
+	    	        location.setGeoPoint(geoPoint);
+	    	        location.setDisplayString(note.get(i));	    	        
+	    	        searchDetails.setRadius(Double.parseDouble(radius.get(i)));
+	    	        
+	    	        searchDetails.setLocationId(location);
+	    	        searchDetails.setNote(note.get(i));
+	    	        searchDetails.setStartOfSearch(startDate);
+	    	        searches.add(searchDetails);
+	    	        DAO.saveSearchDetails((SearchDetailsEntity) searchDetails);
+	    	  }
+	    	  
+	    	  
+	      }
         
         
         
@@ -126,12 +178,12 @@ public class TaskManager {
        
       //  double radius = 177.312;
        
-        String temporary_keywords_for_testing = "and";
+        //String temporary_keywords_for_testing = "and";
         
         //Create all searches here .. This will go into loop
         
-        ArrayList searches = new ArrayList();
-        
+       
+        /*
         SearchObject searchDetails = new SearchObject();
         searchDetails.setKeywords(temporary_keywords_for_testing);
        
@@ -171,20 +223,27 @@ public class TaskManager {
         
         searches.add(searchDetails);
 		searches.add(searchDetails2);
-        
+		
+		 searchDetails.setStartOfSearch(startDate);
+        searchDetails2.setStartOfSearch(startDate);
+       // Set<Status> tweets = restAPI.searchKeywordListGeoCoded(keywords, 1000000, geoLocation, radius, Unit.km);
+       
+        DAO.saveSearchDetails((SearchDetailsEntity) searchDetails);
+        DAO.saveSearchDetails((SearchDetailsEntity) searchDetails2);
+		
+        */
         //Loop will end here
         
         
         
         
         
-        Date startDate = new Date();
-        searchDetails.setStartOfSearch(startDate);
-        searchDetails2.setStartOfSearch(startDate);
-       // Set<Status> tweets = restAPI.searchKeywordListGeoCoded(keywords, 1000000, geoLocation, radius, Unit.km);
+        
+        
+        
+        
+        
        
-        DAO.saveSearchDetails((SearchDetailsEntity) searchDetails);
-        DAO.saveSearchDetails((SearchDetailsEntity) searchDetails2);
         
         restAPI.searchKeywordListGeoCodedMultipleSearches(searches);
         
@@ -196,6 +255,12 @@ public class TaskManager {
         //Looop to add the times
         
         
+        for (int i =0; i< searches.size(); i++) {
+        	searches.get(i).setEndOfSearch(endDate);
+        	 DAO.saveSearchDetails((SearchDetailsEntity) searches.get(i));
+        }
+        
+        /*
         searchDetails.setEndOfSearch(endDate);
         
        
@@ -206,7 +271,7 @@ public class TaskManager {
         DAO.saveSearchDetails((SearchDetailsEntity) searchDetails);
         DAO.saveSearchDetails((SearchDetailsEntity) searchDetails2);
         
-        
+        */
         //String queryString = keywords.stream().map(Object::toString).collect(Collectors.joining("\" OR \""));
         //queryString = "\""+queryString+"\"";
         
