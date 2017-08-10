@@ -349,8 +349,11 @@ public class AppRESTAPI extends BaseRESTAPI {
 					// "+((SearchObject)((Object[])
 					// queriesWithSearchDeatils.get(i))[0]).getLastKonwnID());
 
-					query.setMaxId(
-							((SearchObject) ((Object[]) queriesWithSearchDeatils.get(i))[0]).getLastKonwnID() - 1);
+					long lastRetrievedID = ((SearchObject) ((Object[]) queriesWithSearchDeatils.get(i))[0]).getLastKonwnID();
+					System.out.println ("for search " + so.getNote() + " with unique ID " + so.getUniqueID());
+					System.out.println ("Setting last known id (this will be decreased by 1)" + lastRetrievedID);
+					
+					query.setMaxId(lastRetrievedID - 1);
 
 					// KEEP STATS
 
