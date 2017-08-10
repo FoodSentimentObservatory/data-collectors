@@ -1,5 +1,6 @@
 package ac.uk.abdn.foobs.utils;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,7 @@ public class TwitterKeywordSplit {
 public static  ArrayList <String> createKeywordStrings (List<String> keywords) {
 		
 		ArrayList <String> keywordslist =  new ArrayList <String> ();
-		int THRESHOLD = 30;
+		int THRESHOLD = 453;
 		StringBuilder temp = new StringBuilder();
 		char quotes='"';
 		
@@ -30,7 +31,6 @@ public static  ArrayList <String> createKeywordStrings (List<String> keywords) {
 				temp.append(quotes);
 			}
 			else {
-				
 				
 				if ((temp + word).length()+6 < THRESHOLD) {
 					temp.append(" OR ");

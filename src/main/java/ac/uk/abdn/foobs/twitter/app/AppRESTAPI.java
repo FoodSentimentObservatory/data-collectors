@@ -148,6 +148,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 			query.setQuery(queryString);
 			query.setGeoCode(new GeoLocation(search.getLocationId().getGeoPoint().getLatitude(),
 					search.getLocationId().getGeoPoint().getLongitude()), search.getRadius(), Unit.km);
+			System.out.println(query);
 			// NO point bothering with any other number as we will
 			// search for all we can get
 			query.setCount(100);
@@ -278,7 +279,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 				System.out.println("Limit exceded wait Thread in searchAPI broken.");
 				System.out.println(e.getMessage());
 			}
-
+	
 			// loop to perform all searches
 			try {
 				// System.out.println("------TASKS REMAINING ----------");
@@ -295,7 +296,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 					SearchObject so = (SearchObject) ((Object[]) queriesWithSearchDeatils.get(i))[0];
 
 					requestCounter++;
-
+					System.out.println(query);
 					result = twitter.search(query);
 
 					tweets.addAll(result.getTweets());
@@ -370,7 +371,6 @@ public class AppRESTAPI extends BaseRESTAPI {
 
 			} catch (TwitterException e) {
 				System.out.println(e.getErrorMessage());
-				// System.out.println(e.getResponseHeader(arg0));
 
 				/*
 				 * If rate limit exceeded send to sleep for 15 mins Not ideal as

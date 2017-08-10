@@ -112,6 +112,7 @@ public class TaskManager {
 	    	  
 	    	  String[] keywordsArray;
 	          try {
+	    
 	                      keywordsArray = FileUtils
 	                                              .readFileToString(new File(keywordFiles.get(i).get(0)), keywordFiles.get(i).get(1)).split("\n");
 	          } catch (IOException e) {
@@ -132,7 +133,7 @@ public class TaskManager {
 	    	  System.out.println("Keyword split results: ");
 	    	  
 	    	  for (int j =0; j <keywrodssplit.size();j++) {
-	    		  System.out.println("Keyword list number: " +j +1 +"" + keywrodssplit.get(j));
+	    		  System.out.println("Keyword list number: " +(j+1) +" " + keywrodssplit.get(j)+"; length " + keywrodssplit.get(j).length());
 	    	  }
 	    	 
 	    	  for (int j =0; j <keywrodssplit.size();j++) {
