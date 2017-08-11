@@ -336,7 +336,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 					boolean firstTweet = true;
 					for (Status tweet : tweets) {
 						if (firstRun&&firstTweet) {
-							tempItem = tempItem +"<ID>" + so.getUniqueID() + "</ID>";
+							tempItem = tempItem +"<ID>" + tweet.getId() + "</ID>";
 							firstTweet = false;
 						}
 						if (tweet.getId() < so.getLastKonwnID()) {
