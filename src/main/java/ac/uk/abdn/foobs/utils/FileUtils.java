@@ -18,9 +18,10 @@ public class FileUtils {
 	
 	public static void saveCacheReport (ArrayList previousSearchesXML) {
 	
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd(HH-mm)");
-		 LocalDateTime formatDateTime = LocalDateTime.parse(LocalDateTime.now().toString(), formatter);
-		String pathString =  "SEARCH-CACHE-RESULT-"+formatDateTime + ".txt";	
+		 LocalDateTime now = LocalDateTime.now();
+         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd (HH-mm-ss)");
+        
+		String pathString =  "SEARCH-CACHE-RESULT-"+now.format(formatter) + ".txt";	
 		String directoryString = "/SearchResults/";
 	  
 	    
