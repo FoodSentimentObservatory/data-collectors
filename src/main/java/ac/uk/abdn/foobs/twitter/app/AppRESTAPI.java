@@ -426,12 +426,15 @@ public class AppRESTAPI extends BaseRESTAPI {
 				// ");
 
 				if (so.isCompleted()) {
+					UUID idOfSearch = so.getUniqueID();
+					
+					if (!((HashSet) searchWindowResults.get(idOfSearch)).isEmpty()) {
 					System.out.println("\n------------SAVING LAST BATCH OF SEARCH RESULTS------------ ");
 					System.out.println("Search ID:  " + so.getUniqueID());
 					System.out.println("Group ID: " + so.getId());
-					UUID idOfSearch = so.getUniqueID();
+					
 					saveTweets((HashSet) searchWindowResults.get(idOfSearch), so);
-
+					}
 					// remove from execution queue because completed
 					queriesWithSearchDeatils.remove(search);
 					// remove results so it does not get saved when rate limit
@@ -448,12 +451,17 @@ public class AppRESTAPI extends BaseRESTAPI {
 			}
 
 			
+			if (firstRun) {
 			tempItem = tempItem+"</FirstTweetIDsFromPreviousSearch>";
 			previousSearchesXML.add(tempItem);
-			firstRun=false;
 			
 			//print xml in file to be included in the config next time searchis ran
 			FileUtils.saveCacheReport ( previousSearchesXML);
+			}
+			
+			firstRun=false;
+			
+			
 		}
 
 	}

@@ -16,23 +16,24 @@ public class FileUtils {
 	
 	
 	public static void saveCacheReport (ArrayList previousSearchesXML) {
-	String pathString = "/SearchResults/" +LocalDateTime.now() + ".txt";	
-	Path path = null;
-	File directory;
+	
+		String pathString =  "SEARCH-CACHE-RESULT-"+LocalDateTime.now() + ".txt";	
+		String directoryString = "/SearchResults/";
+	  
+	    
 
-		
 			//path = Paths.get(URLEncoder.encode(pathString, "UTF-8"));
 		
 			File output = new File (pathString);
 			
-		String directoryString = "/SearchResults/";
-		 directory = new File(directoryString);
+		/*
+			File directory = new File(directoryString);
 	    if (! directory.exists()){
 	        directory.mkdir();
 	        // If you require it to make the entire directory path including parents,
 	        // use directory.mkdirs(); here instead.
 	    }
-		
+		*/
 
 	
 	
