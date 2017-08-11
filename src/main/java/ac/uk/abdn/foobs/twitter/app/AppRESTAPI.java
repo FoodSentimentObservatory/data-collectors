@@ -221,7 +221,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 		// initialise hasmaps with all the searches, use searchID as key
 
 		// ------------------------------END STORRAGE -----------
-
+        boolean firstRun = true; 
 		while (true) {
 
 			// check when new search started
@@ -284,8 +284,9 @@ public class AppRESTAPI extends BaseRESTAPI {
 			try {
 				// System.out.println("------TASKS REMAINING ----------");
 				// System.out.println(queriesWithSearchDeatils.size());
+				String searchnote = "";
 				for (int i = 0; i < queriesWithSearchDeatils.size(); i++) {
-
+					
 					// OPTIONAL show progress
 					if (requestCounter % 20 == 0) {
 						System.out.println("");
@@ -295,8 +296,17 @@ public class AppRESTAPI extends BaseRESTAPI {
 					Query query = (Query) ((Object[]) queriesWithSearchDeatils.get(i))[1];
 					SearchObject so = (SearchObject) ((Object[]) queriesWithSearchDeatils.get(i))[0];
 
+					if (!searchnote.equals(so.getNote())&&firstRun) {
+						if (!searchnote.equals("")) {
+							System.out.println("</FirstTweetIDsFromPreviousSearch>");
+						}
+						searchnote = so.getNote();
+						System.out.println("----- Cache report for search "+searchnote);
+						System.out.println("<FirstTweetIDsFromPreviousSearch>");
+						
+					}
+					
 					requestCounter++;
-					System.out.println(query);
 					result = twitter.search(query);
 
 					tweets.addAll(result.getTweets());
@@ -319,9 +329,12 @@ public class AppRESTAPI extends BaseRESTAPI {
 					}
 					// ------------------------------END STOPPING CONDITION (no
 					// more Tweets)-----------
-
+					boolean firstTweet = true;
 					for (Status tweet : tweets) {
-
+						if (firstRun&&firstTweet) {
+							System.out.println("<ID>" + so.getUniqueID() + "</ID>");
+							firstTweet = false;
+						}
 						if (tweet.getId() < so.getLastKonwnID()) {
 							((SearchObject) ((Object[]) queriesWithSearchDeatils.get(i))[0])
 									.setLastKonwnID(tweet.getId());
@@ -424,6 +437,10 @@ public class AppRESTAPI extends BaseRESTAPI {
 				break;
 			}
 
+			
+			System.out.println("</FirstTweetIDsFromPreviousSearch>");
+			firstRun=false;
+			
 		}
 
 	}
