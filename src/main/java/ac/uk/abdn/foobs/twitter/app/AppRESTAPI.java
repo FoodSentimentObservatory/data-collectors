@@ -341,7 +341,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 					// more Tweets)-----------
 					
 					
-					long maxTweetID = 0;
+					long maxTweetID = -1;
 					
 					
 					
@@ -377,7 +377,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 
 					}
 					
-					if (firstRun&&!tweets.isEmpty()) {
+					if (firstRun) {
 						tempItem = tempItem +"<ID>" + maxTweetID + "</ID>";
 					}
 					
