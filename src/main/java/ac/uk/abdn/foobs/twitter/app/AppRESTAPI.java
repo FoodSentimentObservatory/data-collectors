@@ -222,6 +222,8 @@ public class AppRESTAPI extends BaseRESTAPI {
 
 		// ------------------------------END STORRAGE -----------
         boolean firstRun = true; 
+        ArrayList <String> previousSearchesXML = new ArrayList <String> ();
+        String tempItem = "";
 		while (true) {
 
 			// check when new search started
@@ -298,11 +300,13 @@ public class AppRESTAPI extends BaseRESTAPI {
 
 					if (!searchnote.equals(so.getNote())&&firstRun) {
 						if (!searchnote.equals("")) {
-							System.out.println("</FirstTweetIDsFromPreviousSearch>");
+							tempItem = tempItem+"</FirstTweetIDsFromPreviousSearch>";
+							previousSearchesXML.add(tempItem);
+							tempItem="";
 						}
 						searchnote = so.getNote();
-						System.out.println("----- Cache report for search "+searchnote);
-						System.out.println("<FirstTweetIDsFromPreviousSearch>");
+						tempItem = tempItem + "----- Cache report for search "+searchnote;
+						tempItem = tempItem+ "<FirstTweetIDsFromPreviousSearch>";
 						
 					}
 					
@@ -332,7 +336,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 					boolean firstTweet = true;
 					for (Status tweet : tweets) {
 						if (firstRun&&firstTweet) {
-							System.out.println("<ID>" + so.getUniqueID() + "</ID>");
+							tempItem = tempItem +"<ID>" + so.getUniqueID() + "</ID>";
 							firstTweet = false;
 						}
 						if (tweet.getId() < so.getLastKonwnID()) {
@@ -438,8 +442,14 @@ public class AppRESTAPI extends BaseRESTAPI {
 			}
 
 			
-			System.out.println("</FirstTweetIDsFromPreviousSearch>");
+			tempItem = tempItem+"</FirstTweetIDsFromPreviousSearch>";
+			previousSearchesXML.add(tempItem);
 			firstRun=false;
+			
+			//print xml to be included in the config next time searchis ran
+			for (int l =0; l<previousSearchesXML.size();l++ ) {
+				System.out.println(previousSearchesXML.get(l));
+			}
 			
 		}
 
