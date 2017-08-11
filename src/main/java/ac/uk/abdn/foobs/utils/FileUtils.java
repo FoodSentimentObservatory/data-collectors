@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class FileUtils {
@@ -17,7 +18,9 @@ public class FileUtils {
 	
 	public static void saveCacheReport (ArrayList previousSearchesXML) {
 	
-		String pathString =  "SEARCH-CACHE-RESULT-"+LocalDateTime.now() + ".txt";	
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd(HH-mm)");
+		 LocalDateTime formatDateTime = LocalDateTime.parse(LocalDateTime.now().toString(), formatter);
+		String pathString =  "SEARCH-CACHE-RESULT-"+formatDateTime + ".txt";	
 		String directoryString = "/SearchResults/";
 	  
 	    
