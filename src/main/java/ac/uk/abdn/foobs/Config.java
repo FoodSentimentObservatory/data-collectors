@@ -111,7 +111,8 @@ public class Config {
 	         longitude.add(longitudeS);
 	         radius.add(radiusS);
 	         //ADDED UUID to note just to make sure that note is always inserted and unique - this will be however shared for all the split searches from the same group - > they will have doifferent search id in the database though
-	         note.add(noteS + "("+ UUID.randomUUID() + ")");
+	        String noteString =noteS + "("+ UUID.randomUUID() + ")";
+	         note.add(noteString);
 	         unit.add(unitS);
 	         NodeList previousIDs = rootElement.getElementsByTagName("FirstTweetIDsFromPreviousSearch");
 	         
@@ -119,11 +120,13 @@ public class Config {
 	         for (int i=0; i<previousIDs.getLength();i++) {
 	           nNode =(Node) previousIDs.item(i);
 	  	       if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-	        	list.add( Long.parseUnsignedLong(XMLUtils.getStringValue(eElement, "ID")));
+	  	    	if (XMLUtils.getStringValue(eElement, "ID")!= null){   
+	        	list.add( Long.parseLong(XMLUtils.getStringValue(eElement, "ID")));
 	  	       }
+	  	    	}
 	         }
 	         
-	         previousTweetIDs.put(noteS,list);
+	         previousTweetIDs.put(noteString,list);
 	         
 	       }
   		}

@@ -137,7 +137,7 @@ public class TaskManager {
 	    	  }
 	    	 
 	    	  ArrayList <Long> previousIDsFromThisSearch = config.getPreviousTweetIDsForIndividualSearches().get(note.get(i));
-	    	  
+	    	  System.out.println(previousIDsFromThisSearch);
 	    			  for (int j =0; j <keywrodssplit.size();j++) {
 	    		  SearchObject searchDetails = new SearchObject();
 	    	        searchDetails.setKeywords(keywrodssplit.get(j));
@@ -150,7 +150,7 @@ public class TaskManager {
 	    	        location.setDisplayString(note.get(i));	    	        
 	    	        searchDetails.setRadius(Double.parseDouble(radius.get(i)));
 	    	        
-	    	        if (previousIDsFromThisSearch.get(j)!=null) {
+	    	        if (previousIDsFromThisSearch.size()>j) {
 	    	        	searchDetails.setLastKonwnCachedID(previousIDsFromThisSearch.get(j));
 	    	        }
 	    	        
