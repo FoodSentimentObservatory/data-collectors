@@ -136,7 +136,9 @@ public class TaskManager {
 	    		  System.out.println("Keyword list number: " +(j+1) +" " + keywrodssplit.get(j)+"; length " + keywrodssplit.get(j).length());
 	    	  }
 	    	 
-	    	  for (int j =0; j <keywrodssplit.size();j++) {
+	    	  ArrayList <Long> previousIDsFromThisSearch = config.getPreviousTweetIDsForIndividualSearches().get(note.get(i));
+	    	  
+	    			  for (int j =0; j <keywrodssplit.size();j++) {
 	    		  SearchObject searchDetails = new SearchObject();
 	    	        searchDetails.setKeywords(keywrodssplit.get(j));
 	    	       
@@ -148,10 +150,17 @@ public class TaskManager {
 	    	        location.setDisplayString(note.get(i));	    	        
 	    	        searchDetails.setRadius(Double.parseDouble(radius.get(i)));
 	    	        
+	    	        if (previousIDsFromThisSearch.get(j)!=null) {
+	    	        	searchDetails.setLastKonwnCachedID(previousIDsFromThisSearch.get(j));
+	    	        }
+	    	        
 	    	        searchDetails.setLocationId(location);
 	    	        searchDetails.setNote(note.get(i));
 	    	        searchDetails.setStartOfSearch(startDate);
 	    	        searches.add(searchDetails);
+	    	   
+	    	        
+	    	        
 	    	        DAO.saveSearchDetails((SearchDetailsEntity) searchDetails);
 	    	  }
 	    	  

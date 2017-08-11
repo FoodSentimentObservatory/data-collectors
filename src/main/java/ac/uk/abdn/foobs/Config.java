@@ -2,7 +2,9 @@ package ac.uk.abdn.foobs;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.w3c.dom.Document;
@@ -36,8 +38,12 @@ public class Config {
    List <String> latitude = new ArrayList<>();
    List <String> longitude = new ArrayList<>();
    List <String> radius = new ArrayList<>();
+   
+   
+   //NOTE: WE ARE CURRENTLY USING THIS AS A UNIQUE IDENTIFIER OF THE SEARCH
    List <String> note = new ArrayList<>();
    List <String> unit = new ArrayList<>();
+   HashMap <String,ArrayList <Long>> previousTweetIDs = new HashMap<String,ArrayList <Long>>();
    ArrayList<List<String>> keywordListsForSearches = new ArrayList<>();
    public Config(File file) {
       readAndSetConfig(file);
@@ -104,9 +110,20 @@ public class Config {
 	         latitude.add(latitudeS);
 	         longitude.add(longitudeS);
 	         radius.add(radiusS);
-	         note.add(noteS);
+	         //ADDED UUID to note just to make sure that note is always inserted and unique - this will be however shared for all the split searches from the same group - > they will have doifferent search id in the database though
+	         note.add(noteS + "("+ UUID.randomUUID() + ")");
 	         unit.add(unitS);
+	         NodeList previousIDs = rootElement.getElementsByTagName("FirstTweetIDsFromPreviousSearch");
 	         
+	         ArrayList <Long> list = new ArrayList <Long> ();
+	         for (int i=0; i<previousIDs.getLength();i++) {
+	           nNode =(Node) previousIDs.item(i);
+	  	       if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+	        	list.add( Long.parseUnsignedLong(XMLUtils.getStringValue(eElement, "ID")));
+	  	       }
+	         }
+	         
+	         previousTweetIDs.put(noteS,list);
 	         
 	       }
   		}
@@ -115,6 +132,11 @@ public class Config {
   public int getSearchLength() {
 	  return searchLength;
   }
+  
+  public HashMap <String,ArrayList <Long>> getPreviousTweetIDsForIndividualSearches() {
+	  return previousTweetIDs;
+  }
+  
   public ArrayList<List<String>> getFileData() {
 	  return keywordListsForSearches;
   }
