@@ -339,11 +339,21 @@ public class AppRESTAPI extends BaseRESTAPI {
 					}
 					// ------------------------------END STOPPING CONDITION (no
 					// more Tweets)-----------
-					boolean firstTweet = true;
+					
+					
+					long maxTweetID = 0;
+					
+					
+					
 					for (Status tweet : tweets) {
-						if (firstRun&&firstTweet) {
-							tempItem = tempItem +"<ID>" + tweet.getId() + "</ID>";
-							firstTweet = false;
+						
+						//find the max tweet in the first batch of results for all searches
+						if (firstRun) {
+							
+							if (tweet.getId()>maxTweetID ) {
+								maxTweetID=tweet.getId(); 
+							}
+							
 						}
 						if (tweet.getId() < so.getLastKonwnID()) {
 							((SearchObject) ((Object[]) queriesWithSearchDeatils.get(i))[0])
@@ -366,6 +376,11 @@ public class AppRESTAPI extends BaseRESTAPI {
 						((HashSet) searchWindowResults.get(so.getUniqueID())).add(tweet);
 
 					}
+					
+					if (firstRun&&!tweets.isEmpty()) {
+						tempItem = tempItem +"<ID>" + maxTweetID + "</ID>";
+					}
+					
 
 					// System.out.println("Search ID: "+so.getUniqueID());
 					// System.out.println("Tweet ID :
