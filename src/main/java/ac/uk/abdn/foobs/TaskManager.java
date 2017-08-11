@@ -125,7 +125,7 @@ public class TaskManager {
                   keywords.add(keyword);
 	          }
 	          
-	          System.out.println("Keywords loaded from file" + keywords);
+	      //    System.out.println("Keywords loaded from file" + keywords);
 	          System.out.println("Preparing search strings for "+note.get(i) );
 	          
 	    	  ArrayList <String> keywrodssplit = TwitterKeywordSplit.createKeywordStrings(keywords);
@@ -137,7 +137,6 @@ public class TaskManager {
 	    	  }
 	    	 
 	    	  ArrayList <Long> previousIDsFromThisSearch = config.getPreviousTweetIDsForIndividualSearches().get(note.get(i));
-	    	  System.out.println(previousIDsFromThisSearch);
 	    			  for (int j =0; j <keywrodssplit.size();j++) {
 	    		  SearchObject searchDetails = new SearchObject();
 	    	        searchDetails.setKeywords(keywrodssplit.get(j));

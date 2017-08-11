@@ -1,5 +1,10 @@
 package ac.uk.abdn.foobs.twitter.app;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +25,7 @@ import ac.uk.abdn.foobs.db.entity.PlatformEntity;
 import ac.uk.abdn.foobs.db.entity.SearchDetailsEntity;
 import ac.uk.abdn.foobs.db.entity.UserAccountEntity;
 import ac.uk.abdn.foobs.twitter.BaseRESTAPI;
+import ac.uk.abdn.foobs.utils.FileUtils;
 import twitter4j.GeoLocation;
 import twitter4j.Paging;
 import twitter4j.Query;
@@ -305,7 +311,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 							tempItem="";
 						}
 						searchnote = so.getNote();
-						tempItem = tempItem + "----- Cache report for search "+searchnote;
+						tempItem = tempItem + "----- Cache report for search "+searchnote+"\n";
 						tempItem = tempItem+ "<FirstTweetIDsFromPreviousSearch>";
 						
 					}
@@ -367,8 +373,8 @@ public class AppRESTAPI extends BaseRESTAPI {
 					// queriesWithSearchDeatils.get(i))[0]).getLastKonwnID());
 
 					long lastRetrievedID = ((SearchObject) ((Object[]) queriesWithSearchDeatils.get(i))[0]).getLastKonwnID();
-					System.out.println ("for search " + so.getNote() + " with unique ID " + so.getUniqueID());
-					System.out.println ("Setting last known id (this will be decreased by 1)" + lastRetrievedID);
+				//	System.out.println ("for search " + so.getNote() + " with unique ID " + so.getUniqueID());
+				//	System.out.println ("Setting last known id (this will be decreased by 1)" + lastRetrievedID);
 					
 					query.setMaxId(lastRetrievedID - 1);
 
@@ -446,11 +452,8 @@ public class AppRESTAPI extends BaseRESTAPI {
 			previousSearchesXML.add(tempItem);
 			firstRun=false;
 			
-			//print xml to be included in the config next time searchis ran
-			for (int l =0; l<previousSearchesXML.size();l++ ) {
-				System.out.println(previousSearchesXML.get(l));
-			}
-			
+			//print xml in file to be included in the config next time searchis ran
+			FileUtils.saveCacheReport ( previousSearchesXML);
 		}
 
 	}
