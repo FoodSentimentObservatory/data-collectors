@@ -459,11 +459,7 @@ public class AppRESTAPI extends BaseRESTAPI {
 
 			}
 
-			// IF all searches completed then exit
-			if (queriesWithSearchDeatils.size() == 0) {
-				System.out.println("ALL searches COMPLETED exiting.. ");
-				break;
-			}
+			
 
 			
 			if (firstRun) {
@@ -476,6 +472,11 @@ public class AppRESTAPI extends BaseRESTAPI {
 			
 			firstRun=false;
 			
+			// IF all searches completed then exit
+						if (queriesWithSearchDeatils.size() == 0) {
+							System.out.println("ALL searches COMPLETED exiting.. ");
+							break;
+						}
 			
 		}
 
