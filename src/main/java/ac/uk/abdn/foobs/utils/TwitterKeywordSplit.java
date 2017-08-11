@@ -9,7 +9,7 @@ public class TwitterKeywordSplit {
 public static  ArrayList <String> createKeywordStrings (List<String> keywords) {
 		
 		ArrayList <String> keywordslist =  new ArrayList <String> ();
-		int THRESHOLD = 453;
+		int THRESHOLD = 400;
 		StringBuilder temp = new StringBuilder();
 		char quotes='"';
 		
