@@ -25,7 +25,10 @@ To run from Eclipse:
 **Note:** If it's the first run of a series of consecutive runs, run as normally and then follow the instructions bellow. If it's a one-off run, run as normally.
 
 ## Consecutive runs 
-After the first run, a file with cashed results of that search will be created, it contains the IDs of the first tweets that have been pulled for each search definition. Open the config.xml file and in each search tag, create a `FirstTweetIDsPreviousSearch` tag. Within this tag create as many `ID` elements as searches have been done with that search definition.
+After the first run, a file with cashed results of that search will be created, it contains the IDs of the 
+first tweets that have been pulled for each search definition. Open the config.xml file and in each search 
+tag, create a `FirstTweetIDsPreviousSearch` tag. 
+Within this tag create as many `ID` elements as searches have been done with that search definition.
 
 Example:
 
