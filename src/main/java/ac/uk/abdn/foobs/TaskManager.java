@@ -27,6 +27,7 @@ import twitter4j.Query.Unit;
 import twitter4j.Status;
 
 public class TaskManager {
+
 	public static void manageTasks(Config config) {
 
 		if (config.getParseAndUploadRatings() == 1) {
@@ -85,6 +86,7 @@ public class TaskManager {
 	}
 
 	private static void findTweetsContainingKeywords(Config config) {
+
         List<String> keywords = new ArrayList<String>();
 
         SearchDetailsEntity searchDetails = new SearchDetailsEntity();
@@ -109,9 +111,11 @@ public class TaskManager {
         // GeoLocation (50.700517,-3.993530) approx coordinates for Plymouth
         // radius for Plymouth: 50
         AppRESTAPI restAPI = new AppRESTAPI(config);
+
         GeoLocation geoLocation = new   GeoLocation (52.104256,-0.516357);
         Date startDate = new Date();
         double radius = 177.312;
+
         Set<Status> tweets = restAPI.searchKeywordListGeoCoded(keywords, 1000000, geoLocation, radius, Unit.km);
         Date endDate = new Date();
         
