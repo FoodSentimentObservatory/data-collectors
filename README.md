@@ -33,7 +33,13 @@ Within this tag create as many `ID` elements as searches have been done with tha
 Example:
 
 ```
-Search definition Scotland - general food hygiene discourse had four separate searches (i.e the keyword list has been split in four when connecting to the twitter API because of its limitation of characters for each query). This means that the search definition will need four ID elements. Each element will contain the value of the first tweet for that search.
+Search definition Scotland - general food hygiene discourse had four separate searches 
+
+(i.e the keyword list has been split in four when connecting to the twitter API because 
+
+of its limitation of characters for each query). This means that the search definition will 
+
+need four ID elements. Each element will contain the value of the first tweet for that search.
 ```
 
 After those steps have been done, run the script as normal. Repeat the same process before every run.
