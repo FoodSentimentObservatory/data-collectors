@@ -128,7 +128,7 @@ public class TaskManager {
 	      //    System.out.println("Keywords loaded from file" + keywords);
 	          System.out.println("Preparing search strings for "+note.get(i) );
 	          
-	    	  ArrayList <String> keywrodssplit = TwitterKeywordSplit.createKeywordStrings(keywords);
+	    	  ArrayList <String> keywrodssplit = TwitterKeywordSplit.createKeywordAndPhrasesStrings(keywords);
 	    	  
 	    	  System.out.println("Keyword split results: ");
 	    	  
