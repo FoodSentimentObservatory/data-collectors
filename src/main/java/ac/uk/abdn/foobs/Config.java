@@ -111,7 +111,8 @@ public class Config {
 	         longitude.add(longitudeS);
 	         radius.add(radiusS);
 	         //ADDED UUID to note just to make sure that note is always inserted and unique - this will be however shared for all the split searches from the same group - > they will have doifferent search id in the database though
-	        String noteString =noteS ;
+
+	         String noteString =noteS ;
 	         note.add(noteString);
 	         unit.add(unitS);
 	         NodeList previousIDs = rootElement.getElementsByTagName("FirstTweetIDsFromPreviousSearch");
