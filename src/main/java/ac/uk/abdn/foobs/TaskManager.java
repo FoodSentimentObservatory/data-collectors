@@ -19,6 +19,8 @@ import ac.uk.abdn.foobs.db.entity.PremisesEntity;
 import ac.uk.abdn.foobs.db.entity.SearchDetailsEntity;
 import ac.uk.abdn.foobs.db.entity.UserAccountEntity;
 import ac.uk.abdn.foobs.fsa.RatingsHandler;
+import ac.uk.abdn.foobs.newsarticles.app.ParseArticles;
+import ac.uk.abdn.foobs.newsarticles.app.SaveArticles;
 import ac.uk.abdn.foobs.twitter.app.AppRESTAPI;
 import ac.uk.abdn.foobs.twitter.app.SearchObject;
 import ac.uk.abdn.foobs.twitter.user.TwitterHandleFinder;
@@ -51,6 +53,48 @@ public class TaskManager {
 			System.out.println("Finding 200 tweets containing keywords");
 			findTweetsContainingKeywords(config);
 		}
+		
+		if (config.getNewsArticles() == 1){
+			System.out.println("Processing news articles");
+			processNewsArticles(config);
+		}
+		
+	}
+
+	private static void processNewsArticles(Config config) {
+	
+		//save search details
+		String latitude = config.getNewsArticleSearchLatitude();
+		String longitude = config.getNewsArticleSearchLongitude();
+		String radius = config.getNewsArticleSearchRadius();
+		String note = config.getNewsArticleSearchNote();
+		String unit = config.getNewsArticleSearchUnit();
+	    String keywords = config.getNewsArticleSearchKeywords();
+	    Date startDate = new Date();
+	    
+	    SearchObject searchDetails = new SearchObject();
+        searchDetails.setKeywords(keywords);
+       
+        LocationEntity location = new LocationEntity();
+        GeoLocation geoLocation = new   GeoLocation(Double.parseDouble(latitude), Double.parseDouble(longitude));
+        GeoPointEntity geoPoint = new GeoPointEntity(geoLocation);
+        geoPoint.setLocationId(location);
+        location.setGeoPoint(geoPoint);
+        location.setDisplayString(note);	    	        
+        searchDetails.setRadius(Double.parseDouble(radius));
+        
+        
+        searchDetails.setLocationId(location);
+        searchDetails.setNote(note);
+        searchDetails.setStartOfSearch(startDate);
+        //TO DO - we currently don't have a live hook to LExis database so we need to improvise here
+        searchDetails.setEndOfSearch(startDate);
+
+        DAO.saveSearchDetails((SearchDetailsEntity) searchDetails);
+		
+        //parse and save articles 
+	    SaveArticles.saveArticlesToDB(ParseArticles.parse(null),searchDetails);
+		
 	}
 
 	private static void parseAndUploadRatings(Config config) {

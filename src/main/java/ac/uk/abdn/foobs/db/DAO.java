@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -20,6 +21,7 @@ import ac.uk.abdn.foobs.db.entity.PremisesEntity;
 import ac.uk.abdn.foobs.db.entity.RatingEntity;
 import ac.uk.abdn.foobs.db.entity.SearchDetailsEntity;
 import ac.uk.abdn.foobs.db.entity.UserAccountEntity;
+import ac.uk.abdn.foobs.newsarticles.app.NewsArticle;
 import twitter4j.Status;
 
 public class DAO {
@@ -271,7 +273,7 @@ public class DAO {
 					session.close();
 				}
 			}
-
+ //this is identical to next one -> check 
 	public static UserAccountEntity getUserAccountByIdAndPlatformMutithread(String platformAccountId,
 			PlatformEntity platformEntity) {
 		UserAccountEntity userAccount = null;
@@ -298,7 +300,7 @@ public class DAO {
 
 	}
 	
-	
+	// MARKED for deletion? see above
 	public static UserAccountEntity getUserAccountByIdAndPlatform(String platformAccountId,
 			PlatformEntity platformEntity) {
 		UserAccountEntity userAccount = null;
@@ -380,7 +382,6 @@ public class DAO {
 
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
-
 		try {
 			session.saveOrUpdate(platform);
 			session.getTransaction().commit();
@@ -476,4 +477,50 @@ public class DAO {
 			session.close();
 		}
 	}
+	
+	public static void saveNewsArticle(NewsArticle newsarticle) {
+		PlatformEntity platform = getPlatfromBasedOnName(newsarticle.getPlatform());
+		if (platform == null) {
+			System.out.println(newsarticle.getPlatform()+" is not present in platforms, adding.");
+			platform = new PlatformEntity("newspaper", newsarticle.getPlatform(), "");
+			platform = insertPlatform(platform);
+		}
+		
+		UserAccountEntity userAccount = getUserAccountByIdAndPlatform(newsarticle.getPlatform(), platform);
+		if (userAccount == null) {
+				AgentEntity agent = new AgentEntity();
+				agent.setAgentType("News Publisher");
+				// TO DO  - need to check if this account already created
+				userAccount = new UserAccountEntity (newsarticle.getPlatform());
+				userAccount.setAgentId(agent);
+				userAccount.setPlatformId(platform);
+		}
+		
+		
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		Transaction transaction = session.beginTransaction();
+
+		try {		
+			PostEntity post = new PostEntity(newsarticle);
+			//TO DO check if agent already exist - i.e. get it from user account
+			//for newspapers account id is the same as platform id - assumption no two newspapers are called the same (probably needs to be handled better in the future - the problem is that the post will need to come with a user account id (like Tweet) but Lexis does not give us this id)
+			post.setSearchDetailsId(newsarticle.getSearchDetailsEntity());
+			post.setHasCreator(userAccount);
+			
+			//WE dont have any ids for articles but we will create our own#
+			UUID id = UUID.randomUUID();
+			String uniqueArticleID = id.toString()+"_system_generated";
+			post.setPlatformPostID(uniqueArticleID);
+			
+			session.saveOrUpdate(post);
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			transaction.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+	}
+	
+	
 }

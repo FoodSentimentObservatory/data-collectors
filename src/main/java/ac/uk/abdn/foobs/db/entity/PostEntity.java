@@ -16,6 +16,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import ac.uk.abdn.foobs.newsarticles.app.NewsArticle;
 import twitter4j.Status;
 
 @Entity
@@ -72,6 +73,16 @@ public class PostEntity {
 			this.locationId.setGeoPoint(new GeoPointEntity(tweet.getGeoLocation()));
 		}
 	}
+	
+	public PostEntity(NewsArticle newsarticle) {
+		this.postType = "newsArticle";
+		this.body = newsarticle.getBody();
+		this.createdAt = newsarticle.getCreatedAt();
+		this.importedAt = new Date();
+		this.platformPostID = null;
+		
+	}
+	
 
 	/**
 	 * @return the id

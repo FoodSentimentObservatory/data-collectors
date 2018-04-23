@@ -31,13 +31,8 @@ public class SaveTweetsThread extends Thread {
 		
 		for (Status chunk_tweet : chunk) {
 
-			
-			
 			DAO.saveTweetMultithread(chunk_tweet,searchDetails,twitter, factory);
 		
-		
-			
-			
 		}
 		System.out.print("*");
     }

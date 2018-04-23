@@ -72,8 +72,20 @@ public class UserAccountEntity {
       this.platformAccountId = user.getScreenName();
       this.profileDescription = user.getDescription();
       this.verified = user.isVerified();
-
    }
+   
+   //create manually for news articles
+   public UserAccountEntity(String newspapaper) {
+	      this.lastCheckedDate =null;
+	      this.accountCreatedAt = null;
+	      this.accountURL = "no url known";
+	      this.displayName = newspapaper;
+	      this.platformAccountId = newspapaper;
+	      this.profileDescription = "this is assumed publisher account but we dont really have any data about it";
+	      this.verified = false;
+	   }
+   
+   
 
    /**
    * @return the id

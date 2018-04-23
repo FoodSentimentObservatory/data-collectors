@@ -17,9 +17,8 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table(name="Platform")
 public class PlatformEntity {
-   @Id
-   @GeneratedValue(strategy=GenerationType.AUTO,generator="native")
-   @GenericGenerator(name="native",strategy="native")
+@Id   
+@GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
    private Long Id;
 
    @Column(name="forumType")
